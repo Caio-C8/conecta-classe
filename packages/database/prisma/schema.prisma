@@ -1,0 +1,260 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StatusMatricula {
+  CURSANDO
+  APROVADO
+  REPROVADO
+  TRANSFERIDO
+}
+
+enum Papel {
+  ALUNO
+  PROFESSOR
+  ADMINISTRADOR
+}
+
+enum Cargo {
+  DIRETORA
+  SECRETARIA
+}
+
+enum Tipo {
+  ATIVIDADE
+  AVISO
+  GERAL
+  PROVA
+}
+
+enum NivelEnsino {
+  FUNDAMENTAL_1
+  FUNDAMENTAL_2
+  MEDIO
+}
+
+enum SituacaoRendimento {
+  APROVADO
+  REPROVADO_POR_NOTA
+  REPROVADO_POR_FALTA
+  TRANSFERIDO
+  CURSANDO
+}
+
+enum SituacaoTurma {
+  EM_ANDAMENTO
+  ENCERRADA
+}
+
+model Usuario {
+  id           Int       @id @default(autoincrement())
+  usuario      String    @unique
+  senha        String
+  nome         String
+  nome_search  String
+  trocar_senha Boolean   @default(false)
+  papel        Papel
+  deleted_at   DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  aluno         Aluno?
+  professor     Professor?
+  administrador Administrador?
+
+  @@map("usuarios")
+}
+
+model Administrador {
+  id         Int       @id @default(autoincrement())
+  usuario_id Int       @unique
+  cargo      Cargo
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_administrador_usuario")
+
+  @@map("administradores")
+}
+
+model Professor {
+  id         Int       @id @default(autoincrement())
+  usuario_id Int       @unique
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  usuario Usuario          @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_professor_usuario")
+  turmas  ProfessorTurma[]
+  aulas   Aula[]
+  eventos Evento[]
+
+  @@map("professores")
+}
+
+model Aluno {
+  id         Int       @id @default(autoincrement())
+  usuario_id Int       @unique
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  usuario    Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_aluno_usuario")
+  matriculas Matricula[]
+
+  @@map("alunos")
+}
+
+model Disciplina {
+  id         Int       @id @default(autoincrement())
+  nome       String
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  professores ProfessorTurma[]
+  aulas       Aula[]
+  eventos     Evento[]
+  rendimentos RendimentoDisciplina[]
+
+  @@map("disciplinas")
+}
+
+model Turma {
+  id            Int           @id @default(autoincrement())
+  identificacao String
+  serie         Int
+  nivel_ensino  NivelEnsino
+  sala          String
+  ano_letivo    Int
+  situacao      SituacaoTurma @default(EM_ANDAMENTO)
+  deleted_at    DateTime?
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+
+  professores ProfessorTurma[]
+  matriculas  Matricula[]
+  aulas       Aula[]
+  eventos     Evento[]
+
+  @@map("turmas")
+}
+
+model ProfessorTurma {
+  id            Int      @id @default(autoincrement())
+  professor_id  Int
+  turma_id      Int
+  disciplina_id Int
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  professor  Professor  @relation(fields: [professor_id], references: [id], map: "fk_professor_turma_professor")
+  turma      Turma      @relation(fields: [turma_id], references: [id], map: "fk_professor_turma_turma")
+  disciplina Disciplina @relation(fields: [disciplina_id], references: [id], map: "fk_professor_turma_disciplina")
+
+  @@map("professores_turmas")
+}
+
+model Matricula {
+  id         Int             @id @default(autoincrement())
+  aluno_id   Int
+  turma_id   Int
+  ano_letivo Int
+  status     StatusMatricula @default(CURSANDO)
+  created_at DateTime        @default(now())
+  updated_at DateTime        @updatedAt
+
+  aluno                   Aluno                  @relation(fields: [aluno_id], references: [id], map: "fk_matricula_aluno")
+  turma                   Turma                  @relation(fields: [turma_id], references: [id], map: "fk_matricula_turma")
+  frequencias             Frequencia[]
+  notas_eventos           NotaEvento[]
+  rendimentos_disciplinas RendimentoDisciplina[]
+
+  @@map("matriculas")
+}
+
+model Aula {
+  id            Int      @id @default(autoincrement())
+  turma_id      Int
+  disciplina_id Int?
+  professor_id  Int
+  data_aula     DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  turma       Turma        @relation(fields: [turma_id], references: [id], map: "fk_aula_turma")
+  disciplina  Disciplina?  @relation(fields: [disciplina_id], references: [id], map: "fk_aula_disciplina")
+  professor   Professor    @relation(fields: [professor_id], references: [id], map: "fk_aula_professor")
+  frequencias Frequencia[]
+
+  @@map("aulas")
+}
+
+model Frequencia {
+  id            Int      @id @default(autoincrement())
+  aula_id       Int
+  matricula_id  Int
+  numero_faltas Int
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  aula      Aula      @relation(fields: [aula_id], references: [id], map: "fk_frequencia_aula")
+  matricula Matricula @relation(fields: [matricula_id], references: [id], map: "fk_frequencia_matricula")
+
+  @@map("frequencias")
+}
+
+model Evento {
+  id            Int      @id @default(autoincrement())
+  turma_id      Int
+  disciplina_id Int
+  criador_id    Int
+  descricao     String
+  tipo          Tipo
+  valor_nota    Decimal? @db.Decimal(5, 2)
+  data_evento   DateTime
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  turma         Turma        @relation(fields: [turma_id], references: [id], map: "fk_evento_turma")
+  disciplina    Disciplina   @relation(fields: [disciplina_id], references: [id], map: "fk_evento_disciplina")
+  criador       Professor    @relation(fields: [criador_id], references: [id], map: "fk_evento_criador")
+  notas_eventos NotaEvento[]
+
+  @@map("eventos")
+}
+
+model NotaEvento {
+  id           Int      @id @default(autoincrement())
+  evento_id    Int
+  matricula_id Int
+  nota_obtida  Decimal? @db.Decimal(5, 2)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  evento    Evento    @relation(fields: [evento_id], references: [id], map: "fk_nota_evento_evento")
+  matricula Matricula @relation(fields: [matricula_id], references: [id], map: "fk_nota_evento_matricula")
+
+  @@map("notas_eventos")
+}
+
+model RendimentoDisciplina {
+  id            Int                @id @default(autoincrement())
+  matricula_id  Int
+  disciplina_id Int
+  nota_total    Decimal            @default(0) @db.Decimal(5, 2)
+  situacao      SituacaoRendimento @default(CURSANDO)
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+
+  matricula  Matricula  @relation(fields: [matricula_id], references: [id], map: "fk_rendimento_disciplina_matricula")
+  disciplina Disciplina @relation(fields: [disciplina_id], references: [id], map: "fk_rendimento_disciplina_disciplina")
+
+  @@map("rendimentos_disciplinas")
+}

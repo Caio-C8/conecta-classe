@@ -1,0 +1,9 @@
+{
+  "name": "@repo/types",
+  "version": "1.0.0",
+  "main": "index.js",
+  "types": "src/index.ts",
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
+}

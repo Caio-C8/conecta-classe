@@ -58,6 +58,7 @@ export default async function Home() {
 
             <h1>{aluno.usuario?.nome || "Sem nome"}</h1>
             <h1>{aluno.usuario?.usuario || "Sem usuário"}</h1>
+            <h1>{aluno.usuario?.senha || "Sem senha"}</h1>
             <h1>{aluno.usuario?.papel || "Sem papel"}</h1>
             <h1>{aluno.usuario_id}</h1>
 

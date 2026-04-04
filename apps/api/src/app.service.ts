@@ -27,7 +27,7 @@ export class AppService {
         nome: "Nome Padrão",
         nome_search: normalizarString("Nome Padrão"),
         papel: Papel.ALUNO,
-        senha: await bcrypt.hash("senha", 10),
+        senha: await bcrypt.hash("senha123@", 10),
       },
     });
 
@@ -38,9 +38,6 @@ export class AppService {
             id: usuario.id,
           },
         },
-        deleted_at: null,
-        created_at: new Date(),
-        updated_at: new Date(),
       },
       include: {
         usuario: true,

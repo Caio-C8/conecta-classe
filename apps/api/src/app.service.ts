@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { Aluno, Papel } from "@repo/types";
 import { PrismaService } from "./common/prisma/prisma.service";
 import { normalizarString } from "@repo/utils";
-import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AppService {
@@ -27,7 +26,7 @@ export class AppService {
         nome: "Nome Padrão",
         nome_search: normalizarString("Nome Padrão"),
         papel: Papel.ALUNO,
-        senha: await bcrypt.hash("senha", 10),
+        senha: "senha",
       },
     });
 

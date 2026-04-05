@@ -53,11 +53,12 @@ Inicialize o serviço do banco local na raiz:
 docker-compose up -d
 ```
 
-Após o banco estar rodando e os arquivos `.env` estarem no lugar, sincronize seu schema executando:
+Após o banco estar rodando e os arquivos `.env` estarem no lugar, sincronize seu schema executando na raiz do projeto:
 
 ```bash
 pnpm db:generate   # Constrói o Prisma Client localmente
 pnpm db:push       # Envia as tabelas e os schemas do Prisma para o seu Banco de Dados
+pnpm db:seed       # Executa o seed para criar o usuário administrador
 ```
 
 ### 5. Iniciar os Servidores

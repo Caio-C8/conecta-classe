@@ -1,19 +1,20 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { AutenticacaoRepository } from "./autenticacao.repository";
 import { LoginInput, RespostaLogin, TrocarSenhaInput } from "@repo/types";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
+import { UsuarioRepository } from "../usuario/usuario.repository";
 
 @Injectable()
 export class AutenticacaoService {
   constructor(
-    private readonly autenticacaoRepository: AutenticacaoRepository,
+    private readonly usuarioRepository: UsuarioRepository,
     private readonly jwtService: JwtService,
   ) {}
 
   async login(dados: LoginInput): Promise<RespostaLogin> {
-    const usuario =
-      await this.autenticacaoRepository.getUsuarioPorUsuario(dados);
+    const usuario = await this.usuarioRepository.getUsuarioPorUsuario(
+      dados.usuario,
+    );
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário ou senha incorretos.");
@@ -22,7 +23,7 @@ export class AutenticacaoService {
     const senhaCorreta = await bcrypt.compare(dados.senha, usuario.senha);
 
     if (!senhaCorreta) {
-      throw new UnauthorizedException("Senha incorreta.");
+      throw new UnauthorizedException("Usuário ou senha incorretos.");
     }
 
     const payload = {
@@ -51,7 +52,7 @@ export class AutenticacaoService {
       throw new UnauthorizedException("As senhas não coincidem.");
     }
 
-    const usuario = await this.autenticacaoRepository.getUsuarioPorId(id);
+    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário não encontrado.");
@@ -65,8 +66,10 @@ export class AutenticacaoService {
 
     dados.nova_senha = await bcrypt.hash(dados.nova_senha, 10);
 
-    const usuarioAtualizado =
-      await this.autenticacaoRepository.updateSenhaUsuario(id, dados);
+    const usuarioAtualizado = await this.usuarioRepository.updateSenhaUsuario(
+      id,
+      dados.nova_senha,
+    );
 
     const payload = {
       sub: usuarioAtualizado.id,

@@ -5,9 +5,10 @@ import { Papel } from "@repo/types";
 import { ExtractJwt, Strategy } from "passport-jwt";
 
 interface JwtPayload {
-  sub: string;
+  sub: number;
   usuario: string;
   papel: Papel;
+  trocar_senha: boolean;
 }
 
 @Injectable()
@@ -21,6 +22,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    return { id: payload.sub, usuario: payload.usuario, papel: payload.papel };
+    return {
+      id: payload.sub,
+      usuario: payload.usuario,
+      papel: payload.papel,
+      trocar_senha: payload.trocar_senha,
+    };
   }
 }

@@ -5,6 +5,7 @@ export interface Usuario {
   nome: string;
   nome_search: string;
   papel: Papel;
+  trocar_senha: boolean;
   deleted_at: Date | null;
   created_at: Date;
   updated_at: Date;

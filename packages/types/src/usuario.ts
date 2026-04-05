@@ -1,6 +1,7 @@
 export interface Usuario {
   id: number;
   usuario: string;
+  senha: string;
   nome: string;
   nome_search: string;
   papel: Papel;

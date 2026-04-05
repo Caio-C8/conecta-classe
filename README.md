@@ -8,7 +8,7 @@ O projeto está dividido em `apps` (aplicações prontas para uso) e `packages` 
 
 ### Aplicativos (`/apps`)
 
-- **`api`**: Backend do sistema, construído com [NestJS](https://nestjs.com/).
+- **`api`**: Backend do sistema, construído com [NestJS](https://nestjs.com/) (verifique o README em `apps/api/README.md`).
 - **`web`**: Frontend do projeto, desenvolvido com [Next.js](https://nextjs.org/) (App Router).
 
 ### Pacotes Compartilhados (`/packages`)

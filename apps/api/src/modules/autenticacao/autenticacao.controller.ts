@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Request } from "@nestjs/common";
+import { Body, Controller, Patch, Post } from "@nestjs/common";
 import { AutenticacaoService } from "./autenticacao.service";
 import { LoginDto } from "./dtos/login.dto";
 import { RespostaLogin } from "@repo/types";

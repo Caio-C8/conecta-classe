@@ -11,6 +11,7 @@ import { AutenticacaoModule } from "./modules/autenticacao/autenticacao.module";
 import { PapeisGuard } from "./common/guards/papeis.guard";
 import { ForcarTrocaSenhaGuard } from "./common/guards/forcar-troca-senha.guard";
 import { ZodValidationPipe } from "nestjs-zod";
+import { UsuarioModule } from "./modules/usuario/usuario.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ZodValidationPipe } from "nestjs-zod";
     }),
     PersistenceModule,
     AutenticacaoModule,
+    UsuarioModule,
   ],
   controllers: [AppController],
   providers: [

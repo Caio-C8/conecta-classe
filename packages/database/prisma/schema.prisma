@@ -57,7 +57,7 @@ model Usuario {
   senha        String
   nome         String
   nome_search  String
-  trocar_senha Boolean   @default(true)
+  trocar_senha Boolean   @default(false)
   papel        Papel
   deleted_at   DateTime?
   created_at   DateTime  @default(now())
@@ -71,9 +71,12 @@ model Usuario {
 }
 
 model Administrador {
-  id         Int   @id @default(autoincrement())
-  usuario_id Int   @unique
+  id         Int       @id @default(autoincrement())
+  usuario_id Int       @unique
   cargo      Cargo
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
 
   usuario Usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_administrador_usuario")
 
@@ -81,8 +84,11 @@ model Administrador {
 }
 
 model Professor {
-  id         Int @id @default(autoincrement())
-  usuario_id Int @unique
+  id         Int       @id @default(autoincrement())
+  usuario_id Int       @unique
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
 
   usuario Usuario          @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_professor_usuario")
   turmas  ProfessorTurma[]
@@ -93,8 +99,11 @@ model Professor {
 }
 
 model Aluno {
-  id         Int @id @default(autoincrement())
-  usuario_id Int @unique
+  id         Int       @id @default(autoincrement())
+  usuario_id Int       @unique
+  deleted_at DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
 
   usuario    Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_aluno_usuario")
   matriculas Matricula[]

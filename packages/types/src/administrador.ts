@@ -1,10 +1,10 @@
+import { Cargo } from "./enums";
 import { Usuario } from "./usuario";
-import { Matricula } from "./matricula";
 
-export interface Aluno {
+export interface Administrador {
   id: number;
   usuario_id: number;
+  cargo: Cargo;
 
   usuario?: Usuario;
-  matriculas?: Matricula[];
 }

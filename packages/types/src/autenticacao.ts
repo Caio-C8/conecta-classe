@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Papel } from "./usuario";
+import { Papel } from "./enums";
 
 export interface RespostaLogin {
   token: string;

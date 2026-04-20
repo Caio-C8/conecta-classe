@@ -18,6 +18,10 @@
 
 - `POST /usuarios` - Cria um novo usuário - Exclusivo de administrador
 
+### Alunos
+
+- `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Exclusivo de aluno
+
 ---
 
 ## Observação

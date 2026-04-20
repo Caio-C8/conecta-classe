@@ -20,6 +20,9 @@
     },
     "db:seed": {
       "cache": false
+    },
+    "db:seed:frequencia": {
+      "cache": false
     }
   }
 }

@@ -25,7 +25,7 @@ enum Cargo {
   SECRETARIA
 }
 
-enum Tipo {
+enum TipoEvento {
   ATIVIDADE
   AVISO
   GERAL
@@ -176,6 +176,7 @@ model Aula {
   disciplina_id Int?
   professor_id  Int
   data_aula     DateTime
+  quantidade    Int      @default(1)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
@@ -202,16 +203,17 @@ model Frequencia {
 }
 
 model Evento {
-  id            Int      @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   turma_id      Int
   disciplina_id Int
   criador_id    Int
+  titulo        String
   descricao     String
-  tipo          Tipo
-  valor_nota    Decimal? @db.Decimal(5, 2)
+  tipo_evento   TipoEvento
+  valor_nota    Decimal?   @db.Decimal(5, 2)
   data_evento   DateTime
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
 
   turma         Turma        @relation(fields: [turma_id], references: [id], map: "fk_evento_turma")
   disciplina    Disciplina   @relation(fields: [disciplina_id], references: [id], map: "fk_evento_disciplina")

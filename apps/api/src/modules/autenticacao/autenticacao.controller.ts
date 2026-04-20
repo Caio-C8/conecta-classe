@@ -6,7 +6,7 @@ import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decora
 import { Publico } from "src/common/decorators/publico.decorator";
 import { TrocarSenhaDto } from "./dtos/trocar-senha.dto";
 import { IgnorarTrocaSenha } from "src/common/decorators/ignorar-troca-senha.decorator";
-import { UsuarioLogado } from "src/common/decorators/usuario-logado.decorator";
+import { GetUsuario } from "src/common/decorators/get-usuario.decorator";
 
 @Controller("autenticacao")
 export class AutenticacaoController {
@@ -23,7 +23,7 @@ export class AutenticacaoController {
   @IgnorarTrocaSenha()
   @MensagemResposta("Senha alterada com sucesso.")
   async trocarSenha(
-    @UsuarioLogado("id") usuarioId: number,
+    @GetUsuario("id") usuarioId: number,
     @Body() dados: TrocarSenhaDto,
   ): Promise<RespostaLogin> {
     return this.autenticacaoService.trocarSenha(usuarioId, dados);

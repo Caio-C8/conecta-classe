@@ -1,4 +1,5 @@
 import z from "zod";
+import { Cargo, Papel } from "./enums";
 
 export interface Usuario {
   id: number;
@@ -12,21 +13,6 @@ export interface Usuario {
   created_at: Date;
   updated_at: Date;
 }
-
-export const Papel = {
-  ALUNO: "ALUNO",
-  PROFESSOR: "PROFESSOR",
-  ADMINISTRADOR: "ADMINISTRADOR",
-} as const;
-
-export type Papel = (typeof Papel)[keyof typeof Papel];
-
-export const Cargo = {
-  DIRETORA: "DIRETORA",
-  SECRETARIA: "SECRETARIA",
-} as const;
-
-export type Cargo = (typeof Cargo)[keyof typeof Cargo];
 
 const CreateUsuarioSchemaBase = z.object({
   usuario: z.string({

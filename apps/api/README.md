@@ -1,5 +1,49 @@
 # Rotas da API
 
+## Padrões de respostas
+
+Todas as rotas têm um padrão de resposta sendo eles:
+
+- `Sucesso`:
+
+  ```bash
+  {
+    status: 200,
+    sucesso: true,
+    mensagem: "Mensagem de sucesso.",
+    dados: {
+      // Aqui vai o que é retornado podendo ser uma lista []
+    },
+  }
+  ```
+
+- `Erro`:
+
+  ```bash
+  {
+    status: 400,
+    sucesso: false,
+    mensagem: "Erro de validação nos campos informados.",
+    erros: [
+      {
+        campo: "usuario",
+        mensagem: "Usuário inválido.",
+      },
+    ],
+  }
+  ```
+
+  Ou:
+
+  ```bash
+  {
+    status: 401,
+    sucesso: false,
+    mensagem: "Mensagem de erro.",
+    erros: null,
+  }
+  ```
+
 ## Rotas Criadas até o momento
 
 ### Testes (Temporárias)
@@ -11,16 +55,125 @@
 
 ### Autenticação
 
-- `POST /autenticacao/login` - Realiza login - Pública
-- `PATCH /autenticacao/trocar/senha` - Realiza troca de senha
+- `POST /autenticacao/login` - Realiza login - Pública - Ex:
+
+  ```bash
+  {
+    status: 201,
+    sucesso: true,
+    mensagem: "Login realizado com sucesso.",
+    dados: {
+      token: "token",
+      usuario: {
+        id: 3,
+        nome: "Ana Clara",
+        papel: "ALUNO",
+        trocar_senha: false,
+      },
+    },
+  }
+  ```
+
+- `PATCH /autenticacao/trocar/senha` - Realiza troca de senha - Necessário autenticação - Ex:
+
+  ```bash
+  {
+    status: 200,
+    sucesso: true,
+    mensagem: "Senha alterada com sucesso.",
+    dados: {
+      token: "token",
+      usuario: {
+        id: 4,
+        nome: "Carlos Eduardo",
+        papel: "PROFESSOR",
+        trocar_senha: false,
+      },
+    },
+  }
+  ```
 
 ### Usuários
 
-- `POST /usuarios` - Cria um novo usuário - Exclusivo de administrador
+- `POST /usuarios` - Cria um novo usuário - Necessário autenticação - Exclusivo de administrador - Ex:
+
+  ```bash
+  {
+    status: 201,
+    sucesso: true,
+    mensagem: "Usuário criado com sucesso.",
+    dados: {
+      id: 6,
+      usuario: "teste1",
+      senha: "$2b$10$.0k.H7upbCKY.pdf.cT0H.K7gpdZrp1jpq8XHM5ihSHHP0b2.UoOm",
+      nome: "Teste",
+      nome_search: "teste",
+      trocar_senha: true,
+      papel: "ALUNO",
+      deleted_at: null,
+      created_at: "2026-04-24T11:17:23.127Z",
+      updated_at: "2026-04-24T11:17:23.127Z",
+    },
+  }
+  ```
 
 ### Alunos
 
-- `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Exclusivo de aluno
+- `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:
+
+  ```bash
+  {
+    status: 200,
+    sucesso: true,
+    mensagem: "Operação realizada com sucesso",
+    dados: {
+      usuario_id: 3,
+      ano_letivo: 2025,
+      visao: "POR_DISCIPLINA",
+      turma: {
+        identificacao: "C",
+        serie: 9,
+        nivel_ensino: "FUNDAMENTAL_2",
+      },
+      frequencias: [
+        {
+          disciplina: {
+            id: 1,
+            nome: "Matemática",
+          },
+          aulas_realizadas: 1,
+          faltas: 0,
+          presenca_percentual: 100,
+        },
+      ],
+    },
+  }
+  ```
+
+  Ou:
+
+  ```bash
+  {
+    status: 200,
+    sucesso: true,
+    mensagem: "Operação realizada com sucesso",
+    dados: {
+      usuario_id: 2,
+      ano_letivo: 2026,
+      visao: "GERAL",
+      turma: {
+        identificacao: "B",
+        serie: 2,
+        nivel_ensino: "FUNDAMENTAL_1",
+      },
+      frequencia: {
+        total_aulas: 2,
+        total_faltas: 1,
+        presenca_percentual: 50,
+      },
+    },
+  }
+  ```
 
 ---
 

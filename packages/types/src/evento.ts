@@ -20,5 +20,5 @@ export interface Evento {
   turma?: Turma;
   disciplina?: Disciplina;
   criador?: Professor;
-  notas_eventos?: NotaEvento[];
+  nota_evento?: NotaEvento;
 }

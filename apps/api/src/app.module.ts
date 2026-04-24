@@ -12,6 +12,10 @@ import { PapeisGuard } from "./common/guards/papeis.guard";
 import { ForcarTrocaSenhaGuard } from "./common/guards/forcar-troca-senha.guard";
 import { ZodValidationPipe } from "nestjs-zod";
 import { UsuarioModule } from "./modules/usuario/usuario.module";
+import { MatriculaModule } from "./modules/matricula/matricula.module";
+import { AulaModule } from "./modules/aula/aula.module";
+import { DisciplinaModule } from "./modules/disciplina/disciplina.module";
+import { FrequenciaModule } from "./modules/frequencia/frequencia.module";
 
 @Module({
   imports: [
@@ -21,6 +25,10 @@ import { UsuarioModule } from "./modules/usuario/usuario.module";
     PersistenceModule,
     AutenticacaoModule,
     UsuarioModule,
+    FrequenciaModule,
+    MatriculaModule,
+    AulaModule,
+    DisciplinaModule,
   ],
   controllers: [AppController],
   providers: [

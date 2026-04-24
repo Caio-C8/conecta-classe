@@ -10,7 +10,8 @@
     "db:generate": "turbo run db:generate",
     "db:push": "turbo run db:push",
     "db:studio": "turbo run db:studio",
-    "db:seed": "turbo run db:seed"
+    "db:seed": "turbo run db:seed",
+    "db:seed:frequencia": "turbo run db:seed:frequencia"
   },
   "keywords": [],
   "author": "",

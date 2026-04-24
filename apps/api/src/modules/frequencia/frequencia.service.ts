@@ -1,0 +1,128 @@
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { FrequenciaRepository } from "./frequencia.repository";
+import { MatriculaService } from "../matricula/matricula.service";
+import { AulaService } from "../aula/aula.service";
+import { DisciplinaService } from "../disciplina/disciplina.service";
+import { UsuarioService } from "../usuario/usuario.service";
+import { RespostaGetFrequenciaAluno } from "@repo/types";
+
+@Injectable()
+export class FrequenciaService {
+  constructor(
+    private readonly frequenciaRepository: FrequenciaRepository,
+    private readonly matriculaService: MatriculaService,
+    private readonly aulaService: AulaService,
+    private readonly disciplinaService: DisciplinaService,
+    private readonly usuarioService: UsuarioService,
+  ) {}
+
+  async getFrequenciaAluno(
+    usuarioId: number,
+    anoLetivo: number,
+  ): Promise<RespostaGetFrequenciaAluno> {
+    const aluno = await this.usuarioService.getUsuarioPorId(usuarioId);
+
+    if (!aluno) {
+      throw new NotFoundException("Aluno não encontrado.");
+    }
+
+    const matricula = await this.matriculaService.getMatriculaPorAluno(
+      usuarioId,
+      anoLetivo,
+    );
+
+    if (!matricula) {
+      throw new NotFoundException(
+        "Matrícula não encontrada para este aluno e ano letivo.",
+      );
+    }
+
+    const { turma } = matricula;
+
+    if (!turma) {
+      throw new NotFoundException("Turma não encontrada.");
+    }
+
+    if (turma.nivel_ensino === "FUNDAMENTAL_1") {
+      const totalAulas = await this.aulaService.getTotalAulasPorTurma(turma.id);
+
+      const totalFaltas = await this.frequenciaRepository.sumFaltasPorMatricula(
+        matricula.id,
+      );
+
+      const presencas = totalAulas > 0 ? totalAulas - totalFaltas : 0;
+      const presencaPercentual =
+        totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 100;
+
+      return {
+        usuario_id: usuarioId,
+        ano_letivo: anoLetivo,
+        visao: "GERAL",
+        turma: {
+          identificacao: turma.identificacao,
+          serie: turma.serie,
+          nivel_ensino: turma.nivel_ensino,
+        },
+        frequencia: {
+          total_aulas: totalAulas,
+          total_faltas: totalFaltas,
+          presenca_percentual: presencaPercentual,
+        },
+      };
+    } else {
+      const disciplinas = await this.disciplinaService.getDisciplinasPorTurmas(
+        turma.id,
+      );
+
+      const aulasPorDisciplina =
+        await this.aulaService.getAulasPorDisciplinaPorTurma(turma.id);
+
+      const faltas =
+        await this.frequenciaRepository.findFrequenciasPorMatricula(
+          matricula.id,
+        );
+
+      const frequencias = disciplinas.map((disciplina) => {
+        const agregacaoAulas = aulasPorDisciplina.find(
+          (aula) => aula.disciplina_id === disciplina.id,
+        );
+
+        const aulasRealizadas = agregacaoAulas?._sum.quantidade || 0;
+
+        const faltasNessaDisciplina = faltas
+          .filter((falta) => falta.aula?.disciplina_id === disciplina.id)
+          .reduce((acc, falta) => acc + falta.numero_faltas, 0);
+
+        const presencas =
+          aulasRealizadas > 0 ? aulasRealizadas - faltasNessaDisciplina : 0;
+
+        const percentualPresenca =
+          aulasRealizadas > 0
+            ? Math.round((presencas / aulasRealizadas) * 100)
+            : 100;
+
+        return {
+          disciplina: {
+            id: disciplina.id,
+            nome: disciplina.nome,
+          },
+          aulas_realizadas: aulasRealizadas,
+          faltas: faltasNessaDisciplina,
+          presenca_percentual: percentualPresenca,
+        };
+      });
+
+      return {
+        usuario_id: usuarioId,
+        ano_letivo: anoLetivo,
+        visao: "POR_DISCIPLINA",
+        turma: {
+          identificacao: turma.identificacao,
+          serie: turma.serie,
+          nivel_ensino: turma.nivel_ensino,
+        },
+        frequencias,
+      };
+    }
+  }
+}

@@ -35,4 +35,8 @@ export class UsuarioService {
       return await this.usuarioRepository.createAluno(dados);
     }
   }
+
+  async getUsuarioPorId(usuarioId: number): Promise<Usuario | null> {
+    return await this.usuarioRepository.getUsuarioPorId(usuarioId);
+  }
 }

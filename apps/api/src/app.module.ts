@@ -16,6 +16,7 @@ import { MatriculaModule } from "./modules/matricula/matricula.module";
 import { AulaModule } from "./modules/aula/aula.module";
 import { DisciplinaModule } from "./modules/disciplina/disciplina.module";
 import { FrequenciaModule } from "./modules/frequencia/frequencia.module";
+import { EventoModule } from "./modules/evento/evento.module";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { FrequenciaModule } from "./modules/frequencia/frequencia.module";
     MatriculaModule,
     AulaModule,
     DisciplinaModule,
+    EventoModule,
   ],
   controllers: [AppController],
   providers: [

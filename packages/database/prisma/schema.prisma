@@ -215,17 +215,17 @@ model Evento {
   created_at    DateTime   @default(now())
   updated_at    DateTime   @updatedAt
 
-  turma         Turma        @relation(fields: [turma_id], references: [id], map: "fk_evento_turma")
-  disciplina    Disciplina   @relation(fields: [disciplina_id], references: [id], map: "fk_evento_disciplina")
-  criador       Professor    @relation(fields: [criador_id], references: [id], map: "fk_evento_criador")
-  notas_eventos NotaEvento[]
+  turma       Turma       @relation(fields: [turma_id], references: [id], map: "fk_evento_turma")
+  disciplina  Disciplina  @relation(fields: [disciplina_id], references: [id], map: "fk_evento_disciplina")
+  criador     Professor   @relation(fields: [criador_id], references: [id], map: "fk_evento_criador")
+  nota_evento NotaEvento?
 
   @@map("eventos")
 }
 
 model NotaEvento {
   id           Int      @id @default(autoincrement())
-  evento_id    Int
+  evento_id    Int      @unique
   matricula_id Int
   nota_obtida  Decimal? @db.Decimal(5, 2)
   created_at   DateTime @default(now())

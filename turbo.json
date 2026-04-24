@@ -23,6 +23,9 @@
     },
     "db:seed:frequencia": {
       "cache": false
+    },
+    "db:seed:evento": {
+      "cache": false
     }
   }
 }

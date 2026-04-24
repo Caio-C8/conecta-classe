@@ -11,7 +11,8 @@
     "db:push": "turbo run db:push",
     "db:studio": "turbo run db:studio",
     "db:seed": "turbo run db:seed",
-    "db:seed:frequencia": "turbo run db:seed:frequencia"
+    "db:seed:frequencia": "turbo run db:seed:frequencia",
+    "db:seed:evento": "turbo run db:seed:evento"
   },
   "keywords": [],
   "author": "",

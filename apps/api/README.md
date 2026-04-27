@@ -105,7 +105,6 @@ Todas as rotas têm um padrão de resposta sendo eles:
     dados: {
       id: 6,
       usuario: "teste1",
-      senha: "$2b$10$.0k.H7upbCKY.pdf.cT0H.K7gpdZrp1jpq8XHM5ihSHHP0b2.UoOm",
       nome: "Teste",
       nome_search: "teste",
       trocar_senha: true,

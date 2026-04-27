@@ -1,10 +1,23 @@
 import z from "zod";
 import { Cargo, Papel } from "./enums";
+import { int } from "zod/v4";
 
 export interface Usuario {
   id: number;
   usuario: string;
   senha: string;
+  nome: string;
+  nome_search: string;
+  papel: Papel;
+  trocar_senha: boolean;
+  deleted_at: Date | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UsuarioSemSenha {
+  id: number;
+  usuario: string;
   nome: string;
   nome_search: string;
   papel: Papel;

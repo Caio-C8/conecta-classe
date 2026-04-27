@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { EventoRepository } from "./evento.repository";
 import { MatriculaService } from "../matricula/matricula.service";
-import { Evento } from "@repo/types";
+import { Evento, NotaEvento } from "@repo/types";
 
 @Injectable()
 export class EventoService {
@@ -24,5 +24,13 @@ export class EventoService {
     }
 
     return await this.eventoRepository.findEventosPorTurma(matricula.turma_id);
+  }
+
+  async getNotasEventosPorMatricula(
+    matriculaId: number,
+  ): Promise<NotaEvento[]> {
+    return await this.eventoRepository.findNotasEventosPorMatricula(
+      matriculaId,
+    );
   }
 }

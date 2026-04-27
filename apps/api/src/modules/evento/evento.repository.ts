@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Evento } from "@repo/types";
+import { Evento, NotaEvento } from "@repo/types";
 import { PrismaService } from "src/common/prisma/prisma.service";
 
 @Injectable()
@@ -25,5 +25,32 @@ export class EventoRepository {
         valor_nota: evento.valor_nota?.toNumber() || null,
       };
     });
+  }
+
+  async findNotasEventosPorMatricula(
+    matriculaId: number,
+  ): Promise<NotaEvento[]> {
+    const notas = await this.prisma.notaEvento.findMany({
+      where: {
+        matricula_id: matriculaId,
+      },
+      include: {
+        evento: true,
+      },
+      orderBy: {
+        evento: {
+          data_evento: "asc",
+        },
+      },
+    });
+
+    return notas.map((nota) => ({
+      ...nota,
+      nota_obtida: nota.nota_obtida?.toNumber() || null,
+      evento: {
+        ...nota.evento,
+        valor_nota: nota.evento.valor_nota?.toNumber() || null,
+      },
+    }));
   }
 }

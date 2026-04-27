@@ -12,7 +12,8 @@
     "db:studio": "turbo run db:studio",
     "db:seed": "turbo run db:seed",
     "db:seed:frequencia": "turbo run db:seed:frequencia",
-    "db:seed:evento": "turbo run db:seed:evento"
+    "db:seed:evento": "turbo run db:seed:evento",
+    "db:seed:rendimento": "turbo run db:seed:rendimento"
   },
   "keywords": [],
   "author": "",

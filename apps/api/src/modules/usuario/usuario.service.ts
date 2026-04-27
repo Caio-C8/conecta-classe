@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateUsuarioDto } from "./dtos/create-usuario.dto";
-import { Papel, Usuario } from "@repo/types";
+import { Papel, Usuario, UsuarioSemSenha } from "@repo/types";
 import { UsuarioRepository } from "./usuario.repository";
 import * as bcrypt from "bcrypt";
 
@@ -8,7 +8,7 @@ import * as bcrypt from "bcrypt";
 export class UsuarioService {
   constructor(private readonly usuarioRepository: UsuarioRepository) {}
 
-  async createUsuario(dados: CreateUsuarioDto): Promise<Usuario> {
+  async createUsuario(dados: CreateUsuarioDto): Promise<UsuarioSemSenha> {
     const usuario = await this.usuarioRepository.getUsuarioPorUsuario(
       dados.usuario,
     );
@@ -21,19 +21,23 @@ export class UsuarioService {
 
     dados.senha = await bcrypt.hash(dados.senha, 10);
 
+    let novoUsuario: Usuario | null;
+
     if (dados.papel === Papel.ADMINISTRADOR) {
-      const usuario = await this.usuarioRepository.createAdministrador(dados);
-
-      if (!usuario) {
-        throw new BadRequestException("Erro ao criar usuário administrador.");
-      }
-
-      return usuario;
+      novoUsuario = await this.usuarioRepository.createAdministrador(dados);
     } else if (dados.papel === Papel.PROFESSOR) {
-      return await this.usuarioRepository.createProfessor(dados);
+      novoUsuario = await this.usuarioRepository.createProfessor(dados);
     } else {
-      return await this.usuarioRepository.createAluno(dados);
+      novoUsuario = await this.usuarioRepository.createAluno(dados);
     }
+
+    if (!novoUsuario) {
+      throw new BadRequestException("Erro ao criar usuário.");
+    }
+
+    const { senha, ...novoUsuarioSemSenha } = novoUsuario;
+
+    return novoUsuarioSemSenha;
   }
 
   async getUsuarioPorId(usuarioId: number): Promise<Usuario | null> {

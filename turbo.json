@@ -26,6 +26,9 @@
     },
     "db:seed:evento": {
       "cache": false
+    },
+    "db:seed:rendimento": {
+      "cache": false
     }
   }
 }

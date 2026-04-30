@@ -82,6 +82,9 @@ export class FrequenciaService {
           matricula.id,
         );
 
+      let totalAulas: number = 0;
+      let totalFaltas: number = 0;
+
       const frequencias = disciplinas.map((disciplina) => {
         const agregacaoAulas = aulasPorDisciplina.find(
           (aula) => aula.disciplina_id === disciplina.id,
@@ -93,13 +96,15 @@ export class FrequenciaService {
           .filter((falta) => falta.aula?.disciplina_id === disciplina.id)
           .reduce((acc, falta) => acc + falta.numero_faltas, 0);
 
-        const presencas =
-          aulasRealizadas > 0 ? aulasRealizadas - faltasNessaDisciplina : 0;
+        const presencas = Math.max(0, aulasRealizadas - faltasNessaDisciplina);
 
         const percentualPresenca =
           aulasRealizadas > 0
             ? Math.round((presencas / aulasRealizadas) * 100)
             : 100;
+
+        totalAulas += aulasRealizadas;
+        totalFaltas += faltasNessaDisciplina;
 
         return {
           disciplina: {
@@ -112,10 +117,17 @@ export class FrequenciaService {
         };
       });
 
+      const presencas = Math.max(0, totalAulas - totalFaltas);
+      const presencaPercentualGeral =
+        totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 100;
+
       return {
         usuario_id: usuarioId,
         ano_letivo: anoLetivo,
         visao: "POR_DISCIPLINA",
+        porcentagem_frequencia_geral: presencaPercentualGeral,
+        total_faltas: totalFaltas,
+        total_aulas: totalAulas,
         turma: {
           identificacao: turma.identificacao,
           serie: turma.serie,

@@ -14,16 +14,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🧹 Limpando dados anteriores...");
 
-  // Ordem reversa para evitar erros de Foreign Key
   await prisma.notaEvento.deleteMany();
-  await prisma.rendimentoDisciplina.deleteMany();
-  await prisma.evento.deleteMany();
   await prisma.frequencia.deleteMany();
+  await prisma.rendimentoDisciplina.deleteMany();
+
+  await prisma.evento.deleteMany();
   await prisma.aula.deleteMany();
   await prisma.matricula.deleteMany();
   await prisma.professorTurma.deleteMany();
+
   await prisma.turma.deleteMany();
   await prisma.disciplina.deleteMany();
+
   await prisma.usuario.deleteMany();
 
   console.log("🌱 Iniciando o seed de Rendimentos/Notas...");

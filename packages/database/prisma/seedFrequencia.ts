@@ -12,14 +12,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Iniciando o seed...");
 
-  await prisma.professorTurma.deleteMany();
+  await prisma.notaEvento.deleteMany();
   await prisma.frequencia.deleteMany();
+  await prisma.rendimentoDisciplina.deleteMany();
+
+  await prisma.evento.deleteMany();
   await prisma.aula.deleteMany();
   await prisma.matricula.deleteMany();
-  await prisma.disciplina.deleteMany();
+  await prisma.professorTurma.deleteMany();
+
   await prisma.turma.deleteMany();
-  await prisma.aluno.deleteMany();
-  await prisma.professor.deleteMany();
+  await prisma.disciplina.deleteMany();
+
   await prisma.usuario.deleteMany();
 
   // 1. Criar as Disciplinas

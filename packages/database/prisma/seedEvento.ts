@@ -13,17 +13,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🧹 Limpando dados anteriores...");
 
-  // A ordem de exclusão é importante (das tabelas filhas para as tabelas pais)
   await prisma.notaEvento.deleteMany();
-  await prisma.evento.deleteMany();
   await prisma.frequencia.deleteMany();
-  await prisma.aula.deleteMany();
   await prisma.rendimentoDisciplina.deleteMany();
+
+  await prisma.evento.deleteMany();
+  await prisma.aula.deleteMany();
   await prisma.matricula.deleteMany();
   await prisma.professorTurma.deleteMany();
+
   await prisma.turma.deleteMany();
   await prisma.disciplina.deleteMany();
-  // O Usuario apaga o Aluno, Professor e Administrador automaticamente (onDelete: Cascade)
+
   await prisma.usuario.deleteMany();
 
   console.log("🌱 Iniciando o seed de Eventos...");

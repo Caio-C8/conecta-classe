@@ -23,6 +23,7 @@ export interface RespostaGetRendimentosAluno {
     serie: number | null;
     nivel_ensino: NivelEnsino | null;
   };
+  media_geral: number;
   rendimentos: {
     disciplina: {
       id: number | null;
@@ -34,6 +35,7 @@ export interface RespostaGetRendimentosAluno {
       id: number;
       titulo: string | null;
       tipo_evento: TipoEvento | null;
+      data_evento: Date | null;
       nota_obtida: number | null;
       valor_nota: number | null;
     }[];

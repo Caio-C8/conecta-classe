@@ -23,6 +23,9 @@ export interface RespostaGetFrequenciaAluno {
     serie: number;
     nivel_ensino: NivelEnsino;
   };
+  porcentagem_frequencia_geral?: number;
+  total_faltas?: number;
+  total_aulas?: number;
   frequencia?: {
     total_aulas: number;
     total_faltas: number;

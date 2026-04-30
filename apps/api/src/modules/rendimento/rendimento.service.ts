@@ -32,6 +32,8 @@ export class RendimentoService {
       this.eventoService.getNotasEventosPorMatricula(matricula.id),
     ]);
 
+    let totalNotas: number = 0;
+
     const rendimentosFormatados = rendimentos.map((rendimento) => {
       const eventosDaDisciplina = notasEventos
         .filter(
@@ -41,9 +43,12 @@ export class RendimentoService {
           id: nota.evento_id,
           titulo: nota.evento?.titulo || null,
           tipo_evento: nota.evento?.tipo_evento || null,
+          data_evento: nota.evento?.data_evento || null,
           nota_obtida: nota.nota_obtida,
           valor_nota: nota.evento?.valor_nota || null,
         }));
+
+      totalNotas += rendimento.nota_total;
 
       return {
         disciplina: {
@@ -56,6 +61,11 @@ export class RendimentoService {
       };
     });
 
+    const mediaGeral =
+      rendimentos.length > 0
+        ? Number((totalNotas / rendimentos.length).toFixed(2))
+        : 0;
+
     return {
       usuario_id: usuarioId,
       ano_letivo: anoLetivo,
@@ -64,6 +74,7 @@ export class RendimentoService {
         serie: matricula.turma?.serie || null,
         nivel_ensino: matricula.turma?.nivel_ensino || null,
       },
+      media_geral: mediaGeral,
       rendimentos: rendimentosFormatados,
     };
   }

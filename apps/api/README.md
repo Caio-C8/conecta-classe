@@ -126,19 +126,31 @@ Todas as rotas têm um padrão de resposta sendo eles:
     sucesso: true,
     mensagem: "Operação realizada com sucesso",
     dados: {
-      usuario_id: 3,
-      ano_letivo: 2025,
+      usuario_id: 30,
+      ano_letivo: 2026,
       visao: "POR_DISCIPLINA",
+      porcentagem_frequencia_geral: 33,
+      total_faltas: 2,
+      total_aulas: 3,
       turma: {
-        identificacao: "C",
-        serie: 9,
-        nivel_ensino: "FUNDAMENTAL_2",
+        identificacao: "A",
+        serie: 1,
+        nivel_ensino: "MEDIO",
       },
       frequencias: [
         {
           disciplina: {
-            id: 1,
+            id: 15,
             nome: "Matemática",
+          },
+          aulas_realizadas: 2,
+          faltas: 2,
+          presenca_percentual: 0,
+        },
+        {
+          disciplina: {
+            id: 16,
+            nome: "Física",
           },
           aulas_realizadas: 1,
           faltas: 0,
@@ -254,33 +266,36 @@ Todas as rotas têm um padrão de resposta sendo eles:
     sucesso: true,
     mensagem: "Operação realizada com sucesso",
     dados: {
-      usuario_id: 17,
+      usuario_id: 34,
       ano_letivo: 2026,
       turma: {
         identificacao: "B",
         serie: 9,
         nivel_ensino: "FUNDAMENTAL_2",
       },
+      media_geral: 10.75,
       rendimentos: [
         {
           disciplina: {
-            id: 9,
+            id: 17,
             nome: "História",
           },
           nota_total: 12.5,
           situacao: "CURSANDO",
           eventos: [
             {
-              id: 4,
+              id: 10,
               titulo: "Prova Bimestral - Revolução Francesa",
               tipo_evento: "PROVA",
+              data_evento: "2026-03-15T10:00:00.000Z",
               nota_obtida: 8.5,
               valor_nota: 10,
             },
             {
-              id: 5,
+              id: 11,
               titulo: "Trabalho em Grupo",
               tipo_evento: "ATIVIDADE",
+              data_evento: "2026-04-02T10:00:00.000Z",
               nota_obtida: 4,
               valor_nota: 5,
             },
@@ -288,16 +303,17 @@ Todas as rotas têm um padrão de resposta sendo eles:
         },
         {
           disciplina: {
-            id: 10,
+            id: 18,
             nome: "Geografia",
           },
           nota_total: 9,
           situacao: "CURSANDO",
           eventos: [
             {
-              id: 6,
+              id: 12,
               titulo: "Seminário - Geopolítica",
               tipo_evento: "ATIVIDADE",
+              data_evento: "2026-03-20T10:00:00.000Z",
               nota_obtida: 9,
               valor_nota: 10,
             },

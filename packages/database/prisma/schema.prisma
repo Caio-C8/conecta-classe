@@ -205,6 +205,7 @@ model Frequencia {
 model Evento {
   id            Int        @id @default(autoincrement())
   turma_id      Int
+  disciplina_id Int
   criador_id    Int
   titulo        String
   descricao     String
@@ -214,17 +215,17 @@ model Evento {
   created_at    DateTime   @default(now())
   updated_at    DateTime   @updatedAt
 
-  turma       Turma       @relation(fields: [turma_id], references: [id], map: "fk_evento_turma")
-  disciplina  Disciplina  @relation(fields: [disciplina_id], references: [id], map: "fk_evento_disciplina")
-  criador     Professor   @relation(fields: [criador_id], references: [id], map: "fk_evento_criador")
-  nota_evento NotaEvento?
+  turma         Turma        @relation(fields: [turma_id], references: [id], map: "fk_evento_turma")
+  disciplina    Disciplina   @relation(fields: [disciplina_id], references: [id], map: "fk_evento_disciplina")
+  criador       Professor    @relation(fields: [criador_id], references: [id], map: "fk_evento_criador")
+  notas_eventos NotaEvento[]
 
   @@map("eventos")
 }
 
 model NotaEvento {
   id           Int      @id @default(autoincrement())
-  evento_id    Int      @unique
+  evento_id    Int      
   matricula_id Int
   nota_obtida  Decimal? @db.Decimal(5, 2)
   created_at   DateTime @default(now())
@@ -232,7 +233,7 @@ model NotaEvento {
 
   evento    Evento    @relation(fields: [evento_id], references: [id], map: "fk_nota_evento_evento")
   matricula Matricula @relation(fields: [matricula_id], references: [id], map: "fk_nota_evento_matricula")
-
+  @@unique([evento_id, matricula_id])   
   @@map("notas_eventos")
 }
 

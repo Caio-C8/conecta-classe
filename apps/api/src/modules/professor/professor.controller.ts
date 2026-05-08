@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards,Param } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { JwtGuard } from '../../common/guards/jwt.guard';
 import { PapeisGuard } from '../../common/guards/papeis.guard';
@@ -7,6 +7,7 @@ import { GetUsuario } from '../../common/decorators/get-usuario.decorator';
 import { Papel } from '@repo/types';
 import { Body, Post } from '@nestjs/common'; 
 import { CreateEventoDto } from './dto/create-evento.dto';
+
 
 @Controller('professor')
 @UseGuards(JwtGuard, PapeisGuard)
@@ -34,6 +35,15 @@ export class ProfessorController {
     async getProximosEventos(@GetUsuario('id') usuarioId: number) {
       return this.professorService.buscarProximosEventos(usuarioId);
     }
+
+
+  @Get('eventos/:id/notas')
+  async getDiarioDeNotas(
+    @GetUsuario('id') usuarioId: number,
+    @Param('id') eventoId: string 
+  ) {
+    return this.professorService.buscarDiarioDeNotas(usuarioId, +eventoId);
+  }
 
 
 

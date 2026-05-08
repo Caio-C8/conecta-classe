@@ -62,4 +62,38 @@ export class ProfessorService {
       },
     });
   }
+
+  async buscarProximosEventos(professorId: number) {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: professorId }
+    });
+
+    if (!professor) {
+      throw new Error("Professor não encontrado.");
+    }
+
+    const hoje = new Date(); 
+
+    return this.prisma.evento.findMany({
+      where: {
+        criador_id: professor.id, 
+        data_evento: {
+          gte: hoje, 
+        }
+      },
+      orderBy: {
+        data_evento: 'asc' 
+      },
+      take: 5, 
+      
+      include: {
+        turma: {
+          select: { serie: true, identificacao: true, nivel_ensino: true }
+        },
+        disciplina: {
+          select: { nome: true }
+        }
+      }
+    });
+  }
 }

@@ -22,13 +22,18 @@ export class ProfessorController {
 
 
 
-@Post('eventos')
-async criarEvento(
-  @GetUsuario('id') usuarioId: number,
-  @Body() dto: CreateEventoDto, 
-) {
-  return this.professorService.criarEvento(usuarioId, dto);
-}
+  @Post('eventos')
+  async criarEvento(
+    @GetUsuario('id') usuarioId: number,
+    @Body() dto: CreateEventoDto, 
+  ) {
+    return this.professorService.criarEvento(usuarioId, dto);
+  }
+
+  @Get('eventos/proximos')
+    async getProximosEventos(@GetUsuario('id') usuarioId: number) {
+      return this.professorService.buscarProximosEventos(usuarioId);
+    }
 
 
 

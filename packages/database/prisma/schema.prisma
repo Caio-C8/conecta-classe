@@ -205,7 +205,6 @@ model Frequencia {
 model Evento {
   id            Int        @id @default(autoincrement())
   turma_id      Int
-  disciplina_id Int
   criador_id    Int
   titulo        String
   descricao     String

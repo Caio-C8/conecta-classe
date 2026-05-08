@@ -4,7 +4,7 @@ import { ProfessorController } from './professor.controller';
 import { PersistenceModule } from '../../common/prisma/prisma.module';
 
 @Module({
-  imports: [PersistenceModule], // Trazendo o Prisma (Tutor) para cá
+  imports: [PersistenceModule],
   controllers: [ProfessorController],
   providers: [ProfessorService],
 })

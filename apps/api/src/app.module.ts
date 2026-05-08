@@ -18,6 +18,7 @@ import { DisciplinaModule } from "./modules/disciplina/disciplina.module";
 import { FrequenciaModule } from "./modules/frequencia/frequencia.module";
 import { EventoModule } from "./modules/evento/evento.module";
 import { RendimentoModule } from "./modules/rendimento/rendimento.module";
+import { ProfessorModule } from "./modules/professor/professor.module";
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { RendimentoModule } from "./modules/rendimento/rendimento.module";
     DisciplinaModule,
     EventoModule,
     RendimentoModule,
+    ProfessorModule,
   ],
   controllers: [AppController],
   providers: [

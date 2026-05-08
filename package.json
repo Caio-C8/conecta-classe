@@ -13,7 +13,8 @@
     "db:seed": "turbo run db:seed",
     "db:seed:frequencia": "turbo run db:seed:frequencia",
     "db:seed:evento": "turbo run db:seed:evento",
-    "db:seed:rendimento": "turbo run db:seed:rendimento"
+    "db:seed:rendimento": "turbo run db:seed:rendimento",
+    "db:seed:professor": "tsx prisma/seedProfessor.ts"
   },
   "keywords": [],
   "author": "",

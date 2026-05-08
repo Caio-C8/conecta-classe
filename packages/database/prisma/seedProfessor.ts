@@ -24,7 +24,6 @@ async function main() {
   });
 
   console.log("2. Criando Disciplina (Geografia)...");
-  // Procuramos Geografia, se não existir no banco, criamos.
   let disciplina = await prisma.disciplina.findFirst({ where: { nome: "Geografia" } });
   if (!disciplina) {
     disciplina = await prisma.disciplina.create({ data: { nome: "Geografia" } });
@@ -34,7 +33,7 @@ async function main() {
   const turma = await prisma.turma.create({
     data: {
       identificacao: "A",
-      serie: 8, // 8º Ano
+      serie: 8, 
       nivel_ensino: NivelEnsino.FUNDAMENTAL_2,
       sala: "Sala 04",
       ano_letivo: 2026,
@@ -76,7 +75,7 @@ async function main() {
     },
   });
 
-  console.log("✨ Seed do Professor executado com sucesso! ");
+  console.log("Seed do Professor executado com sucesso! ");
 }
 
 main()

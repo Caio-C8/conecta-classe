@@ -96,4 +96,61 @@ export class ProfessorService {
       }
     });
   }
+
+
+  async buscarDiarioDeNotas(professorId: number, eventoId: number) {
+    const evento = await this.prisma.evento.findUnique({
+      where: { id: eventoId },
+      include: {
+        turma: {
+          include: {
+            matriculas: {
+              include: {
+                aluno: {
+                  include: {
+                    usuario: { select: { nome: true } } 
+                  }
+                },
+                notas_eventos: {
+                  where: { evento_id: eventoId }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!evento) {
+      throw new Error("Evento não encontrado.");
+    }
+
+    const professor = await this.prisma.professor.findUnique({ where: { usuario_id: professorId } });
+    if (!professor || evento.criador_id !== professor.id) {
+      throw new Error("Você não tem permissão para acessar o diário deste evento.");
+    }
+
+    if (evento.valor_nota === null) {
+      throw new Error("Este evento não é avaliativo (não possui nota máxima).");
+    }
+
+    const alunosFormatados = evento.turma.matriculas.map((matricula) => {
+      const registroDeNota = matricula.notas_eventos[0];
+
+      return {
+        matricula_id: matricula.id,
+        nome_aluno: matricula.aluno?.usuario?.nome || "Aluno sem nome",
+        nota_obtida: registroDeNota ? registroDeNota.nota_obtida : null 
+      };
+    });
+
+    return {
+      evento: {
+        id: evento.id,
+        titulo: evento.titulo,
+        nota_maxima: evento.valor_nota,
+      },
+      alunos: alunosFormatados
+    };
+  }
 }

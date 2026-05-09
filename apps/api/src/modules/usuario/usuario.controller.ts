@@ -45,4 +45,12 @@ export class UsuarioController {
   ): Promise<UsuarioSemSenha> {
     return await this.usuarioService.updateUsuario(id, dados);
   }
+
+  @Patch("/:id/inativar")
+  @Papeis(Papel.ADMINISTRADOR)
+  async inativarUsuario(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<UsuarioSemSenha> {
+    return await this.usuarioService.softDelte(id);
+  }
 }

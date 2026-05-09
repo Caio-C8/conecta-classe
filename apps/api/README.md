@@ -116,6 +116,60 @@ Todas as rotas têm um padrão de resposta sendo eles:
   }
   ```
 
+- ``GET /usuarios` - Busca todos os usuários de forma paginada, podendo colocar filtros na URL (verificar em `packages/types/src/usuario.ts`) - Necessário autenticação - Exclusivo de administrador - Ex:
+
+  ```bash
+  {
+    status: 200,
+    sucesso: true,
+    mensagem: "Operação realizada com sucesso",
+    dados: {
+      dados: [
+        {
+          id: 41,
+          usuario: "nicolas.aluno",
+          nome: "Nicolas Quadros",
+          nome_search: "nicolas quadros",
+          trocar_senha: false,
+          papel: "ALUNO",
+          deleted_at: null,
+          created_at: "2026-05-09T15:13:24.473Z",
+          updated_at: "2026-05-09T15:13:24.473Z",
+          administrador: null,
+          aluno: {
+            id: 24,
+            usuario_id: 41,
+          },
+          professor: null,
+        },
+        {
+          id: 40,
+          usuario: "mariana.aluno",
+          nome: "Mariana Pinto",
+          nome_search: "mariana pinto",
+          trocar_senha: false,
+          papel: "ALUNO",
+          deleted_at: null,
+          created_at: "2026-05-09T15:13:24.469Z",
+          updated_at: "2026-05-09T15:13:24.469Z",
+          administrador: null,
+          aluno: {
+            id: 23,
+            usuario_id: 40,
+          },
+          professor: null,
+        },
+      ],
+      meta: {
+        total: 24,
+        pagina: 1,
+        limite: 2,
+        ultima_pagina: 12,
+      },
+    },
+  }
+  ```
+
 ### Alunos
 
 - `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:

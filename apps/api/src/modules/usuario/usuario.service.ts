@@ -1,6 +1,12 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateUsuarioDto } from "./dtos/create-usuario.dto";
-import { Papel, Usuario, UsuarioSemSenha } from "@repo/types";
+import {
+  GetUsuariosInput,
+  Paginacao,
+  Papel,
+  Usuario,
+  UsuarioSemSenha,
+} from "@repo/types";
 import { UsuarioRepository } from "./usuario.repository";
 import * as bcrypt from "bcrypt";
 
@@ -38,6 +44,22 @@ export class UsuarioService {
     const { senha, ...novoUsuarioSemSenha } = novoUsuario;
 
     return novoUsuarioSemSenha;
+  }
+
+  async getAllUsuarios(
+    params: GetUsuariosInput,
+  ): Promise<Paginacao<UsuarioSemSenha>> {
+    const { dados, meta } = await this.usuarioRepository.getAllUsuarios(params);
+
+    const usuariosSemSenha = dados.map((usuario) => {
+      const { senha, ...usuarioSemSenha } = usuario;
+      return usuarioSemSenha;
+    });
+
+    return {
+      dados: usuariosSemSenha,
+      meta,
+    };
   }
 
   async getUsuarioPorId(usuarioId: number): Promise<Usuario | null> {

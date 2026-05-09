@@ -123,8 +123,29 @@ export class UsuarioService {
       throw new NotFoundException("Usuário não encontrado.");
     }
 
+    if (usuario.deleted_at) {
+      throw new BadRequestException("Usuário já está inativado.");
+    }
+
     const { senha, ...usuarioInativado } =
       await this.usuarioRepository.softDelete(id);
+
+    return usuarioInativado;
+  }
+
+  async restore(id: number): Promise<UsuarioSemSenha> {
+    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
+
+    if (!usuario) {
+      throw new NotFoundException("Usuário não encontrado.");
+    }
+
+    if (!usuario.deleted_at) {
+      throw new BadRequestException("Usuário já está ativado.");
+    }
+
+    const { senha, ...usuarioInativado } =
+      await this.usuarioRepository.restore(id);
 
     return usuarioInativado;
   }

@@ -7,6 +7,7 @@ import {
   Papel,
   StatusTrocarSenha,
   StatusUsuario,
+  UpdateUsuarioInput,
   Usuario,
 } from "@repo/types";
 import { normalizarString } from "@repo/utils";
@@ -71,6 +72,37 @@ export class UsuarioRepository {
         aluno: {
           create: {},
         },
+      },
+    });
+  }
+
+  async updateUsuario(
+    id: number,
+    dados: UpdateUsuarioInput & { nome_search?: string },
+  ): Promise<Usuario> {
+    const dadosParaAtualizar: Prisma.UsuarioUpdateInput = {
+      usuario: dados.usuario,
+      senha: dados.senha,
+      nome: dados.nome,
+      nome_search: dados.nome_search,
+      trocar_senha: dados.trocar_senha,
+    };
+
+    if (dados.cargo) {
+      dadosParaAtualizar.administrador = {
+        update: {
+          cargo: dados.cargo,
+        },
+      };
+    }
+
+    return await this.prisma.usuario.update({
+      where: { id },
+      data: dadosParaAtualizar,
+      include: {
+        administrador: true,
+        aluno: true,
+        professor: true,
       },
     });
   }
@@ -154,6 +186,11 @@ export class UsuarioRepository {
   async getUsuarioPorUsuario(usuario: string): Promise<Usuario | null> {
     return await this.prisma.usuario.findUnique({
       where: { usuario },
+      include: {
+        administrador: true,
+        aluno: true,
+        professor: true,
+      },
     });
   }
 
@@ -161,6 +198,11 @@ export class UsuarioRepository {
     return await this.prisma.usuario.findUnique({
       where: {
         id,
+      },
+      include: {
+        administrador: true,
+        aluno: true,
+        professor: true,
       },
     });
   }

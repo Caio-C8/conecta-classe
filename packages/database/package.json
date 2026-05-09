@@ -10,7 +10,8 @@
     "db:seed": "prisma db seed",
     "db:seed:frequencia": "tsx prisma/seedFrequencia.ts",
     "db:seed:evento": "tsx prisma/seedEvento.ts",
-    "db:seed:rendimento": "tsx prisma/seedRendimento.ts"
+    "db:seed:rendimento": "tsx prisma/seedRendimento.ts",
+    "db:seed:usuarios": "tsx prisma/seedUsuarios.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

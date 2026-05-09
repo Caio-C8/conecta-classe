@@ -29,6 +29,9 @@
     },
     "db:seed:rendimento": {
       "cache": false
+    },
+    "db:seed:usuarios": {
+      "cache": false
     }
   }
 }

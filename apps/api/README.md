@@ -197,6 +197,33 @@ Todas as rotas têm um padrão de resposta sendo eles:
   }
   ```
 
+- `PATCH /usuarios/:id/inativar` - Inativa (soft delete) um usuário - Necessário autenticação - Exclusivo de administrador - Ex:
+
+  ```bash
+  {
+    status: 200,
+    sucesso: true,
+    mensagem: "Operação realizada com sucesso",
+    dados: {
+      id: 39,
+      usuario: "leonardo.aluno",
+      nome: "Carlos Silva Atualizado",
+      nome_search: "carlos silva atualizado",
+      trocar_senha: false,
+      papel: "ALUNO",
+      deleted_at: "2026-05-09T23:41:00.348Z",
+      created_at: "2026-05-09T15:13:24.465Z",
+      updated_at: "2026-05-09T22:51:40.115Z",
+      administrador: null,
+      aluno: {
+        id: 22,
+        usuario_id: 39,
+      },
+      professor: null,
+    },
+  }
+  ```
+
 ### Alunos
 
 - `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:

@@ -50,3 +50,18 @@ export const SituacaoTurma = {
   ENCERRADA: "ENCERRADA",
 } as const;
 export type SituacaoTurma = (typeof SituacaoTurma)[keyof typeof SituacaoTurma];
+
+export const StatusUsuario = {
+  ATIVO: "ATIVO",
+  INATIVO: "INATIVO",
+  TODOS: "TODOS",
+} as const;
+export type StatusUsuario = (typeof StatusUsuario)[keyof typeof StatusUsuario];
+
+export const StatusTrocarSenha = {
+  SIM: "SIM",
+  NAO: "NAO",
+  TODOS: "TODOS",
+} as const;
+export type StatusTrocarSenha =
+  (typeof StatusTrocarSenha)[keyof typeof StatusTrocarSenha];

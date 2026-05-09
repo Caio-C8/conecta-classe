@@ -5,7 +5,7 @@
   font-family: sans-serif;
 }
 
-/* HEADER / NAVBAR */
+/* NAVBAR */
 .header {
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
@@ -13,7 +13,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .headerLeft {
@@ -26,221 +25,266 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
 }
 
 .logoIcon {
-  background-color: #000000;
-  color: #ffffff;
-  padding: 8px;
-  border-radius: 8px;
+  background-color: #000;
+  color: #fff;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  border-radius: 8px;
   font-weight: bold;
-  font-size: 18px;
 }
 
 .logoText {
   font-weight: bold;
-  font-size: 20px;
-  color: #111827;
+  font-size: 18px;
 }
 
 .nav {
   display: flex;
-  align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .navLink {
-  font-size: 14px;
-  font-weight: 500;
-  color: #4b5563;
   text-decoration: none;
-  transition: color 0.2s;
-}
-
-.navLink:hover {
-  color: #000000;
+  color: #4b5563;
+  font-size: 14px;
 }
 
 .navLinkActive {
-  color: #000000;
+  color: #000;
   font-weight: 600;
 }
 
-.exitButton {
-  background: none;
-  border: none;
-  color: #4b5563;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
-}
-
-.exitButton:hover {
-  color: #000000;
-}
-
-.exitIcon {
-  width: 24px;
-  height: 24px;
-}
-
-/* CONTEÚDO PRINCIPAL */
+/* MAIN CONTENT */
 .main {
-  max-width: 1152px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 40px 20px;
 }
 
 .topRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 }
 
 .title {
-  font-size: 30px;
-  font-weight: 400;
-  color: #111827;
-  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
 }
 
-/* BOTÃO NOVO EVENTO */
 .newButton {
   background-color: #3b82f6;
-  color: #ffffff;
-  font-weight: 500;
-  padding: 12px 24px;
-  border-radius: 8px;
+  color: white;
   text-decoration: none;
-  font-size: 14px;
-  display: inline-flex;
+  padding: 10px 24px;
+  border-radius: 10px;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
+  gap: 12px;
+  font-size: 14px;
 }
 
-.newButton:hover {
-  background-color: #2563eb;
-}
-
-/* FILTROS */
+/* FILTERS BAR */
 .filtersCard {
   background-color: #ffffff;
-  padding: 16px 24px;
+  padding: 20px 24px;
   border-radius: 16px;
-  border: 1px solid #f3f4f6;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   margin-bottom: 32px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-@media (min-width: 768px) {
-  .filtersCard {
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  }
+  display: flex;
+  gap: 20px;
 }
 
 .filterGroup {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
 }
 
 .filterLabel {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #4b5563;
 }
 
 .filterInput, .filterSelect {
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 10px 14px;
   font-size: 14px;
-  color: #374151;
-  background-color: #ffffff;
+  color: #6b7280;
+  background-color: #fff;
   outline: none;
-  transition: all 0.2s;
 }
 
-.filterInput:focus, .filterSelect:focus {
-  border-color: #3b82f6;
-}
-
-/* TABELA DE EVENTOS */
+/* TABLE CARD */
 .tableCard {
   background-color: #ffffff;
   border-radius: 16px;
-  border: 1px solid #f3f4f6;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
 }
 
 .th {
-  padding: 16px 24px;
+  padding: 16px;
+  text-align: center;
   font-size: 14px;
   font-weight: 700;
-  color: #1f2937;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .td {
-  padding: 16px 24px;
+  padding: 16px;
+  text-align: center;
   font-size: 14px;
-  color: #374151;
   border-bottom: 1px solid #f3f4f6;
 }
 
-/* BOTÕES DE STATUS E AÇÕES */
+/* BUTTONS */
 .actionGroup {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  gap: 10px;
+  justify-content: center;
 }
 
 .editButton {
-  background-color: #f3f4f6;
-  color: #9ca3af;
+  background-color: #ffffff;
   border: 1px solid #e5e7eb;
+  color: #9ca3af;
   padding: 6px 16px;
   border-radius: 8px;
+  cursor: pointer;
   font-size: 13px;
-  font-weight: 500;
-  cursor: not-allowed;
-  transition: all 0.2s;
 }
 
 .actionButton {
   background-color: #10b981;
-  color: #ffffff;
+  color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  font-size: 13px;
 }
 
-.actionButton:hover {
-  background-color: #059669;
+/* MODAL OVERLAY */
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 24px 32px;
+  border-radius: 20px;
+  width: 550px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* CABEÇALHO */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.modalTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #111827;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #000;
+  line-height: 1;
+}
+
+/* FORMULÁRIO */
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rowInputs {
+  display: flex;
+  gap: 16px;
+}
+
+/* RODAPÉ E BOTÕES */
+.modalFooter {
+  display: flex;
+  justify-content: flex-end; /* Alinha tudo para a direita */
+  gap: 12px; /* Espaço entre os botões */
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.footerRight {
+  display: flex;
+  gap: 12px;
+}
+
+/* Botão Azul (Esquerda) */
+.btnAtivar {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Botão Escuro (Direita) */
+.btnCancelar {
+  background-color: #2d3748;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Botão Verde (Direita) */
+.btnSalvar {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
 }

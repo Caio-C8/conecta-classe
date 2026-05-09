@@ -115,4 +115,17 @@ export class UsuarioService {
   async getUsuarioPorId(usuarioId: number): Promise<Usuario | null> {
     return await this.usuarioRepository.getUsuarioPorId(usuarioId);
   }
+
+  async softDelte(id: number): Promise<UsuarioSemSenha> {
+    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
+
+    if (!usuario) {
+      throw new NotFoundException("Usuário não encontrado.");
+    }
+
+    const { senha, ...usuarioInativado } =
+      await this.usuarioRepository.softDelete(id);
+
+    return usuarioInativado;
+  }
 }

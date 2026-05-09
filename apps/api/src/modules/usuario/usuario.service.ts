@@ -1,14 +1,22 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateUsuarioDto } from "./dtos/create-usuario.dto";
 import {
+  Cargo,
   GetUsuariosInput,
   Paginacao,
   Papel,
+  UpdateUsuarioInput,
   Usuario,
   UsuarioSemSenha,
 } from "@repo/types";
 import { UsuarioRepository } from "./usuario.repository";
 import * as bcrypt from "bcrypt";
+
+import { normalizarString } from "@repo/utils";
 
 @Injectable()
 export class UsuarioService {
@@ -44,6 +52,48 @@ export class UsuarioService {
     const { senha, ...novoUsuarioSemSenha } = novoUsuario;
 
     return novoUsuarioSemSenha;
+  }
+
+  async updateUsuario(
+    id: number,
+    dados: UpdateUsuarioInput,
+  ): Promise<UsuarioSemSenha> {
+    if (Object.keys(dados).length === 0) {
+      throw new BadRequestException("Nenhum dado fornecido para a atuaização.");
+    }
+
+    const usuarioParaAtualizar =
+      await this.usuarioRepository.getUsuarioPorId(id);
+
+    if (!usuarioParaAtualizar) {
+      throw new NotFoundException("Usuário não encontrado.");
+    }
+
+    if (dados.usuario) {
+      const usuarioExistente =
+        await this.usuarioRepository.getUsuarioPorUsuario(dados.usuario);
+
+      if (usuarioExistente && usuarioExistente.id !== id) {
+        throw new BadRequestException("Este usuário já está em uso.");
+      }
+    }
+
+    if (dados.cargo && usuarioParaAtualizar.papel !== Papel.ADMINISTRADOR) {
+      throw new BadRequestException("Somente administradores podem ter cargo.");
+    }
+
+    const nome_search = dados.nome ? normalizarString(dados.nome) : undefined;
+
+    dados.senha = dados.senha ? await bcrypt.hash(dados.senha, 10) : undefined;
+
+    const usuarioAtualizado = await this.usuarioRepository.updateUsuario(id, {
+      ...dados,
+      nome_search,
+    });
+
+    const { senha, ...usuarioSemSenha } = usuarioAtualizado;
+
+    return usuarioSemSenha;
   }
 
   async getAllUsuarios(

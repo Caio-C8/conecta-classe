@@ -220,4 +220,18 @@ export class UsuarioRepository {
       },
     });
   }
+
+  async restore(id: number): Promise<Usuario> {
+    return await this.prisma.usuario.update({
+      where: { id },
+      data: {
+        deleted_at: null,
+      },
+      include: {
+        administrador: true,
+        aluno: true,
+        professor: true,
+      },
+    });
+  }
 }

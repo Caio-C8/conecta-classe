@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState } from "react";
 import styles from "./evento.module.css";
 
@@ -52,10 +53,10 @@ export default function CriarEvento() {
             <span className={styles.logoText}>Conecta Classe</span>
           </div>
           <nav className={styles.nav}>
-            <a href="#" className={styles.navLink}>Painel Geral</a>
-            <a href="#" className={styles.navLink}>Frequência</a>
-            <a href="#" className={`${styles.navLink} ${styles.navLinkActive}`}>Criar Evento</a>
-            <a href="#" className={styles.navLink}>Gerenciar Eventos</a>
+            <Link href="#" className={styles.navLink}>Painel Geral</Link>
+            <Link href="/professorChamada" className={styles.navLink}>Frequência</Link>
+            <Link href="/professorEvento" className={styles.navLink}>Criar Evento</Link>
+            <Link href="/professorGerenciar" className={styles.navLink}>Gerenciar Eventos</Link>
           </nav>
         </div>
         <button className={styles.exitButton}>

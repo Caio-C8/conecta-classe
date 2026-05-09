@@ -5,52 +5,30 @@ import Link from "next/link";
 import styles from "./gerenciar.module.css";
 
 const initialEventos = [
-  {
-    id: 1,
-    data: "20/03/2026",
-    nome: "Avaliação Mensal: Geografia",
-    turma: "8º Ano A",
-    tipo: "Prova",
-    finalizado: false,
-  },
-  {
-    id: 2,
-    data: "25/03/2026",
-    nome: "Seminário: Relevo Brasileiro",
-    turma: "8º Ano A",
-    tipo: "Atividade",
-    finalizado: false,
-  },
-  {
-    id: 3,
-    data: "28/03/2026",
-    nome: "Palestra Ambiental",
-    turma: "9º Ano B",
-    tipo: "Geral",
-    finalizado: true,
-  },
+  { id: 1, data: "20/03/2026", nome: "Avaliação Mensal: Geografia", turma: "8º Ano A", tipo: "Prova", finalizado: false },
+  { id: 2, data: "25/03/2026", nome: "Seminário: Relevo Brasileiro", turma: "8º Ano A", tipo: "Atividade", finalizado: false },
+  { id: 3, data: "28/03/2026", nome: "Palestra Ambiental", turma: "9º Ano B", tipo: "Geral", finalizado: true },
 ];
 
 export default function GerenciarEventos() {
-  const [pesquisa, setPesquisa] = useState("");
-  const [turma, setTurma] = useState("Todas as Turmas");
-  const [tipo, setTipo] = useState("Todos");
-  const [finalizado, setFinalizado] = useState("Não");
+  const [eventos, setEventos] = useState(initialEventos);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editEvento, setEditEvento] = useState<any>(null);
 
-  // Filtragem dos eventos conforme os selects da imagem
-  const eventosFiltrados = initialEventos.filter((evento) => {
-    const batePesquisa = evento.nome.toLowerCase().includes(pesquisa.toLowerCase());
-    const bateTurma = turma === "Todas as Turmas" || evento.turma === turma;
-    const bateTipo = tipo === "Todos" || evento.tipo === tipo;
-    const statusFiltro = finalizado === "Sim" ? true : false;
-    const bateStatus = evento.finalizado === statusFiltro;
+  const abrirEdicao = (evento: any) => {
+    setEditEvento({ ...evento });
+    setIsModalOpen(true);
+  };
 
-    return batePesquisa && bateTurma && bateTipo && bateStatus;
-  });
+  const salvarAlteracoes = (e: React.FormEvent) => {
+    e.preventDefault();
+    setEventos(eventos.map(ev => ev.id === editEvento.id ? editEvento : ev));
+    setIsModalOpen(false);
+  };
 
   return (
     <div className={styles.container}>
-      {/* HEADER / NAVBAR */}
+      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.logoWrapper}>
@@ -58,118 +36,69 @@ export default function GerenciarEventos() {
             <span className={styles.logoText}>Conecta Classe</span>
           </div>
           <nav className={styles.nav}>
-            <a href="#" className={styles.navLink}>Painel Geral</a>
-            <a href="#" className={styles.navLink}>Frequência</a>
-            <a href="#" className={styles.navLink}>Criar Evento</a>
-            <a href="#" className={`${styles.navLink} ${styles.navLinkActive}`}>Gerenciar Eventos</a>
+            <Link href="#" className={styles.navLink}>Painel Geral</Link>
+            <Link href="/professorChamada" className={styles.navLink}>Frequência</Link>
+            <Link href="/professorEvento" className={styles.navLink}>Criar Evento</Link>
+            <Link href="/professorGerenciar" className={`${styles.navLink} ${styles.navLinkActive}`}>Gerenciar Eventos</Link>
           </nav>
         </div>
-        <button className={styles.exitButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className={styles.exitIcon}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M19.5 12l-3-3m0 0l-3 3m3-3H9"
-            />
-          </svg>
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>
         </button>
       </header>
 
       {/* CONTEÚDO PRINCIPAL */}
       <main className={styles.main}>
-        {/* Topo: Título e Botão */}
         <div className={styles.topRow}>
           <h1 className={styles.title}>Gerenciar Eventos</h1>
           <Link href="/professorEvento" className={styles.newButton}>
-            <span>+</span> Novo evento
+            <span style={{ fontSize: '20px' }}>+</span> Novo evento
           </Link>
         </div>
 
-        {/* Card de Filtros */}
+        {/* FILTROS */}
         <div className={styles.filtersCard}>
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Pesquisar</label>
-            <input
-              type="text"
-              placeholder="Nome do evento.."
-              value={pesquisa}
-              onChange={(e) => setPesquisa(e.target.value)}
-              className={styles.filterInput}
-            />
+            <input type="text" placeholder="Nome do evento.." className={styles.filterInput} />
           </div>
-
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Turma</label>
-            <select
-              value={turma}
-              onChange={(e) => setTurma(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option>Todas as Turmas</option>
-              <option>8º Ano A</option>
-              <option>9º Ano B</option>
-            </select>
+            <select className={styles.filterSelect}><option>Todas as Turmas</option></select>
           </div>
-
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Tipo</label>
-            <select
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option>Todos</option>
-              <option>Prova</option>
-              <option>Atividade</option>
-              <option>Geral</option>
-            </select>
+            <select className={styles.filterSelect}><option>Todos</option></select>
           </div>
-
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Evento finalizado</label>
-            <select
-              value={finalizado}
-              onChange={(e) => setFinalizado(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option>Não</option>
-              <option>Sim</option>
-            </select>
+            <select className={styles.filterSelect}><option>Não</option></select>
           </div>
         </div>
 
-        {/* Tabela de Eventos */}
+        {/* TABELA */}
         <div className={styles.tableCard}>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th className={styles.th} style={{ textAlign: "center" }}>Data</th>
-                <th className={styles.th}>Evento</th>
-                <th className={styles.th} style={{ textAlign: "center" }}>Turma</th>
-                <th className={styles.th} style={{ textAlign: "center" }}>Tipo</th>
-                <th className={styles.th} style={{ textAlign: "center" }}>Status</th>
+                <th className={styles.th}>Data</th>
+                <th className={styles.th} style={{ textAlign: 'left' }}>Evento</th>
+                <th className={styles.th}>Turma</th>
+                <th className={styles.th}>Tipo</th>
+                <th className={styles.th}>Status</th>
               </tr>
             </thead>
             <tbody>
-              {eventosFiltrados.map((evento) => (
+              {eventos.map((evento) => (
                 <tr key={evento.id}>
-                  <td className={styles.td} style={{ textAlign: "center" }}>{evento.data}</td>
-                  <td className={styles.td}>{evento.nome}</td>
-                  <td className={styles.td} style={{ textAlign: "center" }}>{evento.turma}</td>
-                  <td className={styles.td} style={{ textAlign: "center" }}>{evento.tipo}</td>
-                  <td className={styles.td} style={{ textAlign: "center" }}>
-                    <div className={styles.actionGroup} style={{ justifyContent: "center" }}>
-                      <button className={styles.editButton}>
-                        {evento.finalizado ? "Falta" : "Editar"}
-                      </button>
-                      <button className={styles.actionButton}>Lançar Notas</button>
+                  <td className={styles.td}>{evento.data}</td>
+                  <td className={styles.td} style={{ textAlign: 'left' }}>{evento.nome}</td>
+                  <td className={styles.td}>{evento.turma}</td>
+                  <td className={styles.td}>{evento.tipo}</td>
+                  <td className={styles.td}>
+                    <div className={styles.actionGroup}>
+                      <button className={styles.editButton} onClick={() => abrirEdicao(evento)}>Editar</button>
+                      <Link href="/professorNotas"><button className={styles.actionButton}>Lançar Notas</button></Link>
                     </div>
                   </td>
                 </tr>
@@ -178,6 +107,83 @@ export default function GerenciarEventos() {
           </table>
         </div>
       </main>
+
+      {/* MODAL DE EDIÇÃO */}
+      {isModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            
+            {/* Cabeçalho do Modal */}
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Editar evento</h2>
+              <button onClick={() => setIsModalOpen(false)} className={styles.closeButton}>&times;</button>
+            </div>
+
+            <form onSubmit={salvarAlteracoes} className={styles.modalForm}>
+              
+              {/* Nome */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Nome do Evento:</label>
+                <input 
+                  type="text"
+                  className={styles.filterInput} 
+                  value={editEvento.nome} 
+                  onChange={(e) => setEditEvento({...editEvento, nome: e.target.value})}
+                />
+              </div>
+
+              {/* Data e Tipo */}
+              <div className={styles.rowInputs}>
+                <div className={styles.filterGroup} style={{ flex: 1 }}>
+                  <label className={styles.filterLabel}>Data:</label>
+                  <input 
+                    type="text"
+                    className={styles.filterInput} 
+                    value={editEvento.data} 
+                    onChange={(e) => setEditEvento({...editEvento, data: e.target.value})}
+                  />
+                </div>
+                <div className={styles.filterGroup} style={{ flex: 1 }}>
+                  <label className={styles.filterLabel}>Tipo:</label>
+                  <select 
+                    className={styles.filterSelect}
+                    value={editEvento.tipo}
+                    onChange={(e) => setEditEvento({...editEvento, tipo: e.target.value})}
+                  >
+                    <option value="Prova">Prova</option>
+                    <option value="Atividade">Atividade</option>
+                    <option value="Geral">Geral</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Turma */}
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Turma:</label>
+                <select 
+                  className={styles.filterSelect}
+                  value={editEvento.turma}
+                  onChange={(e) => setEditEvento({...editEvento, turma: e.target.value})}
+                >
+                  <option value="8º Ano A">8º Ano A</option>
+                  <option value="9º Ano B">9º Ano B</option>
+                </select>
+              </div>
+
+              {/* Rodapé com os 2 botões alinhados à direita */}
+              <div className={styles.modalFooter}>
+                <button type="button" onClick={() => setIsModalOpen(false)} className={styles.btnCancelar}>
+                  Cancelar
+                </button>
+                <button type="submit" className={styles.btnSalvar}>
+                  Salvar alterações
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

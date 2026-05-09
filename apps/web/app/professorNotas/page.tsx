@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useState } from "react";
 import styles from "./notas.module.css";
 
@@ -43,26 +44,26 @@ export default function LancarNotas() {
             <span className={styles.logoText}>Conecta Classe</span>
           </div>
           <nav className={styles.nav}>
-            <a href="#" className={styles.navLink}>Painel Geral</a>
-            <a href="#" className={styles.navLink}>Frequência</a>
-            <a href="#" className={styles.navLink}>Criar Evento</a>
-            <a href="#" className={styles.navLink}>Gerenciar Eventos</a>
+            <Link href="#" className={styles.navLink}>Painel Geral</Link>
+            <Link href="/professorChamada" className={styles.navLink}>Frequência</Link>
+            <Link href="/professorEvento" className={styles.navLink}>Criar Evento</Link>
+            <Link href="/professorGerenciar" className={styles.navLink}>Gerenciar Eventos</Link>
           </nav>
         </div>
-        <button className={styles.exitButton}>
+        
+        {/* BOTÃO DE SAIR ATUALIZADO VIA CSS */}
+        <button className={styles.exitButton} title="Sair">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
             stroke="currentColor"
             className={styles.exitIcon}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M19.5 12l-3-3m0 0l-3 3m3-3H9"
-            />
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
           </svg>
         </button>
       </header>

@@ -1,6 +1,6 @@
 import z from "zod";
-import { Cargo, Papel } from "./enums";
-import { int } from "zod/v4";
+import { Cargo, Papel, StatusTrocarSenha, StatusUsuario } from "./enums";
+import { PaginacaoSchema } from "./paginacao";
 
 export interface Usuario {
   id: number;
@@ -64,4 +64,18 @@ export const CreateUsuarioSchema = z.discriminatedUnion("papel", [
   }),
 ]);
 
+export const GetUsuariosSchema = PaginacaoSchema.extend({
+  pesquisa: z.string().optional(),
+
+  papel: z.nativeEnum(Papel).optional(),
+
+  status: z.nativeEnum(StatusUsuario).optional().default(StatusUsuario.TODOS),
+
+  trocar_senha: z
+    .nativeEnum(StatusTrocarSenha)
+    .optional()
+    .default(StatusTrocarSenha.TODOS),
+});
+
 export type CreateUsuarioInput = z.infer<typeof CreateUsuarioSchema>;
+export type GetUsuariosInput = z.infer<typeof GetUsuariosSchema>;

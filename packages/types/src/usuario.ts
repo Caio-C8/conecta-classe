@@ -1,6 +1,9 @@
 import z from "zod";
 import { Cargo, Papel, StatusTrocarSenha, StatusUsuario } from "./enums";
 import { PaginacaoSchema } from "./paginacao";
+import { Administrador } from "./administrador";
+import { Professor } from "./professor";
+import { Aluno } from "./aluno";
 
 export interface Usuario {
   id: number;
@@ -13,6 +16,10 @@ export interface Usuario {
   deleted_at: Date | null;
   created_at: Date;
   updated_at: Date;
+
+  administrador?: Administrador | null;
+  aluno?: Aluno | null;
+  professor?: Professor | null;
 }
 
 export interface UsuarioSemSenha {
@@ -77,5 +84,33 @@ export const GetUsuariosSchema = PaginacaoSchema.extend({
     .default(StatusTrocarSenha.TODOS),
 });
 
+export const UpdateUsuarioSchema = z.object({
+  usuario: z
+    .string({
+      invalid_type_error: "Usuário inválido.",
+    })
+    .optional(),
+
+  senha: z
+    .string({
+      invalid_type_error: "Senha inválida.",
+    })
+    .min(6, { message: "A senha deve ter pelo menos 6 caracteres." })
+    .optional(),
+
+  nome: z
+    .string({
+      invalid_type_error: "Nome inválido.",
+    })
+    .optional(),
+
+  cargo: z.nativeEnum(Cargo).optional(),
+
+  trocar_senha: z
+    .boolean({ invalid_type_error: "Trocar senha inválido." })
+    .optional(),
+});
+
 export type CreateUsuarioInput = z.infer<typeof CreateUsuarioSchema>;
 export type GetUsuariosInput = z.infer<typeof GetUsuariosSchema>;
+export type UpdateUsuarioInput = z.infer<typeof UpdateUsuarioSchema>;

@@ -6,7 +6,7 @@ import {
   Paginacao,
   Papel,
   StatusTrocarSenha,
-  StatusUsuario,
+  Status,
   UpdateUsuarioInput,
   Usuario,
 } from "@repo/types";
@@ -126,9 +126,9 @@ export class UsuarioRepository {
 
     const where: Prisma.UsuarioWhereInput = {
       deleted_at:
-        status === StatusUsuario.ATIVO
+        status === Status.ATIVO
           ? null
-          : status === StatusUsuario.INATIVO
+          : status === Status.INATIVO
             ? { not: null }
             : undefined,
     };

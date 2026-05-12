@@ -71,6 +71,7 @@ Todas as rotas têm um padrão de resposta sendo eles:
 
 - `POST /autenticacao/login`
   - descricao: Realiza login no sistema.
+  - requerimentos: Autenticação: Não | Acessível por: Público
   - corpo da requisicao:
     ```json
     {
@@ -98,6 +99,7 @@ Todas as rotas têm um padrão de resposta sendo eles:
 
 - `PATCH /autenticacao/trocar/senha`
   - descricao: Realiza troca de senha para o usuário logado.
+  - requerimentos: Autenticação: Sim | Acessível por: Qualquer usuário logado
   - corpo da requisicao:
     ```json
     {
@@ -126,7 +128,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
 ### Usuários
 
 - `POST /usuarios`
-  - descricao: Cria um novo usuário (Exclusivo de administrador).
+  - descricao: Cria um novo usuário.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
   - corpo da requisicao:
     ```json
     {
@@ -159,7 +162,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `GET /usuarios`
-  - descricao: Busca todos os usuários de forma paginada (Exclusivo de administrador).
+  - descricao: Busca todos os usuários de forma paginada.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -193,7 +197,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `PATCH /usuarios/:id`
-  - descricao: Atualiza dados de um usuário (Exclusivo de administrador).
+  - descricao: Atualiza dados de um usuário.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
   - corpo da requisicao:
     ```json
     {
@@ -225,7 +230,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `PATCH /usuarios/:id/inativar`
-  - descricao: Inativa (soft delete) um usuário (Exclusivo de administrador).
+  - descricao: Inativa (soft delete) um usuário.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -248,7 +254,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `PATCH /usuarios/:id/ativar`
-  - descricao: Ativa um usuário inativado (Exclusivo de administrador).
+  - descricao: Ativa um usuário inativado.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -273,7 +280,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
 ### Disciplinas
 
 - `POST /disciplinas`
-  - descricao: Cria uma nova disciplina (Exclusivo de administrador).
+  - descricao: Cria uma nova disciplina.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
   - corpo da requisicao:
     ```json
     {
@@ -300,7 +308,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
 ### Frequências
 
 - `GET /frequencias/me/:anoLetivo`
-  - descricao: Busca a frequência do aluno em um ano letivo específico (Exclusivo de aluno).
+  - descricao: Busca a frequência do aluno em um ano letivo específico.
+  - requerimentos: Autenticação: Sim | Acessível por: Aluno
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -339,7 +348,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
 ### Eventos
 
 - `GET /eventos/me/:anoLetivo`
-  - descricao: Busca eventos do aluno de um ano letivo específico (Exclusivo de aluno).
+  - descricao: Busca eventos do aluno de um ano letivo específico.
+  - requerimentos: Autenticação: Sim | Acessível por: Aluno
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -376,7 +386,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
 ### Rendimentos
 
 - `GET /rendimentos/me/:anoLetivo`
-  - descricao: Busca os rendimentos (notas) do aluno de um ano letivo específico (Exclusivo de aluno).
+  - descricao: Busca os rendimentos (notas) do aluno de um ano letivo específico.
+  - requerimentos: Autenticação: Sim | Acessível por: Aluno
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -422,7 +433,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
 ### Professores
 
 - `GET /professor/turmas`
-  - descricao: Busca as turmas que estão sob responsabilidade do professor (Exclusivo de professor).
+  - descricao: Busca as turmas que estão sob responsabilidade do professor.
+  - requerimentos: Autenticação: Sim | Acessível por: Professor
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -455,7 +467,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `POST /professor/eventos`
-  - descricao: Cria um novo evento, como prova ou atividade, para uma de suas turmas (Exclusivo de professor).
+  - descricao: Cria um novo evento, como prova ou atividade, para uma de suas turmas.
+  - requerimentos: Autenticação: Sim | Acessível por: Professor
   - corpo da requisicao:
     ```json
     {
@@ -491,7 +504,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `GET /professor/eventos/proximos`
-  - descricao: Busca os próximos eventos marcados para o professor (Exclusivo de professor).
+  - descricao: Busca os próximos eventos marcados para o professor.
+  - requerimentos: Autenticação: Sim | Acessível por: Professor
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json
@@ -529,7 +543,8 @@ Todas as rotas têm um padrão de resposta sendo eles:
     ```
 
 - `GET /professor/eventos/:id/notas`
-  - descricao: Busca o diário de notas de um evento específico criado pelo professor (Exclusivo de professor).
+  - descricao: Busca o diário de notas de um evento específico criado pelo professor.
+  - requerimentos: Autenticação: Sim | Acessível por: Professor
   - corpo da requisicao: Nenhum.
   - resposta de sucesso:
     ```json

@@ -51,12 +51,12 @@ export const SituacaoTurma = {
 } as const;
 export type SituacaoTurma = (typeof SituacaoTurma)[keyof typeof SituacaoTurma];
 
-export const StatusUsuario = {
+export const Status = {
   ATIVO: "ATIVO",
   INATIVO: "INATIVO",
   TODOS: "TODOS",
 } as const;
-export type StatusUsuario = (typeof StatusUsuario)[keyof typeof StatusUsuario];
+export type Status = (typeof Status)[keyof typeof Status];
 
 export const StatusTrocarSenha = {
   SIM: "SIM",

@@ -3,6 +3,8 @@ import { Aula } from "./aula";
 import { Evento } from "./evento";
 import { RendimentoDisciplina } from "./rendimento-disciplina";
 import z from "zod";
+import { PaginacaoSchema } from "./paginacao";
+import { Status } from "./enums";
 
 export interface Disciplina {
   id: number;
@@ -25,4 +27,11 @@ export const CreateDisciplinaSchema = z.object({
   }),
 });
 
+export const GetDisciplinasSchema = PaginacaoSchema.extend({
+  pesquisa: z.string().optional(),
+
+  status: z.nativeEnum(Status).optional().default(Status.TODOS),
+});
+
 export type CreateDisciplinaInput = z.infer<typeof CreateDisciplinaSchema>;
+export type GetDisciplinasInput = z.infer<typeof GetDisciplinasSchema>;

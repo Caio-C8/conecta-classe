@@ -251,6 +251,26 @@ Todas as rotas têm um padrão de resposta sendo eles:
   }
   ```
 
+### Disciplinas
+
+- `POST /disciplinas` - Cria uma disciplina - Necessário autenticação - Exclusivo de administrador - Ex:
+
+  ```bash
+  {
+    status: 201,
+    sucesso: true,
+    mensagem: "Disciplina criada com sucesso.",
+    dados: {
+      id: 3,
+      nome: "Geografia",
+      nome_search: "geografia",
+      deleted_at: null,
+      created_at: "2026-05-12T16:37:17.990Z",
+      updated_at: "2026-05-12T16:37:17.990Z",
+    },
+  }
+  ```
+
 ### Alunos
 
 - `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:

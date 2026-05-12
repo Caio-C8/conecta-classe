@@ -1,5 +1,5 @@
 import z from "zod";
-import { Cargo, Papel, StatusTrocarSenha, StatusUsuario } from "./enums";
+import { Cargo, Papel, StatusTrocarSenha, Status } from "./enums";
 import { PaginacaoSchema } from "./paginacao";
 import { Administrador } from "./administrador";
 import { Professor } from "./professor";
@@ -76,7 +76,7 @@ export const GetUsuariosSchema = PaginacaoSchema.extend({
 
   papel: z.nativeEnum(Papel).optional(),
 
-  status: z.nativeEnum(StatusUsuario).optional().default(StatusUsuario.TODOS),
+  status: z.nativeEnum(Status).optional().default(Status.TODOS),
 
   trocar_senha: z
     .nativeEnum(StatusTrocarSenha)

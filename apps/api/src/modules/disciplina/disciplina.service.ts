@@ -1,6 +1,11 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { DisciplinaRepository } from "./disciplina.repository";
-import { CreateDisciplinaInput, Disciplina } from "@repo/types";
+import {
+  CreateDisciplinaInput,
+  Disciplina,
+  GetDisciplinasInput,
+  Paginacao,
+} from "@repo/types";
 
 @Injectable()
 export class DisciplinaService {
@@ -16,6 +21,15 @@ export class DisciplinaService {
     }
 
     return await this.disciplinaRepository.createDisciplina(dados);
+  }
+
+  async getAll(params: GetDisciplinasInput): Promise<Paginacao<Disciplina>> {
+    const { dados, meta } = await this.disciplinaRepository.findAll(params);
+
+    return {
+      dados,
+      meta,
+    };
   }
 
   async getDisciplinasPorTurmas(turmaId: number): Promise<Disciplina[]> {

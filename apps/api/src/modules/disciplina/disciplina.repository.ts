@@ -1,6 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "@repo/database";
-import { CreateDisciplinaInput, Disciplina } from "@repo/types";
+import { Prisma, Usuario } from "@repo/database";
+import {
+  CreateDisciplinaInput,
+  Disciplina,
+  GetDisciplinasInput,
+  Paginacao,
+  Status,
+} from "@repo/types";
 import { normalizarString } from "@repo/utils";
 import { equal } from "assert";
 import { PrismaService } from "src/common/prisma/prisma.service";
@@ -18,6 +24,47 @@ export class DisciplinaRepository {
     return await this.prisma.disciplina.create({
       data,
     });
+  }
+
+  async findAll(params: GetDisciplinasInput): Promise<Paginacao<Disciplina>> {
+    const { limite, pagina, status, pesquisa } = params;
+
+    const skip = (pagina - 1) * limite;
+
+    const where: Prisma.DisciplinaWhereInput = {
+      deleted_at:
+        status === Status.ATIVO
+          ? null
+          : status === Status.INATIVO
+            ? { not: null }
+            : undefined,
+    };
+
+    if (pesquisa) {
+      where.OR = [{ nome_search: { contains: normalizarString(pesquisa) } }];
+    }
+
+    const [total, dados] = await this.prisma.$transaction([
+      this.prisma.disciplina.count({ where }),
+      this.prisma.disciplina.findMany({
+        where,
+        skip,
+        take: limite,
+        orderBy: {
+          id: "desc",
+        },
+      }),
+    ]);
+
+    return {
+      dados,
+      meta: {
+        total,
+        pagina,
+        limite,
+        ultima_pagina: Math.ceil(total / limite),
+      },
+    };
   }
 
   async findDisciplinaPorNome(nome: string): Promise<Disciplina | null> {

@@ -1,5 +1,19 @@
 # Rotas da API
 
+## Sumário
+
+- [Padrões de respostas](#padrões-de-respostas)
+- [Rotas Criadas até o momento](#rotas-criadas-até-o-momento)
+  - [Testes (Temporárias)](#testes-temporárias)
+  - [Autenticação](#autenticação)
+  - [Usuários](#usuários)
+  - [Disciplinas](#disciplinas)
+  - [Frequências](#frequências)
+  - [Eventos](#eventos)
+  - [Rendimentos](#rendimentos)
+  - [Professores](#professores)
+- [Observação](#observação)
+
 ## Padrões de respostas
 
 Todas as rotas têm um padrão de resposta sendo eles:
@@ -55,429 +69,497 @@ Todas as rotas têm um padrão de resposta sendo eles:
 
 ### Autenticação
 
-- `POST /autenticacao/login` - Realiza login - Pública - Ex:
+- `POST /autenticacao/login`
+  - descricao: Realiza login no sistema.
+  - corpo da requisicao:
+    ```json
+    {
+      "usuario": "string",
+      "senha": "string"
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Login realizado com sucesso.",
+      "dados": {
+        "token": "string",
+        "usuario": {
+          "id": 1,
+          "nome": "string",
+          "papel": "ALUNO",
+          "trocar_senha": false
+        }
+      }
+    }
+    ```
 
-  ```bash
-  {
-    status: 201,
-    sucesso: true,
-    mensagem: "Login realizado com sucesso.",
-    dados: {
-      token: "token",
-      usuario: {
-        id: 3,
-        nome: "Ana Clara",
-        papel: "ALUNO",
-        trocar_senha: false,
-      },
-    },
-  }
-  ```
-
-- `PATCH /autenticacao/trocar/senha` - Realiza troca de senha - Necessário autenticação - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Senha alterada com sucesso.",
-    dados: {
-      token: "token",
-      usuario: {
-        id: 4,
-        nome: "Carlos Eduardo",
-        papel: "PROFESSOR",
-        trocar_senha: false,
-      },
-    },
-  }
-  ```
+- `PATCH /autenticacao/trocar/senha`
+  - descricao: Realiza troca de senha para o usuário logado.
+  - corpo da requisicao:
+    ```json
+    {
+      "nova_senha": "string",
+      "confirmar_senha": "string"
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Senha alterada com sucesso.",
+      "dados": {
+        "token": "string",
+        "usuario": {
+          "id": 1,
+          "nome": "string",
+          "papel": "ALUNO",
+          "trocar_senha": false
+        }
+      }
+    }
+    ```
 
 ### Usuários
 
-- `POST /usuarios` - Cria um novo usuário - Necessário autenticação - Exclusivo de administrador - Ex:
+- `POST /usuarios`
+  - descricao: Cria um novo usuário (Exclusivo de administrador).
+  - corpo da requisicao:
+    ```json
+    {
+      "usuario": "string",
+      "senha": "string",
+      "nome": "string",
+      "trocar_senha": true,
+      "papel": "ADMINISTRADOR | ALUNO | PROFESSOR",
+      "cargo": "DIRETOR | COORDENADOR | SECRETARIO"
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 201,
+      "sucesso": true,
+      "mensagem": "Usuário criado com sucesso.",
+      "dados": {
+        "id": 1,
+        "usuario": "string",
+        "nome": "string",
+        "nome_search": "string",
+        "papel": "ALUNO",
+        "trocar_senha": true,
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
 
-  ```bash
-  {
-    status: 201,
-    sucesso: true,
-    mensagem: "Usuário criado com sucesso.",
-    dados: {
-      id: 6,
-      usuario: "teste1",
-      nome: "Teste",
-      nome_search: "teste",
-      trocar_senha: true,
-      papel: "ALUNO",
-      deleted_at: null,
-      created_at: "2026-04-24T11:17:23.127Z",
-      updated_at: "2026-04-24T11:17:23.127Z",
-    },
-  }
-  ```
-
-- ``GET /usuarios` - Busca todos os usuários de forma paginada, podendo colocar filtros na URL (verificar em `packages/types/src/usuario.ts`) - Necessário autenticação - Exclusivo de administrador - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      dados: [
-        {
-          id: 41,
-          usuario: "nicolas.aluno",
-          nome: "Nicolas Quadros",
-          nome_search: "nicolas quadros",
-          trocar_senha: false,
-          papel: "ALUNO",
-          deleted_at: null,
-          created_at: "2026-05-09T15:13:24.473Z",
-          updated_at: "2026-05-09T15:13:24.473Z",
-          administrador: null,
-          aluno: {
-            id: 24,
-            usuario_id: 41,
+- `GET /usuarios`
+  - descricao: Busca todos os usuários de forma paginada (Exclusivo de administrador).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "dados": [
+          {
+            "id": 1,
+            "usuario": "string",
+            "nome": "string",
+            "nome_search": "string",
+            "papel": "ALUNO",
+            "trocar_senha": false,
+            "deleted_at": null,
+            "created_at": "string",
+            "updated_at": "string"
           },
-          professor: null,
-        },
-        {
-          id: 40,
-          usuario: "mariana.aluno",
-          nome: "Mariana Pinto",
-          nome_search: "mariana pinto",
-          trocar_senha: false,
-          papel: "ALUNO",
-          deleted_at: null,
-          created_at: "2026-05-09T15:13:24.469Z",
-          updated_at: "2026-05-09T15:13:24.469Z",
-          administrador: null,
-          aluno: {
-            id: 23,
-            usuario_id: 40,
-          },
-          professor: null,
-        },
-      ],
-      meta: {
-        total: 24,
-        pagina: 1,
-        limite: 2,
-        ultima_pagina: 12,
-      },
-    },
-  }
-  ```
+          "..."
+        ],
+        "meta": {
+          "total": 1,
+          "pagina": 1,
+          "limite": 10,
+          "ultima_pagina": 1
+        }
+      }
+    }
+    ```
 
-- `PATCH /usuarios/:id` - Atualiza um usuário - Necessário autenticação - Exclusivo de administrador - Ex:
+- `PATCH /usuarios/:id`
+  - descricao: Atualiza dados de um usuário (Exclusivo de administrador).
+  - corpo da requisicao:
+    ```json
+    {
+      "usuario": "string",
+      "senha": "string",
+      "nome": "string",
+      "cargo": "DIRETOR | COORDENADOR | SECRETARIO",
+      "trocar_senha": false
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "id": 1,
+        "usuario": "string",
+        "nome": "string",
+        "nome_search": "string",
+        "papel": "ALUNO",
+        "trocar_senha": false,
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
 
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      id: 39,
-      usuario: "leonardo.aluno",
-      nome: "Carlos Silva Atualizado",
-      nome_search: "carlos silva atualizado",
-      trocar_senha: false,
-      papel: "ALUNO",
-      deleted_at: null,
-      created_at: "2026-05-09T15:13:24.465Z",
-      updated_at: "2026-05-09T22:51:40.115Z",
-      administrador: null,
-      aluno: {
-        id: 22,
-        usuario_id: 39,
-      },
-      professor: null,
-    },
-  }
-  ```
+- `PATCH /usuarios/:id/inativar`
+  - descricao: Inativa (soft delete) um usuário (Exclusivo de administrador).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "id": 1,
+        "usuario": "string",
+        "nome": "string",
+        "nome_search": "string",
+        "papel": "ALUNO",
+        "trocar_senha": false,
+        "deleted_at": "string",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
 
-- `PATCH /usuarios/:id/inativar` - Inativa (soft delete) um usuário - Necessário autenticação - Exclusivo de administrador - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      id: 39,
-      usuario: "leonardo.aluno",
-      nome: "Carlos Silva Atualizado",
-      nome_search: "carlos silva atualizado",
-      trocar_senha: false,
-      papel: "ALUNO",
-      deleted_at: "2026-05-09T23:41:00.348Z",
-      created_at: "2026-05-09T15:13:24.465Z",
-      updated_at: "2026-05-09T22:51:40.115Z",
-      administrador: null,
-      aluno: {
-        id: 22,
-        usuario_id: 39,
-      },
-      professor: null,
-    },
-  }
-  ```
-
-- `PATCH /usuarios/:id/ativar` - Ativa um usuário - Necessário autenticação - Exclusivo de administrador - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      id: 39,
-      usuario: "leonardo.aluno",
-      nome: "Carlos Silva Atualizado",
-      nome_search: "carlos silva atualizado",
-      trocar_senha: false,
-      papel: "ALUNO",
-      deleted_at: null,
-      created_at: "2026-05-09T15:13:24.465Z",
-      updated_at: "2026-05-09T22:51:40.115Z",
-      administrador: null,
-      aluno: {
-        id: 22,
-        usuario_id: 39,
-      },
-      professor: null,
-    },
-  }
-  ```
+- `PATCH /usuarios/:id/ativar`
+  - descricao: Ativa um usuário inativado (Exclusivo de administrador).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "id": 1,
+        "usuario": "string",
+        "nome": "string",
+        "nome_search": "string",
+        "papel": "ALUNO",
+        "trocar_senha": false,
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
 
 ### Disciplinas
 
-- `POST /disciplinas` - Cria uma disciplina - Necessário autenticação - Exclusivo de administrador - Ex:
+- `POST /disciplinas`
+  - descricao: Cria uma nova disciplina (Exclusivo de administrador).
+  - corpo da requisicao:
+    ```json
+    {
+      "nome": "string"
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 201,
+      "sucesso": true,
+      "mensagem": "Disciplina criada com sucesso.",
+      "dados": {
+        "id": 1,
+        "nome": "string",
+        "nome_search": "string",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
 
-  ```bash
-  {
-    status: 201,
-    sucesso: true,
-    mensagem: "Disciplina criada com sucesso.",
-    dados: {
-      id: 3,
-      nome: "Geografia",
-      nome_search: "geografia",
-      deleted_at: null,
-      created_at: "2026-05-12T16:37:17.990Z",
-      updated_at: "2026-05-12T16:37:17.990Z",
-    },
-  }
-  ```
+### Frequências
 
-### Alunos
-
-- `GET /frequencias/me/:anoLetivo` - Busca frequência do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      usuario_id: 30,
-      ano_letivo: 2026,
-      visao: "POR_DISCIPLINA",
-      porcentagem_frequencia_geral: 33,
-      total_faltas: 2,
-      total_aulas: 3,
-      turma: {
-        identificacao: "A",
-        serie: 1,
-        nivel_ensino: "MEDIO",
-      },
-      frequencias: [
-        {
-          disciplina: {
-            id: 15,
-            nome: "Matemática",
-          },
-          aulas_realizadas: 2,
-          faltas: 2,
-          presenca_percentual: 0,
+- `GET /frequencias/me/:anoLetivo`
+  - descricao: Busca a frequência do aluno em um ano letivo específico (Exclusivo de aluno).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "usuario_id": 1,
+        "ano_letivo": 2026,
+        "visao": "POR_DISCIPLINA",
+        "porcentagem_frequencia_geral": 100,
+        "total_faltas": 0,
+        "total_aulas": 10,
+        "turma": {
+          "identificacao": "A",
+          "serie": 1,
+          "nivel_ensino": "MEDIO"
         },
-        {
-          disciplina: {
-            id: 16,
-            nome: "Física",
-          },
-          aulas_realizadas: 1,
-          faltas: 0,
-          presenca_percentual: 100,
-        },
-      ],
-    },
-  }
-  ```
-
-  Ou:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      usuario_id: 2,
-      ano_letivo: 2026,
-      visao: "GERAL",
-      turma: {
-        identificacao: "B",
-        serie: 2,
-        nivel_ensino: "FUNDAMENTAL_1",
-      },
-      frequencia: {
-        total_aulas: 2,
-        total_faltas: 1,
-        presenca_percentual: 50,
-      },
-    },
-  }
-  ```
-
-- `GET /eventos/me/:anoLetivo` - Busca eventos do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: [
-      {
-        id: 1,
-        turma_id: 10,
-        disciplina_id: 7,
-        criador_id: 4,
-        titulo: "Prova Bimestral de Exatas",
-        descricao: "Cairá todo o conteúdo sobre Geometria Analítica.",
-        tipo_evento: "PROVA",
-        valor_nota: 10,
-        data_evento: "2026-04-25T15:15:12.860Z",
-        created_at: "2026-04-24T15:15:12.862Z",
-        updated_at: "2026-04-24T15:15:12.862Z",
-        disciplina: {
-          id: 7,
-          nome: "Matemática",
-          deleted_at: null,
-          created_at: "2026-04-24T15:15:12.780Z",
-          updated_at: "2026-04-24T15:15:12.780Z",
-        },
-      },
-      {
-        id: 2,
-        turma_id: 10,
-        disciplina_id: 8,
-        criador_id: 4,
-        titulo: "Entrega do Trabalho",
-        descricao: "Maquete sobre divisão celular.",
-        tipo_evento: "ATIVIDADE",
-        valor_nota: 5,
-        data_evento: "2026-05-01T15:15:12.860Z",
-        created_at: "2026-04-24T15:15:12.862Z",
-        updated_at: "2026-04-24T15:15:12.862Z",
-        disciplina: {
-          id: 8,
-          nome: "Biologia",
-          deleted_at: null,
-          created_at: "2026-04-24T15:15:12.783Z",
-          updated_at: "2026-04-24T15:15:12.783Z",
-        },
-      },
-      {
-        id: 3,
-        turma_id: 10,
-        disciplina_id: 8,
-        criador_id: 4,
-        titulo: "Feira de Ciências",
-        descricao: "Apresentação obrigatória no pátio principal.",
-        tipo_evento: "GERAL",
-        valor_nota: null,
-        data_evento: "2026-05-24T15:15:12.860Z",
-        created_at: "2026-04-24T15:15:12.862Z",
-        updated_at: "2026-04-24T15:15:12.862Z",
-        disciplina: {
-          id: 8,
-          nome: "Biologia",
-          deleted_at: null,
-          created_at: "2026-04-24T15:15:12.783Z",
-          updated_at: "2026-04-24T15:15:12.783Z",
-        },
-      },
-    ],
-  }
-  ```
-
-- `GET /rendimentos/me/:anoLetivo` - Busca rendimentos do aluno de um ano letivo específico - Necessário autenticação - Exclusivo de aluno - Ex:
-
-  ```bash
-  {
-    status: 200,
-    sucesso: true,
-    mensagem: "Operação realizada com sucesso",
-    dados: {
-      usuario_id: 34,
-      ano_letivo: 2026,
-      turma: {
-        identificacao: "B",
-        serie: 9,
-        nivel_ensino: "FUNDAMENTAL_2",
-      },
-      media_geral: 10.75,
-      rendimentos: [
-        {
-          disciplina: {
-            id: 17,
-            nome: "História",
-          },
-          nota_total: 12.5,
-          situacao: "CURSANDO",
-          eventos: [
-            {
-              id: 10,
-              titulo: "Prova Bimestral - Revolução Francesa",
-              tipo_evento: "PROVA",
-              data_evento: "2026-03-15T10:00:00.000Z",
-              nota_obtida: 8.5,
-              valor_nota: 10,
+        "frequencias": [
+          {
+            "disciplina": {
+              "id": 1,
+              "nome": "string"
             },
-            {
-              id: 11,
-              titulo: "Trabalho em Grupo",
-              tipo_evento: "ATIVIDADE",
-              data_evento: "2026-04-02T10:00:00.000Z",
-              nota_obtida: 4,
-              valor_nota: 5,
-            },
-          ],
-        },
-        {
-          disciplina: {
-            id: 18,
-            nome: "Geografia",
+            "aulas_realizadas": 10,
+            "faltas": 0,
+            "presenca_percentual": 100
           },
-          nota_total: 9,
-          situacao: "CURSANDO",
-          eventos: [
-            {
-              id: 12,
-              titulo: "Seminário - Geopolítica",
-              tipo_evento: "ATIVIDADE",
-              data_evento: "2026-03-20T10:00:00.000Z",
-              nota_obtida: 9,
-              valor_nota: 10,
-            },
-          ],
+          "..."
+        ]
+      }
+    }
+    ```
+
+### Eventos
+
+- `GET /eventos/me/:anoLetivo`
+  - descricao: Busca eventos do aluno de um ano letivo específico (Exclusivo de aluno).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": [
+        {
+          "id": 1,
+          "turma_id": 1,
+          "disciplina_id": 1,
+          "criador_id": 1,
+          "titulo": "string",
+          "descricao": "string",
+          "tipo_evento": "PROVA",
+          "valor_nota": 10,
+          "data_evento": "string",
+          "created_at": "string",
+          "updated_at": "string",
+          "disciplina": {
+            "id": 1,
+            "nome": "string",
+            "deleted_at": null,
+            "created_at": "string",
+            "updated_at": "string"
+          }
         },
-      ],
-    },
-  }
-  ```
+        "..."
+      ]
+    }
+    ```
+
+### Rendimentos
+
+- `GET /rendimentos/me/:anoLetivo`
+  - descricao: Busca os rendimentos (notas) do aluno de um ano letivo específico (Exclusivo de aluno).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "usuario_id": 1,
+        "ano_letivo": 2026,
+        "turma": {
+          "identificacao": "A",
+          "serie": 1,
+          "nivel_ensino": "MEDIO"
+        },
+        "media_geral": 10,
+        "rendimentos": [
+          {
+            "disciplina": {
+              "id": 1,
+              "nome": "string"
+            },
+            "nota_total": 10,
+            "situacao": "CURSANDO",
+            "eventos": [
+              {
+                "id": 1,
+                "titulo": "string",
+                "tipo_evento": "PROVA",
+                "data_evento": "string",
+                "nota_obtida": 10,
+                "valor_nota": 10
+              },
+              "..."
+            ]
+          },
+          "..."
+        ]
+      }
+    }
+    ```
+
+### Professores
+
+- `GET /professor/turmas`
+  - descricao: Busca as turmas que estão sob responsabilidade do professor (Exclusivo de professor).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": [
+        {
+          "id": 1,
+          "professor_id": 1,
+          "turma_id": 1,
+          "disciplina_id": 1,
+          "created_at": "string",
+          "updated_at": "string",
+          "turma": {
+            "id": 1,
+            "identificacao": "string",
+            "serie": 1,
+            "nivel_ensino": "MEDIO"
+          },
+          "disciplina": {
+            "id": 1,
+            "nome": "string"
+          }
+        },
+        "..."
+      ]
+    }
+    ```
+
+- `POST /professor/eventos`
+  - descricao: Cria um novo evento, como prova ou atividade, para uma de suas turmas (Exclusivo de professor).
+  - corpo da requisicao:
+    ```json
+    {
+      "titulo": "string",
+      "descricao": "string",
+      "data_evento": "string",
+      "valor_nota": 10,
+      "tipo_evento": "PROVA | ATIVIDADE | GERAL",
+      "turma_id": 1,
+      "disciplina_id": 1
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 201,
+      "sucesso": true,
+      "mensagem": "Evento criado com sucesso.",
+      "dados": {
+        "id": 1,
+        "turma_id": 1,
+        "disciplina_id": 1,
+        "criador_id": 1,
+        "titulo": "string",
+        "descricao": "string",
+        "tipo_evento": "PROVA",
+        "valor_nota": 10,
+        "data_evento": "string",
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
+
+- `GET /professor/eventos/proximos`
+  - descricao: Busca os próximos eventos marcados para o professor (Exclusivo de professor).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": [
+        {
+          "id": 1,
+          "turma_id": 1,
+          "disciplina_id": 1,
+          "criador_id": 1,
+          "titulo": "string",
+          "descricao": "string",
+          "tipo_evento": "PROVA",
+          "valor_nota": 10,
+          "data_evento": "string",
+          "created_at": "string",
+          "updated_at": "string",
+          "turma": {
+            "id": 1,
+            "identificacao": "string",
+            "serie": 1,
+            "nivel_ensino": "MEDIO"
+          },
+          "disciplina": {
+            "id": 1,
+            "nome": "string"
+          }
+        },
+        "..."
+      ]
+    }
+    ```
+
+- `GET /professor/eventos/:id/notas`
+  - descricao: Busca o diário de notas de um evento específico criado pelo professor (Exclusivo de professor).
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": [
+        {
+          "id": 1,
+          "nota": 10,
+          "evento_id": 1,
+          "matricula_id": 1,
+          "created_at": "string",
+          "updated_at": "string",
+          "matricula": {
+            "id": 1,
+            "aluno": {
+              "id": 1,
+              "usuario": {
+                "id": 1,
+                "nome": "string"
+              }
+            }
+          }
+        },
+        "..."
+      ]
+    }
+    ```
 
 ---
 

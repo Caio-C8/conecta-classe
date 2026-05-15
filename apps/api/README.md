@@ -337,6 +337,32 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+- `PATCH /disciplinas/:id`
+  - descricao: Atualiza dados de uma disciplina.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "nome": "string"
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Disciplina atualizada com sucesso.",
+      "dados": {
+        "id": 1,
+        "nome": "string",
+        "nome_search": "string",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
+
 ### Frequências
 
 - `GET /frequencias/me/:anoLetivo`

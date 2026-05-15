@@ -68,6 +68,20 @@ export class DisciplinaService {
     return await this.disciplinaRepository.softDelete(id);
   }
 
+  async restore(id: number): Promise<Disciplina> {
+    const disciplina = await this.disciplinaRepository.findDisciplinaPorId(id);
+
+    if (!disciplina) {
+      throw new NotFoundException("Disciplina não encontrada.");
+    }
+
+    if (!disciplina.deleted_at) {
+      throw new BadRequestException("Disciplina já está ativada.");
+    }
+
+    return await this.disciplinaRepository.restore(id);
+  }
+
   async getDisciplinasPorTurmas(turmaId: number): Promise<Disciplina[]> {
     return await this.disciplinaRepository.findDisciplinasPorTurma(turmaId);
   }

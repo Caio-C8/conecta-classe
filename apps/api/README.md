@@ -384,6 +384,27 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+- `PATCH /disciplinas/:id/ativar`
+  - descricao: Ativa uma disciplina inativada.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Disciplina ativada com sucesso.",
+      "dados": {
+        "id": 1,
+        "nome": "string",
+        "nome_search": "string",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
+
 ### Frequências
 
 - `GET /frequencias/me/:anoLetivo`

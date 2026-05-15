@@ -27,6 +27,14 @@ export const CreateDisciplinaSchema = z.object({
   }),
 });
 
+export const UpdateDisciplinaSchema = z.object({
+  nome: z
+    .string({
+      invalid_type_error: "Nome inválido.",
+    })
+    .optional(),
+});
+
 export const GetDisciplinasSchema = PaginacaoSchema.extend({
   pesquisa: z.string().optional(),
 
@@ -35,3 +43,4 @@ export const GetDisciplinasSchema = PaginacaoSchema.extend({
 
 export type CreateDisciplinaInput = z.infer<typeof CreateDisciplinaSchema>;
 export type GetDisciplinasInput = z.infer<typeof GetDisciplinasSchema>;
+export type UpdateDisciplinaInput = z.infer<typeof UpdateDisciplinaSchema>;

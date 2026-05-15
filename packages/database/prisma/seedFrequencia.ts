@@ -28,11 +28,11 @@ async function main() {
 
   // 1. Criar as Disciplinas
   const matematica = await prisma.disciplina.create({
-    data: { nome: "Matemática" },
+    data: { nome: "Matemática", nome_search: "matematica" },
   });
 
   const fisica = await prisma.disciplina.create({
-    data: { nome: "Física" },
+    data: { nome: "Física", nome_search: "fisica" },
   });
 
   // 2. Criar os Usuários junto com seus perfis (Aluno e Professor)

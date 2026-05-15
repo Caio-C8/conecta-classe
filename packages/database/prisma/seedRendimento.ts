@@ -32,11 +32,11 @@ async function main() {
 
   // 1. Criar as Disciplinas
   const historia = await prisma.disciplina.create({
-    data: { nome: "História" },
+    data: { nome: "História", nome_search: "historia" },
   });
 
   const geografia = await prisma.disciplina.create({
-    data: { nome: "Geografia" },
+    data: { nome: "Geografia", nome_search: "geografia" },
   });
 
   // 2. Criar os Usuários

@@ -1,10 +1,30 @@
 import "dotenv/config";
-import { Papel, PrismaClient, NivelEnsino, SituacaoTurma, StatusMatricula } from "@prisma/client";
+import {
+  Papel,
+  PrismaClient,
+  NivelEnsino,
+  SituacaoTurma,
+  StatusMatricula,
+} from "@prisma/client";
 import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.notaEvento.deleteMany();
+  await prisma.frequencia.deleteMany();
+  await prisma.rendimentoDisciplina.deleteMany();
+
+  await prisma.evento.deleteMany();
+  await prisma.aula.deleteMany();
+  await prisma.matricula.deleteMany();
+  await prisma.professorTurma.deleteMany();
+
+  await prisma.turma.deleteMany();
+  await prisma.disciplina.deleteMany();
+
+  await prisma.usuario.deleteMany();
+
   const senhaPadrao = await bcrypt.hash("Senha123@", 10);
 
   console.log("1. Garantindo Professor Teste...");
@@ -20,25 +40,29 @@ async function main() {
       trocar_senha: false,
       professor: { create: {} },
     },
-    include: { professor: true }
+    include: { professor: true },
   });
 
   console.log("2. Garantindo Disciplina (Geografia)...");
-  let disciplina = await prisma.disciplina.findFirst({ where: { nome: "Geografia" } });
+  let disciplina = await prisma.disciplina.findFirst({
+    where: { nome: "Geografia" },
+  });
   if (!disciplina) {
-    disciplina = await prisma.disciplina.create({ data: { nome: "Geografia" } });
+    disciplina = await prisma.disciplina.create({
+      data: { nome: "Geografia", nome_search: "geografia" },
+    });
   }
 
   console.log("3. Garantindo Turma Única (8º Ano A - 2026)...");
   let turma = await prisma.turma.findFirst({
-    where: { identificacao: "A", serie: 8, ano_letivo: 2026 }
+    where: { identificacao: "A", serie: 8, ano_letivo: 2026 },
   });
 
   if (!turma) {
     turma = await prisma.turma.create({
       data: {
         identificacao: "A",
-        serie: 8, 
+        serie: 8,
         nivel_ensino: NivelEnsino.FUNDAMENTAL_2,
         sala: "Sala 04",
         ano_letivo: 2026,
@@ -53,7 +77,7 @@ async function main() {
       professor_id: usuarioProfessor.professor!.id,
       turma_id: turma.id,
       disciplina_id: disciplina.id,
-    }
+    },
   });
 
   if (!vinculoExistente) {
@@ -79,11 +103,11 @@ async function main() {
         trocar_senha: false,
         aluno: { create: {} },
       },
-      include: { aluno: true }
+      include: { aluno: true },
     });
 
     const matriculaExistente = await prisma.matricula.findFirst({
-      where: { aluno_id: user.aluno!.id, turma_id: turma.id }
+      where: { aluno_id: user.aluno!.id, turma_id: turma.id },
     });
 
     if (!matriculaExistente) {
@@ -93,7 +117,7 @@ async function main() {
           turma_id: turma.id,
           ano_letivo: 2026,
           status: StatusMatricula.CURSANDO,
-        }
+        },
       });
     }
     return user;

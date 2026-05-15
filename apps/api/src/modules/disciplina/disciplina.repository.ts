@@ -121,4 +121,15 @@ export class DisciplinaRepository {
       distinct: ["id"],
     });
   }
+
+  async softDelete(id: number): Promise<Disciplina> {
+    return await this.prisma.disciplina.update({
+      where: {
+        id,
+      },
+      data: {
+        deleted_at: new Date(),
+      },
+    });
+  }
 }

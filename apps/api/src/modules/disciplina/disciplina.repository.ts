@@ -132,4 +132,15 @@ export class DisciplinaRepository {
       },
     });
   }
+
+  async restore(id: number): Promise<Disciplina> {
+    return await this.prisma.disciplina.update({
+      where: {
+        id,
+      },
+      data: {
+        deleted_at: null,
+      },
+    });
+  }
 }

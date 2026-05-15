@@ -55,4 +55,13 @@ export class DisciplinaController {
   ): Promise<Disciplina> {
     return await this.disciplinaService.softDelete(id);
   }
+
+  @Patch("/:id/ativar")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Disciplina ativada com sucesso.")
+  async ativarDisciplina(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<Disciplina> {
+    return await this.disciplinaService.restore(id);
+  }
 }

@@ -1,10 +1,15 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { DisciplinaRepository } from "./disciplina.repository";
 import {
   CreateDisciplinaInput,
   Disciplina,
   GetDisciplinasInput,
   Paginacao,
+  UpdateDisciplinaInput,
 } from "@repo/types";
 
 @Injectable()
@@ -21,6 +26,23 @@ export class DisciplinaService {
     }
 
     return await this.disciplinaRepository.createDisciplina(dados);
+  }
+
+  async updateDisciplina(
+    id: number,
+    dados: UpdateDisciplinaInput,
+  ): Promise<Disciplina> {
+    if (Object.keys(dados).length === 0) {
+      throw new BadRequestException("Nenhum dado fornecido para atualização.");
+    }
+
+    const disciplina = await this.disciplinaRepository.findDisciplinaPorId(id);
+
+    if (!disciplina) {
+      throw new NotFoundException("Disciplina não encontrada.");
+    }
+
+    return await this.disciplinaRepository.udpateDisciplina(id, dados);
   }
 
   async getAll(params: GetDisciplinasInput): Promise<Paginacao<Disciplina>> {

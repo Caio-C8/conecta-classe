@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma, Usuario } from "@repo/database";
+import { Prisma } from "@repo/database";
 import {
   CreateDisciplinaInput,
   Disciplina,
   GetDisciplinasInput,
   Paginacao,
   Status,
+  UpdateDisciplinaInput,
 } from "@repo/types";
 import { normalizarString } from "@repo/utils";
-import { equal } from "assert";
 import { PrismaService } from "src/common/prisma/prisma.service";
 
 @Injectable()
@@ -23,6 +23,31 @@ export class DisciplinaRepository {
 
     return await this.prisma.disciplina.create({
       data,
+    });
+  }
+
+  async udpateDisciplina(
+    id: number,
+    dados: UpdateDisciplinaInput,
+  ): Promise<Disciplina> {
+    const data: Prisma.DisciplinaUpdateInput = {
+      nome: dados.nome ? dados.nome : undefined,
+      nome_search: dados.nome ? normalizarString(dados.nome) : undefined,
+    };
+
+    return await this.prisma.disciplina.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
+
+  async findDisciplinaPorId(id: number): Promise<Disciplina | null> {
+    return await this.prisma.disciplina.findUnique({
+      where: {
+        id,
+      },
     });
   }
 

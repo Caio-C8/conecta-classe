@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from "@nestjs/common";
 import { Papeis } from "src/common/decorators/papeis.decorator";
 import { DisciplinaService } from "./disciplina.service";
 import { Disciplina, Paginacao } from "@repo/types";
 import { CreateDisciplinaDto } from "./dtos/create-disciplina.dto";
 import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decorator";
 import { GetDisciplinasDto } from "./dtos/get-disciplinas.dto";
+import { UpdateDisciplinaDto } from "./dtos/update-disciplina.dto";
 
 @Controller("disciplinas")
 export class DisciplinaController {
@@ -17,6 +27,16 @@ export class DisciplinaController {
     @Body() dados: CreateDisciplinaDto,
   ): Promise<Disciplina> {
     return await this.disciplinaService.createDisciplina(dados);
+  }
+
+  @Patch("/:id")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Disciplina atualizada com sucesso.")
+  async atualizarDisciplina(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dados: UpdateDisciplinaDto,
+  ): Promise<Disciplina> {
+    return await this.disciplinaService.updateDisciplina(id, dados);
   }
 
   @Get()

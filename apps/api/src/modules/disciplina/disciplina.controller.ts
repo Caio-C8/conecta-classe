@@ -46,4 +46,13 @@ export class DisciplinaController {
   ): Promise<Paginacao<Disciplina>> {
     return await this.disciplinaService.getAll(params);
   }
+
+  @Patch("/:id/inativar")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Disciplina inativada com sucesso.")
+  async inativarDisciplina(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<Disciplina> {
+    return await this.disciplinaService.softDelete(id);
+  }
 }

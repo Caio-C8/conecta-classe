@@ -12,6 +12,7 @@
   - [Eventos](#eventos)
   - [Rendimentos](#rendimentos)
   - [Professores](#professores)
+  - [Turmas](#turmas)
 - [Observação](#observação)
 
 ## Padrões de respostas
@@ -673,6 +674,44 @@ Todas as rotas têm um padrão de resposta sendo eles:
         },
         "..."
       ]
+    }
+    ```
+
+---
+
+### Turmas
+
+- `POST /turmas`
+  - descricao: Cria uma nova turma.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "identificacao": "string",
+      "serie": 1,
+      "nivel_ensino": "FUNDAMENTAL_1 | FUNDAMENTAL_2 | MEDIO",
+      "sala": "string",
+      "ano_letivo": 2026
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 201,
+      "sucesso": true,
+      "mensagem": "Turma criada com sucesso.",
+      "dados": {
+        "id": 1,
+        "identificacao": "string",
+        "serie": 1,
+        "nivel_ensino": "MEDIO",
+        "sala": "string",
+        "ano_letivo": 2026,
+        "situacao": "EM_ANDAMENTO",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
     }
     ```
 

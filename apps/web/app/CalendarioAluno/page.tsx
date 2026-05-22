@@ -1,4 +1,4 @@
-'use client';
+'use client'; //apagar depois, usando este comentário para comitar
 
 import React, { useState } from 'react';
 import Link from 'next/link';

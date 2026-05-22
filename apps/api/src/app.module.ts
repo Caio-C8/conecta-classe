@@ -19,6 +19,7 @@ import { FrequenciaModule } from "./modules/frequencia/frequencia.module";
 import { EventoModule } from "./modules/evento/evento.module";
 import { RendimentoModule } from "./modules/rendimento/rendimento.module";
 import { ProfessorModule } from "./modules/professor/professor.module";
+import { TurmaModule } from "./modules/turma/turma.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ProfessorModule } from "./modules/professor/professor.module";
     EventoModule,
     RendimentoModule,
     ProfessorModule,
+    TurmaModule,
   ],
   controllers: [AppController],
   providers: [

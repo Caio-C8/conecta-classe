@@ -1,8 +1,10 @@
-import { NivelEnsino, SituacaoTurma } from "./enums";
+import { NivelEnsino, SituacaoTurma, Status } from "./enums";
 import { ProfessorTurma } from "./professor-turma";
 import { Matricula } from "./matricula";
 import { Aula } from "./aula";
 import { Evento } from "./evento";
+import z from "zod";
+import { PaginacaoSchema } from "./paginacao";
 
 export interface Turma {
   id: number;
@@ -21,3 +23,47 @@ export interface Turma {
   aulas?: Aula[];
   eventos?: Evento[];
 }
+
+export const CreateTurmaSchema = z.object({
+  identificacao: z.string({
+    required_error: "Preencha o campo identificação.",
+    invalid_type_error: "Identificação inválida.",
+  }),
+
+  serie: z.coerce
+    .number({
+      required_error: "Preencha o campo série.",
+      invalid_type_error: "Série inválida.",
+    })
+    .min(1, { message: "A série deve ser no mínimo no 1° ano." }),
+
+  nivel_ensino: z.nativeEnum(NivelEnsino, {
+    message: "Nível de ensino inválido.",
+  }),
+
+  sala: z.string({
+    required_error: "Preencha o campo sala.",
+    invalid_type_error: "Sala inválida.",
+  }),
+
+  ano_letivo: z.coerce
+    .number({
+      required_error: "Preencha o campo ano letivo.",
+      invalid_type_error: "Ano letivo inválido.",
+    })
+    .min(new Date().getFullYear(), {
+      message: "O ano letivo deve ser no mínimo o ano atual.",
+    }),
+});
+
+export const UpdateTurmaSchema = CreateTurmaSchema.partial();
+
+export const GetTurmasSchema = PaginacaoSchema.extend({
+  pesquisa: z.string().optional(),
+
+  status: z.nativeEnum(Status).optional().default(Status.TODOS),
+});
+
+export type CreateTurmaInput = z.infer<typeof CreateTurmaSchema>;
+export type UpdateTurmaInput = z.infer<typeof UpdateTurmaSchema>;
+export type GetTurmasInput = z.infer<typeof GetTurmasSchema>;

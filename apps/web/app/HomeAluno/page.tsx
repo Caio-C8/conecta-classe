@@ -1,19 +1,17 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
-  BookOpen, 
-  Moon, 
-  LogOut, 
   TrendingUp, 
   Clock, 
   Calendar as CalendarIcon,
-  CheckCircle2,
-  ChevronRight,
-  Info
+  BookOpen
 } from 'lucide-react';
 
 export default function DashboardPage() {
+  const pathname = usePathname();
   const student = { name: "João Pedro", year: "9º ano", level: "Fundamental II" };
 
   const recentGrades = [
@@ -22,54 +20,49 @@ export default function DashboardPage() {
     { subject: "História", assessment: "Simulado", score: 6.5, date: "05/03" },
   ];
 
-  const upcomingEvents = [
-    { title: "Entrega: Trabalho de Artes", date: "15 Abr", type: "warning" },
-    { title: "Prova de Inglês", date: "18 Abr", type: "danger" },
-  ];
-
   return (
     <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#1A202C]">
-      {/* Navbar - Reutilizando o padrão do projeto */}
-      <nav className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="bg-[#1A202C] p-2 rounded-xl text-white shadow-lg"><BookOpen size={22} /></div>
-          <span className="text-xl font-bold tracking-tight">Conecta Classe</span>
+      {/* HEADER INTEGRADO */}
+      <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2">
+            <div className="bg-black text-white w-8 h-8 flex items-center justify-center rounded-lg font-bold text-base">C</div>
+            <span className="font-bold text-lg text-gray-900">Conecta Classe</span>
+          </div>
+          <nav className="flex gap-5">
+            <Link href="/painel" className={`text-sm no-underline ${pathname === '/painel' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}>Painel Geral</Link>
+            <Link href="/frequencia" className={`text-sm no-underline ${pathname === '/frequencia' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}>Frequência</Link>
+            <Link href="/notas" className={`text-sm no-underline ${pathname === '/notas' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}>Notas</Link>
+            <Link href="/calendario" className={`text-sm no-underline ${pathname === '/calendario' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}>Calendário</Link>
+          </nav>
         </div>
-        <div className="hidden md:flex space-x-8 text-sm font-semibold text-gray-400">
-          <span className="text-gray-900 border-b-2 border-gray-900 pb-1">Painel</span>
-          <span className="hover:text-gray-900 cursor-pointer">Frequência</span>
-          <span className="hover:text-gray-900 cursor-pointer">Notas</span>
-          <span className="hover:text-gray-900 cursor-pointer">Calendário</span>
-        </div>
-        <div className="flex items-center space-x-4 text-gray-400">
-          <Moon size={20} className="cursor-pointer hover:text-gray-900" />
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-900 border border-gray-200 cursor-pointer"><LogOut size={16} /></div>
-        </div>
-      </nav>
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer' }} className="text-[#4b5563] hover:text-black">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>
+        </button>
+      </header>
 
       <main className="max-w-6xl mx-auto px-8 py-12">
-        <header className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
+        <header className="mb-10">
           <h1 className="text-4xl font-black text-[#1A202C] mb-2 tracking-tight">Olá, {student.name.split(' ')[0]}!</h1>
-          <p className="text-gray-400 font-medium">Aqui está o resumo do seu desempenho escolar.</p>
+          <p className="text-gray-400 font-medium">Aqui está o resumo do seu desempenho escolar em {student.year}.</p>
         </header>
 
-        {/* Estatísticas Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-in fade-in duration-1000">
-          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm hover:shadow-md transition-all flex items-center space-x-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-center space-x-5 hover:shadow-md transition-all">
             <div className="bg-green-50 p-4 rounded-2xl text-green-500"><TrendingUp size={24} /></div>
             <div>
               <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Média Geral</p>
               <h3 className="text-2xl font-black text-gray-900">7.3</h3>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm hover:shadow-md transition-all flex items-center space-x-5">
+          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-center space-x-5 hover:shadow-md transition-all">
             <div className="bg-blue-50 p-4 rounded-2xl text-blue-500"><Clock size={24} /></div>
             <div>
               <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Frequência</p>
               <h3 className="text-2xl font-black text-gray-900">92%</h3>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm hover:shadow-md transition-all flex items-center space-x-5">
+          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-center space-x-5 hover:shadow-md transition-all">
             <div className="bg-red-50 p-4 rounded-2xl text-red-500"><CalendarIcon size={24} /></div>
             <div>
               <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Próxima Prova</p>
@@ -79,12 +72,8 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Coluna de Notas Recentes */}
-          <section className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between px-2">
-              <h2 className="text-xl font-black text-gray-900 tracking-tight">Avaliações Recentes</h2>
-              <button className="text-xs font-bold text-blue-500 hover:underline">Ver todas</button>
-            </div>
+          <div className="lg:col-span-2 space-y-6">
+            <h2 className="text-xl font-black text-gray-900 tracking-tight">Avaliações Recentes</h2>
             <div className="space-y-4">
               {recentGrades.map((grade, i) => (
                 <div key={i} className="bg-white p-5 rounded-[24px] border border-gray-50 shadow-sm flex items-center justify-between group hover:border-blue-100 transition-all">
@@ -102,29 +91,22 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          {/* Coluna de Agenda */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between px-2">
-              <h2 className="text-xl font-black text-gray-900 tracking-tight">Agenda</h2>
-              <CalendarIcon size={20} className="text-gray-300" />
-            </div>
+          <div className="space-y-6">
+            <h2 className="text-xl font-black text-gray-900 tracking-tight">Agenda Próxima</h2>
             <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm space-y-6">
-              {upcomingEvents.map((ev, i) => (
-                <div key={i} className="flex items-start space-x-4">
-                  <div className="text-center min-w-[45px]">
-                    <span className="block text-[10px] font-black text-gray-300 uppercase">{ev.date.split(' ')[1]}</span>
-                    <span className="block text-xl font-black text-gray-900">{ev.date.split(' ')[0]}</span>
-                  </div>
-                  <div className={`flex-1 p-3 rounded-2xl border-l-4 ${ev.type === 'danger' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-orange-50 border-orange-400 text-orange-700'}`}>
-                    <p className="text-xs font-bold leading-tight">{ev.title}</p>
-                  </div>
+              <div className="flex items-start space-x-4">
+                <div className="text-center min-w-[45px]">
+                  <span className="block text-[10px] font-black text-gray-300 uppercase">MAR</span>
+                  <span className="block text-xl font-black text-gray-900">10</span>
                 </div>
-              ))}
-              <button className="w-full py-3 bg-gray-50 rounded-2xl text-xs font-black text-gray-400 uppercase tracking-widest hover:bg-gray-100 transition-colors">Ver Calendário Completo</button>
+                <div className="flex-1 p-3 rounded-2xl border-l-4 bg-red-50 border-red-500 text-red-700">
+                  <p className="text-xs font-bold leading-tight">Prova de Matemática</p>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       </main>
     </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards,Param } from '@nestjs/common';
+import { Controller, Get, UseGuards,Param, Query } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { JwtGuard } from '../../common/guards/jwt.guard';
 import { PapeisGuard } from '../../common/guards/papeis.guard';
@@ -19,9 +19,6 @@ export class ProfessorController {
   async getTurmas(@GetUsuario('id') usuarioId: number) {
     return this.professorService.buscarTurmasDoProfessor(usuarioId);
   }
-
-
-
 
   @Post('eventos')
   async criarEvento(
@@ -45,6 +42,17 @@ export class ProfessorController {
     return this.professorService.buscarDiarioDeNotas(usuarioId, +eventoId);
   }
 
+  
+  @Get('turmas/:id/alunos')
+  async getAlunosDaTurma(
+  @Param('id') turmaId: string,
+  @Query('aula_id') aula_idStr?: string 
+  ) {
+    let numeroAulaId = aula_idStr?  Number(aula_idStr) : undefined
+    let numeroTurmaId = Number(turmaId)
+
+    return this.professorService.buscarAlunosParaChamada(numeroTurmaId,numeroAulaId)
+  }
 
 
 }

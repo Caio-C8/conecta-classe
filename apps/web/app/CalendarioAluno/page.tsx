@@ -2,23 +2,36 @@
 
 import React, { useState } from 'react';
 import { 
-  BookOpen, 
-  Moon, 
-  LogOut, 
   ChevronDown, 
   ChevronLeft, 
   ChevronRight,
   Info
 } from 'lucide-react';
 
-export default function CalendarPage() {
+// Simulação dos componentes do Next.js para garantir que o código compile no ambiente de visualização.
+// No seu projeto Next.js real, você pode substituir por:
+// import Link from 'next/link';
+// import { usePathname } from 'next/navigation';
+const Link = ({ href, children, className, ...props }: any) => {
+  return (
+    <a href={href} className={className} {...props}>
+      {children}
+    </a>
+  );
+};
+
+const usePathname = () => {
+  return '/calendario'; // Simula a rota ativa atual
+};
+
+export default function App() {
+  const pathname = usePathname();
   const [selectedDay, setSelectedDay] = useState(10);
   
-  // Mock de dias do mês de Março 2026 (começando no domingo)
+  // Mock de dias do mês de Março 2026
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
-  const startOffset = 0; // Março 2026 começa no Domingo (1)
 
-  // Dias que possuem eventos (para mostrar a bolinha embaixo)
+  // Dias que possuem eventos
   const daysWithEvents = [10, 12, 20, 25];
 
   const events = {
@@ -28,30 +41,52 @@ export default function CalendarPage() {
     12: [
       { title: "Entrega de Trabalho", subject: "Geografia", color: "#3B82F6" }
     ],
-    // Adicione mais eventos conforme necessário
   };
 
   const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
   return (
     <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#1A202C]">
-      {/* Navbar Padrão */}
-      <nav className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
-        <div className="flex items-center space-x-3">
-          <div className="bg-[#1A202C] p-2 rounded-xl text-white shadow-lg"><BookOpen size={22} /></div>
-          <span className="text-xl font-bold tracking-tight">Conecta Classe</span>
+      {/* HEADER INTEGRADO */}
+      <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2">
+            <div className="bg-black text-white w-8 h-8 flex items-center justify-center rounded-lg font-bold text-base">C</div>
+            <span className="font-bold text-lg text-gray-900">Conecta Classe</span>
+          </div>
+          <nav className="flex gap-5">
+            <Link 
+              href="/painel" 
+              className={`text-sm no-underline ${pathname === '/painel' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}
+            >
+              Painel Geral
+            </Link>
+            <Link 
+              href="/frequencia" 
+              className={`text-sm no-underline ${pathname === '/frequencia' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}
+            >
+              Frequência
+            </Link>
+            <Link 
+              href="/notas" 
+              className={`text-sm no-underline ${pathname === '/notas' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}
+            >
+              Notas
+            </Link>
+            <Link 
+              href="/calendario" 
+              className={`text-sm no-underline ${pathname === '/calendario' ? 'text-black font-semibold' : 'text-[#4b5563] hover:text-black'}`}
+            >
+              Calendário
+            </Link>
+          </nav>
         </div>
-        <div className="hidden md:flex space-x-8 text-sm font-semibold text-gray-400">
-          <span className="hover:text-gray-900 cursor-pointer">Painel</span>
-          <span className="hover:text-gray-900 cursor-pointer">Frequência</span>
-          <span className="hover:text-gray-900 cursor-pointer">Notas</span>
-          <span className="text-gray-900 border-b-2 border-gray-900 pb-1">Calendário</span>
-        </div>
-        <div className="flex items-center space-x-4 text-gray-400">
-          <Moon size={20} className="cursor-pointer hover:text-gray-900" />
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-900 border border-gray-200 cursor-pointer"><LogOut size={16} /></div>
-        </div>
-      </nav>
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer' }} className="text-[#4b5563] hover:text-black transition-colors">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+          </svg>
+        </button>
+      </header>
 
       <main className="max-w-6xl mx-auto px-8 py-12">
         <header className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
@@ -72,18 +107,15 @@ export default function CalendarPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          {/* Lado Esquerdo: O Calendário */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-[40px] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-gray-50">
               <div className="grid grid-cols-7 gap-y-8 text-center">
-                {/* Dias da Semana */}
                 {weekDays.map((day) => (
                   <div key={day} className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
                     {day}
                   </div>
                 ))}
 
-                {/* Grid de Dias */}
                 {days.map((day) => {
                   const isSelected = selectedDay === day;
                   const hasEvent = daysWithEvents.includes(day);
@@ -103,7 +135,6 @@ export default function CalendarPage() {
                         {day}
                       </button>
                       
-                      {/* Pontinho de Evento (não mostra se estiver selecionado, pois fica por cima) */}
                       {hasEvent && !isSelected && (
                         <div className="absolute bottom-[-4px] w-1 h-1 bg-[#5D5FEF] rounded-full"></div>
                       )}
@@ -114,7 +145,6 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          {/* Lado Direito: Detalhes do Dia */}
           <div className="space-y-8">
             <section>
               <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-6">
@@ -124,7 +154,7 @@ export default function CalendarPage() {
               <div className="space-y-4">
                 {events[selectedDay as keyof typeof events] ? (
                   events[selectedDay as keyof typeof events].map((ev, i) => (
-                    <div key={i} className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-start space-x-4 animate-in zoom-in-95 duration-300">
+                    <div key={i} className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-start space-x-4">
                       <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: ev.color }}></div>
                       <div>
                         <h4 className="font-bold text-gray-900 leading-tight">{ev.title}</h4>
@@ -140,7 +170,6 @@ export default function CalendarPage() {
               </div>
             </section>
 
-            {/* Banner Informativo */}
             <div className="bg-[#EFF6FF] p-6 rounded-[32px] border border-blue-50 flex items-start space-x-4">
               <div className="bg-blue-500 p-2 rounded-xl text-white"><Info size={20} /></div>
               <p className="text-xs font-semibold text-blue-700 leading-relaxed">

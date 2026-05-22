@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateEventoDto } from './dto/create-evento.dto';
+import { MatriculaModule } from '../matricula/matricula.module';
+import { number } from 'zod/v4';
 
 @Injectable()
 export class ProfessorService {
@@ -38,8 +40,6 @@ export class ProfessorService {
       numeroAlunos: vinculo.turma._count.matriculas,
     }));
   }
-
-
   async criarEvento(professorId: number, dto: CreateEventoDto) {
     const professor = await this.prisma.professor.findUnique({
       where: { usuario_id: professorId }
@@ -153,4 +153,33 @@ export class ProfessorService {
       alunos: alunosFormatados
     };
   }
+
+ async buscarAlunosParaChamada(turmaId: number, aula_id?: number) {
+    const listaDeAlunos = await this.prisma.matricula.findMany({
+      where:  { turma_id: turmaId, status: 'CURSANDO' },
+      include: {
+          aluno: {
+            include: {
+              usuario: { select: { nome: true } }
+          }
+        },
+        frequencias: aula_id ? {
+          where: { aula_id: aula_id }
+        } : false
+      }
+    });  
+
+    const listaDeAlunosFormatada = listaDeAlunos.map(matricula=>{
+      let faltasDoAluno = matricula.frequencias?.[0]?.numero_faltas || 0;
+      return{
+        id: matricula.id,
+        nome: matricula.aluno?.usuario?.nome, 
+        faltas: faltasDoAluno
+      };
+    });
+
+
+    return listaDeAlunosFormatada;
+  }
+
 }

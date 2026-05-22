@@ -76,7 +76,7 @@ importers:
         specifier: ^9.18.0
         version: 9.39.4
       '@nestjs/cli':
-        specifier: ^11.0.0
+        specifier: ^11.0.16
         version: 11.0.16(@types/node@22.19.15)
       '@nestjs/schematics':
         specifier: ^11.0.0

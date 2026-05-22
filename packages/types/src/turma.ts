@@ -1,9 +1,10 @@
-import { NivelEnsino, SituacaoTurma } from "./enums";
+import { NivelEnsino, SituacaoTurma, Status } from "./enums";
 import { ProfessorTurma } from "./professor-turma";
 import { Matricula } from "./matricula";
 import { Aula } from "./aula";
 import { Evento } from "./evento";
 import z from "zod";
+import { PaginacaoSchema } from "./paginacao";
 
 export interface Turma {
   id: number;
@@ -55,4 +56,14 @@ export const CreateTurmaSchema = z.object({
     }),
 });
 
+export const UpdateTurmaSchema = CreateTurmaSchema.partial();
+
+export const GetTurmasSchema = PaginacaoSchema.extend({
+  pesquisa: z.string().optional(),
+
+  status: z.nativeEnum(Status).optional().default(Status.TODOS),
+});
+
 export type CreateTurmaInput = z.infer<typeof CreateTurmaSchema>;
+export type UpdateTurmaInput = z.infer<typeof UpdateTurmaSchema>;
+export type GetTurmasInput = z.infer<typeof GetTurmasSchema>;

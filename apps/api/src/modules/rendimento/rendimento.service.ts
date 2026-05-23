@@ -2,7 +2,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { RendimentoRepository } from "./rendimento.repository";
 import { MatriculaService } from "../matricula/matricula.service";
 import { EventoService } from "../evento/evento.service";
-import { RespostaGetRendimentosAluno } from "@repo/types";
+import {
+  RendimentoDisciplina,
+  RespostaGetRendimentosAluno,
+  SituacaoRendimento,
+} from "@repo/types";
+import { Prisma } from "@repo/database";
 
 @Injectable()
 export class RendimentoService {
@@ -15,10 +20,12 @@ export class RendimentoService {
   async getRendimentosPorAluno(
     usuarioId: number,
     anoLetivo: number,
+    tx?: Prisma.TransactionClient,
   ): Promise<RespostaGetRendimentosAluno> {
     const matricula = await this.matriculaService.getMatriculaPorAluno(
       usuarioId,
       anoLetivo,
+      tx,
     );
 
     if (!matricula) {
@@ -28,8 +35,8 @@ export class RendimentoService {
     }
 
     const [rendimentos, notasEventos] = await Promise.all([
-      this.rendimentoRepository.findRendimentosPorMatricula(matricula.id),
-      this.eventoService.getNotasEventosPorMatricula(matricula.id),
+      this.rendimentoRepository.findRendimentosPorMatricula(matricula.id, tx),
+      this.eventoService.getNotasEventosPorMatricula(matricula.id, tx),
     ]);
 
     let totalNotas: number = 0;
@@ -51,6 +58,7 @@ export class RendimentoService {
       totalNotas += rendimento.nota_total;
 
       return {
+        id: rendimento.id,
         disciplina: {
           id: rendimento.disciplina?.id || null,
           nome: rendimento.disciplina?.nome || null,
@@ -77,5 +85,17 @@ export class RendimentoService {
       media_geral: mediaGeral,
       rendimentos: rendimentosFormatados,
     };
+  }
+
+  async updateSituacaoRendimento(
+    id: number,
+    situacao: SituacaoRendimento,
+    tx?: Prisma.TransactionClient,
+  ): Promise<RendimentoDisciplina> {
+    return await this.rendimentoRepository.updateSituacaoRendimento(
+      id,
+      situacao,
+      tx,
+    );
   }
 }

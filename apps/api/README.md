@@ -860,6 +860,31 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+- `PATCH /turmas/:id/encerrar`
+  - descricao: Encerra uma turma (ano letivo). Altera a situação da turma para ENCERRADA, calcula a aprovação/reprovação de cada aluno com base em notas e frequência, e atualiza os rendimentos e matrículas. Regras de classificação por disciplina: nota >= 60 e freq >= 75% = APROVADO; nota < 60 e freq >= 75% = REPROVADO_POR_NOTA; nota >= 60 e freq < 75% = REPROVADO_POR_FALTA; nota < 60 e freq < 75% = REPROVADO_POR_FALTA.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Turma encerrada com sucesso.",
+      "dados": {
+        "id": 1,
+        "identificacao": "string",
+        "serie": 1,
+        "nivel_ensino": "MEDIO",
+        "sala": "string",
+        "ano_letivo": 2026,
+        "situacao": "ENCERRADA",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
+
 ---
 
 ## Observação

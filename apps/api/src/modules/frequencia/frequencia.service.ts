@@ -5,6 +5,7 @@ import { AulaService } from "../aula/aula.service";
 import { DisciplinaService } from "../disciplina/disciplina.service";
 import { UsuarioService } from "../usuario/usuario.service";
 import { RespostaGetFrequenciaAluno } from "@repo/types";
+import { Prisma } from "@repo/database";
 
 @Injectable()
 export class FrequenciaService {
@@ -19,8 +20,9 @@ export class FrequenciaService {
   async getFrequenciaAluno(
     usuarioId: number,
     anoLetivo: number,
+    tx?: Prisma.TransactionClient,
   ): Promise<RespostaGetFrequenciaAluno> {
-    const aluno = await this.usuarioService.getUsuarioPorId(usuarioId);
+    const aluno = await this.usuarioService.getUsuarioPorId(usuarioId, tx);
 
     if (!aluno) {
       throw new NotFoundException("Aluno não encontrado.");
@@ -29,6 +31,7 @@ export class FrequenciaService {
     const matricula = await this.matriculaService.getMatriculaPorAluno(
       usuarioId,
       anoLetivo,
+      tx,
     );
 
     if (!matricula) {
@@ -44,10 +47,14 @@ export class FrequenciaService {
     }
 
     if (turma.nivel_ensino === "FUNDAMENTAL_1") {
-      const totalAulas = await this.aulaService.getTotalAulasPorTurma(turma.id);
+      const totalAulas = await this.aulaService.getTotalAulasPorTurma(
+        turma.id,
+        tx,
+      );
 
       const totalFaltas = await this.frequenciaRepository.sumFaltasPorMatricula(
         matricula.id,
+        tx,
       );
 
       const presencas = totalAulas > 0 ? totalAulas - totalFaltas : 0;
@@ -72,14 +79,16 @@ export class FrequenciaService {
     } else {
       const disciplinas = await this.disciplinaService.getDisciplinasPorTurmas(
         turma.id,
+        tx,
       );
 
       const aulasPorDisciplina =
-        await this.aulaService.getAulasPorDisciplinaPorTurma(turma.id);
+        await this.aulaService.getAulasPorDisciplinaPorTurma(turma.id, tx);
 
       const faltas =
         await this.frequenciaRepository.findFrequenciasPorMatricula(
           matricula.id,
+          tx,
         );
 
       let totalAulas: number = 0;

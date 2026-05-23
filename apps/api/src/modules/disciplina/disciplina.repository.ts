@@ -111,8 +111,13 @@ export class DisciplinaRepository {
     });
   }
 
-  async findDisciplinasPorTurma(turmaId: number): Promise<Disciplina[]> {
-    return await this.prisma.disciplina.findMany({
+  async findDisciplinasPorTurma(
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Disciplina[]> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.disciplina.findMany({
       where: {
         professores: {
           some: { turma_id: turmaId },

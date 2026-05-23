@@ -4,7 +4,10 @@ import {
   CreateTurmaInput,
   GetTurmasInput,
   Paginacao,
+  SituacaoRendimento,
+  SituacaoTurma,
   Status,
+  StatusMatricula,
   Turma,
   UpdateTurmaInput,
 } from "@repo/types";
@@ -28,8 +31,13 @@ export class TurmaRepository {
     });
   }
 
-  async findTurmaPorId(id: number): Promise<Turma | null> {
-    return await this.prisma.turma.findUnique({
+  async findTurmaPorId(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Turma | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.turma.findUnique({
       where: {
         id,
       },
@@ -51,7 +59,9 @@ export class TurmaRepository {
     };
 
     if (pesquisa) {
-      where.OR = [{ identificacao: { contains: pesquisa, mode: "insensitive" } }];
+      where.OR = [
+        { identificacao: { contains: pesquisa, mode: "insensitive" } },
+      ];
     }
 
     const [total, dados] = await this.prisma.$transaction([
@@ -77,10 +87,7 @@ export class TurmaRepository {
     };
   }
 
-  async updateTurma(
-    id: number,
-    dados: UpdateTurmaInput,
-  ): Promise<Turma> {
+  async updateTurma(id: number, dados: UpdateTurmaInput): Promise<Turma> {
     const data: Prisma.TurmaUpdateInput = {
       identificacao: dados.identificacao ? dados.identificacao : undefined,
       serie: dados.serie ? dados.serie : undefined,
@@ -94,6 +101,23 @@ export class TurmaRepository {
         id,
       },
       data,
+    });
+  }
+
+  async updateSituacaoTurma(
+    id: number,
+    situacao: SituacaoTurma,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Turma> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.turma.update({
+      where: {
+        id,
+      },
+      data: {
+        situacao,
+      },
     });
   }
 

@@ -194,8 +194,13 @@ export class UsuarioRepository {
     });
   }
 
-  async getUsuarioPorId(id: number): Promise<Usuario | null> {
-    return await this.prisma.usuario.findUnique({
+  async getUsuarioPorId(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Usuario | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.usuario.findUnique({
       where: {
         id,
       },

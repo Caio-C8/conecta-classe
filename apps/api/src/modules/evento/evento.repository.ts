@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { Prisma } from "@repo/database";
 import { Evento, NotaEvento } from "@repo/types";
 import { PrismaService } from "src/common/prisma/prisma.service";
 
@@ -29,8 +30,11 @@ export class EventoRepository {
 
   async findNotasEventosPorMatricula(
     matriculaId: number,
+    tx?: Prisma.TransactionClient,
   ): Promise<NotaEvento[]> {
-    const notas = await this.prisma.notaEvento.findMany({
+    const prismaClient = tx || this.prisma;
+
+    const notas = await prismaClient.notaEvento.findMany({
       where: {
         matricula_id: matriculaId,
       },

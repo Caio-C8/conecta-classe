@@ -12,7 +12,8 @@
     "db:seed:evento": "tsx prisma/seedEvento.ts",
     "db:seed:rendimento": "tsx prisma/seedRendimento.ts",
     "db:seed:professor": "tsx prisma/seedProfessor.ts",
-    "db:seed:usuarios": "tsx prisma/seedUsuarios.ts"
+    "db:seed:usuarios": "tsx prisma/seedUsuarios.ts",
+    "db:seed:encerrar-turma": "tsx prisma/seedEncerrarTurma.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

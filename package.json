@@ -15,7 +15,8 @@
     "db:seed:evento": "turbo run db:seed:evento",
     "db:seed:rendimento": "turbo run db:seed:rendimento",
     "db:seed:professor": "turbo run db:seed:professor",
-    "db:seed:usuarios": "turbo run db:seed:usuarios"
+    "db:seed:usuarios": "turbo run db:seed:usuarios",
+    "db:seed:encerrar-turma": "turbo run db:seed:encerrar-turma"
   },
   "keywords": [],
   "author": "",

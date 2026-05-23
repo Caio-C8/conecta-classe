@@ -116,21 +116,6 @@ export class MatriculaRepository {
     });
   }
 
-  async findMatriculaPorAlunoETurma(
-    alunoId: number,
-    turmaId: number,
-    tx?: Prisma.TransactionClient,
-  ): Promise<Matricula | null> {
-    const prismaClient = tx || this.prisma;
-
-    return await prismaClient.matricula.findFirst({
-      where: {
-        aluno_id: alunoId,
-        turma_id: turmaId,
-      },
-    });
-  }
-
   async findMatriculaPorAlunoEAnoLetivo(
     alunoId: number,
     anoLetivo: number,
@@ -142,6 +127,22 @@ export class MatriculaRepository {
       where: {
         aluno_id: alunoId,
         ano_letivo: anoLetivo,
+        status: StatusMatricula.CURSANDO,
+      },
+    });
+  }
+
+  async findMatriculaAtivaPorAlunoETurma(
+    alunoId: number,
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.matricula.findFirst({
+      where: {
+        aluno_id: alunoId,
+        turma_id: turmaId,
         status: StatusMatricula.CURSANDO,
       },
     });
@@ -160,6 +161,28 @@ export class MatriculaRepository {
       },
       data: {
         status,
+      },
+    });
+  }
+
+  async transferirMatriculaERendimentos(
+    matriculaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    const prismaClient = tx || this.prisma;
+
+    await prismaClient.matricula.update({
+      where: {
+        id: matriculaId,
+      },
+      data: {
+        status: StatusMatricula.TRANSFERIDO,
+        rendimentos_disciplinas: {
+          updateMany: {
+            where: { matricula_id: matriculaId },
+            data: { situacao: SituacaoRendimento.TRANSFERIDO },
+          },
+        },
       },
     });
   }

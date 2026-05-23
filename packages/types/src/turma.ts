@@ -64,7 +64,7 @@ export const GetTurmasSchema = PaginacaoSchema.extend({
   status: z.nativeEnum(Status).optional().default(Status.TODOS),
 });
 
-export const VincularProfessorSchema = z.object({
+export const VincularEDesvincularProfessorSchema = z.object({
   professorId: z.coerce.number({
     required_error: "Preencha o campo professor.",
     invalid_type_error: "Professor inválido.",
@@ -76,7 +76,7 @@ export const VincularProfessorSchema = z.object({
   }),
 });
 
-export const VincularAlunoSchema = z.object({
+export const VincularEDesvincularAlunoSchema = z.object({
   alunoId: z.coerce.number({
     required_error: "Preencha o campo aluno.",
     invalid_type_error: "Aluno inválido.",
@@ -86,5 +86,9 @@ export const VincularAlunoSchema = z.object({
 export type CreateTurmaInput = z.infer<typeof CreateTurmaSchema>;
 export type UpdateTurmaInput = z.infer<typeof UpdateTurmaSchema>;
 export type GetTurmasInput = z.infer<typeof GetTurmasSchema>;
-export type VincularProfessorInput = z.infer<typeof VincularProfessorSchema>;
-export type VincularAlunoInput = z.infer<typeof VincularAlunoSchema>;
+export type VincularEDesvincularProfessorInput = z.infer<
+  typeof VincularEDesvincularProfessorSchema
+>;
+export type VincularEDesvincularAlunoInput = z.infer<
+  typeof VincularEDesvincularAlunoSchema
+>;

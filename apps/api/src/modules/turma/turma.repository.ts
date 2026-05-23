@@ -277,4 +277,21 @@ export class TurmaRepository {
       },
     });
   }
+
+  async desvincularProfessor(
+    turmaId: number,
+    professorId: number,
+    disciplinaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<void> {
+    const prismaClient = tx || this.prisma;
+
+    await prismaClient.professorTurma.deleteMany({
+      where: {
+        turma_id: turmaId,
+        professor_id: professorId,
+        disciplina_id: disciplinaId,
+      },
+    });
+  }
 }

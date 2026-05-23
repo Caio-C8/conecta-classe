@@ -11,6 +11,7 @@ import {
   Paginacao,
   UpdateDisciplinaInput,
 } from "@repo/types";
+import { Prisma } from "@repo/database";
 
 @Injectable()
 export class DisciplinaService {
@@ -82,7 +83,10 @@ export class DisciplinaService {
     return await this.disciplinaRepository.restore(id);
   }
 
-  async getDisciplinasPorTurmas(turmaId: number): Promise<Disciplina[]> {
-    return await this.disciplinaRepository.findDisciplinasPorTurma(turmaId);
+  async getDisciplinasPorTurmas(
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Disciplina[]> {
+    return await this.disciplinaRepository.findDisciplinasPorTurma(turmaId, tx);
   }
 }

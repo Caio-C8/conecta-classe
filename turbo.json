@@ -35,6 +35,9 @@
     },
     "db:seed:usuarios": {
       "cache": false
+    },
+    "db:seed:encerrar-turma": {
+      "cache": false
     }
   }
 }

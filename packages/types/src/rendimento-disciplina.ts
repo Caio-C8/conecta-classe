@@ -25,6 +25,7 @@ export interface RespostaGetRendimentosAluno {
   };
   media_geral: number;
   rendimentos: {
+    id: number;
     disciplina: {
       id: number | null;
       nome: string | null;

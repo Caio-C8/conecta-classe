@@ -17,6 +17,7 @@ import { UsuarioRepository } from "./usuario.repository";
 import * as bcrypt from "bcrypt";
 
 import { normalizarString } from "@repo/utils";
+import { Prisma } from "@repo/database";
 
 @Injectable()
 export class UsuarioService {
@@ -112,8 +113,11 @@ export class UsuarioService {
     };
   }
 
-  async getUsuarioPorId(usuarioId: number): Promise<Usuario | null> {
-    return await this.usuarioRepository.getUsuarioPorId(usuarioId);
+  async getUsuarioPorId(
+    usuarioId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Usuario | null> {
+    return await this.usuarioRepository.getUsuarioPorId(usuarioId, tx);
   }
 
   async softDelte(id: number): Promise<UsuarioSemSenha> {

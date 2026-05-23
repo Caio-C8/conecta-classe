@@ -87,6 +87,16 @@ export class RendimentoService {
     };
   }
 
+  async getRendimentosBasePorMatricula(
+    matriculaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<RendimentoDisciplina[]> {
+    return await this.rendimentoRepository.findRendimentosPorMatricula(
+      matriculaId,
+      tx,
+    );
+  }
+
   async updateSituacaoRendimento(
     id: number,
     situacao: SituacaoRendimento,

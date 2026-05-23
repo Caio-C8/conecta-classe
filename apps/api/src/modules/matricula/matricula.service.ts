@@ -29,6 +29,16 @@ export class MatriculaService {
     );
   }
 
+  async getMatriculasEncerradasPorTurma(
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula[]> {
+    return await this.matriculaRepository.findMatriculasEncerradasPorTurma(
+      turmaId,
+      tx,
+    );
+  }
+
   async updateStatusMatricula(
     id: number,
     status: StatusMatricula,

@@ -885,6 +885,152 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+- `PATCH /turmas/:id/retomar`
+  - descricao: Retoma uma turma encerrada. Altera a situação da turma de volta para EM_ANDAMENTO, reverte o status de todas as matrículas para CURSANDO e a situação de todos os rendimentos para CURSANDO.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Turma retomada com sucesso.",
+      "dados": {
+        "id": 1,
+        "identificacao": "string",
+        "serie": 1,
+        "nivel_ensino": "MEDIO",
+        "sala": "string",
+        "ano_letivo": 2026,
+        "situacao": "EM_ANDAMENTO",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
+
+- `POST /turmas/:id/vincular/professor`
+  - descricao: Vincula um professor a uma turma em uma disciplina específica.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "professorId": 1,
+      "disciplinaId": 1
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 201,
+      "sucesso": true,
+      "mensagem": "Professor vinculado com sucesso.",
+      "dados": {
+        "id": 1,
+        "identificacao": "string",
+        "serie": 1,
+        "nivel_ensino": "MEDIO",
+        "sala": "string",
+        "ano_letivo": 2026,
+        "situacao": "EM_ANDAMENTO",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string",
+        "professores": [
+          {
+            "id": 1,
+            "professor_id": 1,
+            "turma_id": 1,
+            "disciplina_id": 1,
+            "created_at": "string",
+            "updated_at": "string"
+          }
+        ]
+      }
+    }
+    ```
+
+- `DELETE /turmas/:id/desvincular/professor`
+  - descricao: Desvincula um professor de uma turma em uma disciplina específica.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "professorId": 1,
+      "disciplinaId": 1
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Professor desvinculado com sucesso.",
+      "dados": null
+    }
+    ```
+
+- `POST /turmas/:id/vincular/aluno`
+  - descricao: Vincula um aluno a uma turma, criando sua matrícula e os rendimentos por disciplina automaticamente.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "alunoId": 1
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 201,
+      "sucesso": true,
+      "mensagem": "Aluno vinculado com sucesso.",
+      "dados": {
+        "id": 1,
+        "identificacao": "string",
+        "serie": 1,
+        "nivel_ensino": "MEDIO",
+        "sala": "string",
+        "ano_letivo": 2026,
+        "situacao": "EM_ANDAMENTO",
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string",
+        "matriculas": [
+          {
+            "id": 1,
+            "aluno_id": 1,
+            "turma_id": 1,
+            "ano_letivo": 2026,
+            "status": "CURSANDO",
+            "created_at": "string",
+            "updated_at": "string"
+          }
+        ]
+      }
+    }
+    ```
+
+- `PATCH /turmas/:id/desvincular/aluno`
+  - descricao: Desvincula um aluno de uma turma, alterando o status da matrícula para TRANSFERIDO.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "alunoId": 1
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Aluno desvinculado com sucesso.",
+      "dados": null
+    }
+    ```
+
 ---
 
 ## Observação

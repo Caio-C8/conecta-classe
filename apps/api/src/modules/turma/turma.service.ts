@@ -107,7 +107,7 @@ export class TurmaService {
       );
     }
 
-    if (turma.situacao === "ENCERRADA") {
+    if (turma.situacao === SituacaoTurma.ENCERRADA) {
       throw new BadRequestException("Turma já está encerrada.");
     }
 
@@ -190,6 +190,62 @@ export class TurmaService {
       return await this.turmaRepository.updateSituacaoTurma(
         id,
         SituacaoTurma.ENCERRADA,
+        tx,
+      );
+    });
+  }
+
+  async retomar(id: number): Promise<Turma> {
+    const turma = await this.turmaRepository.findTurmaPorId(id);
+
+    if (!turma) {
+      throw new NotFoundException("Turma não encontrada.");
+    }
+
+    if (turma.deleted_at) {
+      throw new BadRequestException(
+        "Não é possível retomar uma turma inativada.",
+      );
+    }
+
+    if (turma.situacao !== SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Apenas turmas encerradas podem ser retomadas.",
+      );
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      const matriculas =
+        await this.matriculaService.getMatriculasEncerradasPorTurma(
+          turma.id,
+          tx,
+        );
+
+      for (const matricula of matriculas) {
+        const rendimentos =
+          await this.rendimentoService.getRendimentosBasePorMatricula(
+            matricula.id,
+            tx,
+          );
+
+        for (const rendimento of rendimentos) {
+          await this.rendimentoService.updateSituacaoRendimento(
+            rendimento.id,
+            SituacaoRendimento.CURSANDO,
+            tx,
+          );
+        }
+
+        await this.matriculaService.updateStatusMatricula(
+          matricula.id,
+          StatusMatricula.CURSANDO,
+          tx,
+        );
+      }
+
+      return await this.turmaRepository.updateSituacaoTurma(
+        id,
+        SituacaoTurma.EM_ANDAMENTO,
         tx,
       );
     });

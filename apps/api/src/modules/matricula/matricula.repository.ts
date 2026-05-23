@@ -61,6 +61,22 @@ export class MatriculaRepository {
     }));
   }
 
+  async findMatriculasEncerradasPorTurma(
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula[]> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.matricula.findMany({
+      where: {
+        turma_id: turmaId,
+        status: {
+          in: [StatusMatricula.APROVADO, StatusMatricula.REPROVADO],
+        },
+      },
+    });
+  }
+
   async updateStatusMatricula(
     id: number,
     status: StatusMatricula,

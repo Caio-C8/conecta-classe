@@ -15,7 +15,6 @@ import { UpdateTurmaDto } from "./dtos/update-turma.dto";
 import { GetTurmasDto } from "./dtos/get-turmas.dto";
 import { Papeis } from "src/common/decorators/papeis.decorator";
 import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decorator";
-import { GetUsuario } from "src/common/decorators/get-usuario.decorator";
 
 @Controller("turmas")
 export class TurmaController {
@@ -71,5 +70,12 @@ export class TurmaController {
   @MensagemResposta("Turma encerrada com sucesso.")
   async encerrarTurma(@Param("id", ParseIntPipe) id: number): Promise<Turma> {
     return await this.turmaService.encerrar(id);
+  }
+
+  @Patch("/:id/retomar")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Turma retomada com sucesso.")
+  async retomarTurma(@Param("id", ParseIntPipe) id: number): Promise<Turma> {
+    return await this.turmaService.retomar(id);
   }
 }

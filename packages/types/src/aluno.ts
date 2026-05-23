@@ -1,10 +1,10 @@
-import { Usuario } from "./usuario";
+import { UsuarioSemSenha } from "./usuario";
 import { Matricula } from "./matricula";
 
 export interface Aluno {
   id: number;
   usuario_id: number;
 
-  usuario?: Usuario;
+  usuario?: UsuarioSemSenha;
   matriculas?: Matricula[];
 }

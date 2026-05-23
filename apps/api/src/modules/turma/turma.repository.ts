@@ -4,10 +4,9 @@ import {
   CreateTurmaInput,
   GetTurmasInput,
   Paginacao,
-  SituacaoRendimento,
+  ProfessorTurma,
   SituacaoTurma,
   Status,
-  StatusMatricula,
   Turma,
   UpdateTurmaInput,
 } from "@repo/types";
@@ -40,6 +39,67 @@ export class TurmaRepository {
     return await prismaClient.turma.findUnique({
       where: {
         id,
+      },
+      include: {
+        matriculas: {
+          include: {
+            aluno: {
+              include: {
+                usuario: {
+                  select: {
+                    id: true,
+                    nome: true,
+                    nome_search: true,
+                    papel: true,
+                    trocar_senha: true,
+                    usuario: true,
+                    updated_at: true,
+                    created_at: true,
+                    deleted_at: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        professores: {
+          include: {
+            disciplina: true,
+            professor: {
+              include: {
+                usuario: {
+                  select: {
+                    id: true,
+                    nome: true,
+                    nome_search: true,
+                    papel: true,
+                    trocar_senha: true,
+                    usuario: true,
+                    updated_at: true,
+                    created_at: true,
+                    deleted_at: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async findTurmaComMatriculasPorId(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Turma | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.turma.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        matriculas: true,
       },
     });
   }
@@ -85,6 +145,41 @@ export class TurmaRepository {
         ultima_pagina: Math.ceil(total / limite),
       },
     };
+  }
+
+  async findProfessorTurma(
+    turmaId: number,
+    professorId: number,
+    disciplinaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<ProfessorTurma | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.professorTurma.findFirst({
+      where: {
+        turma_id: turmaId,
+        professor_id: professorId,
+        disciplina_id: disciplinaId,
+      },
+    });
+  }
+
+  async findDisciplinasPorTurma(
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number[]> {
+    const prismaClient = tx || this.prisma;
+
+    const vinculos = await prismaClient.professorTurma.findMany({
+      where: {
+        turma_id: turmaId,
+      },
+      select: {
+        disciplina_id: true,
+      },
+    });
+
+    return [...new Set(vinculos.map((v) => v.disciplina_id))];
   }
 
   async updateTurma(id: number, dados: UpdateTurmaInput): Promise<Turma> {
@@ -139,6 +234,46 @@ export class TurmaRepository {
       },
       data: {
         deleted_at: null,
+      },
+    });
+  }
+
+  async vincularProfessor(
+    turmaId: number,
+    professorId: number,
+    disciplinaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Turma | null> {
+    const prismaClient = tx || this.prisma;
+
+    const data: Prisma.ProfessorTurmaCreateInput = {
+      turma: {
+        connect: {
+          id: turmaId,
+        },
+      },
+      professor: {
+        connect: {
+          id: professorId,
+        },
+      },
+      disciplina: {
+        connect: {
+          id: disciplinaId,
+        },
+      },
+    };
+
+    await prismaClient.professorTurma.create({
+      data,
+    });
+
+    return await prismaClient.turma.findUnique({
+      where: {
+        id: turmaId,
+      },
+      include: {
+        professores: true,
       },
     });
   }

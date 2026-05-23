@@ -22,17 +22,7 @@ export interface Usuario {
   professor?: Professor | null;
 }
 
-export interface UsuarioSemSenha {
-  id: number;
-  usuario: string;
-  nome: string;
-  nome_search: string;
-  papel: Papel;
-  trocar_senha: boolean;
-  deleted_at: Date | null;
-  created_at: Date;
-  updated_at: Date;
-}
+export type UsuarioSemSenha = Omit<Usuario, "senha">;
 
 const CreateUsuarioSchemaBase = z.object({
   usuario: z.string({

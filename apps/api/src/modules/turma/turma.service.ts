@@ -13,6 +13,8 @@ import {
   StatusMatricula,
   Turma,
   UpdateTurmaInput,
+  VincularAlunoInput,
+  VincularProfessorInput,
 } from "@repo/types";
 import { PrismaService } from "src/common/prisma/prisma.service";
 import { MatriculaService } from "../matricula/matricula.service";
@@ -248,6 +250,87 @@ export class TurmaService {
         SituacaoTurma.EM_ANDAMENTO,
         tx,
       );
+    });
+  }
+
+  async vincularProfessor(
+    id: number,
+    dados: VincularProfessorInput,
+  ): Promise<Turma | null> {
+    const turma = await this.turmaRepository.findTurmaPorId(id);
+
+    if (!turma) {
+      throw new NotFoundException("Turma não encontrada.");
+    }
+
+    if (turma.deleted_at) {
+      throw new BadRequestException(
+        "Não é possível vincular professores a uma turma inativa.",
+      );
+    }
+
+    if (turma.situacao === SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Não é possível vincular professores a uma turma encerrada.",
+      );
+    }
+
+    const vinculoExistente = await this.turmaRepository.findProfessorTurma(
+      id,
+      dados.professorId,
+      dados.disciplinaId,
+    );
+
+    if (vinculoExistente) {
+      throw new BadRequestException(
+        "Este professor já está vinculado a esta turma com esta disciplina.",
+      );
+    }
+
+    return await this.turmaRepository.vincularProfessor(
+      id,
+      dados.professorId,
+      dados.disciplinaId,
+    );
+  }
+
+  async vincularAluno(
+    id: number,
+    dados: VincularAlunoInput,
+  ): Promise<Turma | null> {
+    const turma = await this.turmaRepository.findTurmaPorId(id);
+
+    if (!turma) {
+      throw new NotFoundException("Turma não encontrada.");
+    }
+
+    if (turma.deleted_at) {
+      throw new BadRequestException(
+        "Não é possível vincular professores a uma turma inativa.",
+      );
+    }
+
+    if (turma.situacao === SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Não é possível vincular professores a uma turma encerrada.",
+      );
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      const disciplinaIds = await this.turmaRepository.findDisciplinasPorTurma(
+        id,
+        tx,
+      );
+
+      await this.matriculaService.createMatriculaComRendimentos(
+        dados.alunoId,
+        id,
+        turma.ano_letivo,
+        disciplinaIds,
+        tx,
+      );
+
+      return this.turmaRepository.findTurmaComMatriculasPorId(id, tx);
     });
   }
 }

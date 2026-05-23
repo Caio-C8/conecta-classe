@@ -13,8 +13,8 @@ import {
   StatusMatricula,
   Turma,
   UpdateTurmaInput,
-  VincularAlunoInput,
-  VincularProfessorInput,
+  VincularEDesvincularAlunoInput,
+  VincularEDesvincularProfessorInput,
 } from "@repo/types";
 import { PrismaService } from "src/common/prisma/prisma.service";
 import { MatriculaService } from "../matricula/matricula.service";
@@ -255,7 +255,7 @@ export class TurmaService {
 
   async vincularProfessor(
     id: number,
-    dados: VincularProfessorInput,
+    dados: VincularEDesvincularProfessorInput,
   ): Promise<Turma | null> {
     const turma = await this.turmaRepository.findTurmaPorId(id);
 
@@ -296,7 +296,7 @@ export class TurmaService {
 
   async vincularAluno(
     id: number,
-    dados: VincularAlunoInput,
+    dados: VincularEDesvincularAlunoInput,
   ): Promise<Turma | null> {
     const turma = await this.turmaRepository.findTurmaPorId(id);
 
@@ -332,5 +332,71 @@ export class TurmaService {
 
       return this.turmaRepository.findTurmaComMatriculasPorId(id, tx);
     });
+  }
+
+  async desvincularProfessor(
+    turmaId: number,
+    dados: VincularEDesvincularProfessorInput,
+  ): Promise<void> {
+    const turma = await this.turmaRepository.findTurmaPorId(turmaId);
+
+    if (!turma) {
+      throw new NotFoundException("Turma não encontrada.");
+    }
+
+    if (turma.deleted_at) {
+      throw new BadRequestException(
+        "Não é possível remover vínculos de uma turma inativada.",
+      );
+    }
+
+    if (turma.situacao === SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Não é possível remover vínculos de uma turma já encerrada.",
+      );
+    }
+
+    const vinculoExistente = await this.turmaRepository.findProfessorTurma(
+      turmaId,
+      dados.professorId,
+      dados.disciplinaId,
+    );
+
+    if (!vinculoExistente) {
+      throw new NotFoundException(
+        "Vínculo entre o professor, a turma e a disciplina não encontrado.",
+      );
+    }
+
+    await this.turmaRepository.desvincularProfessor(
+      turmaId,
+      dados.professorId,
+      dados.disciplinaId,
+    );
+  }
+
+  async desvincularAluno(
+    turmaId: number,
+    dados: VincularEDesvincularAlunoInput,
+  ): Promise<void> {
+    const turma = await this.turmaRepository.findTurmaPorId(turmaId);
+
+    if (!turma) {
+      throw new NotFoundException("Turma não encontrada.");
+    }
+
+    if (turma.deleted_at) {
+      throw new BadRequestException(
+        "Não é possível alterar vínculos de uma turma inativada.",
+      );
+    }
+
+    if (turma.situacao === SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Não é possível alterar vínculos de uma turma já encerrada.",
+      );
+    }
+
+    await this.matriculaService.transferirAlunoDaTurma(dados.alunoId, turmaId);
   }
 }

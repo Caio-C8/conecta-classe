@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { MatriculaRepository } from "./matricula.repository";
 import { Matricula, StatusMatricula } from "@repo/types";
 import { Prisma } from "@repo/database";
@@ -15,7 +19,7 @@ export class MatriculaService {
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula> {
     const matriculaExistenteNaTurma =
-      await this.matriculaRepository.findMatriculaPorAlunoETurma(
+      await this.matriculaRepository.findMatriculaAtivaPorAlunoETurma(
         alunoId,
         turmaId,
         tx,
@@ -87,5 +91,26 @@ export class MatriculaService {
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula> {
     return await this.matriculaRepository.updateStatusMatricula(id, status, tx);
+  }
+
+  async transferirAlunoDaTurma(
+    alunoId: number,
+    turmaId: number,
+  ): Promise<void> {
+    const matriculaAtiva =
+      await this.matriculaRepository.findMatriculaAtivaPorAlunoETurma(
+        alunoId,
+        turmaId,
+      );
+
+    if (!matriculaAtiva) {
+      throw new NotFoundException(
+        "O aluno não possui uma matrícula ativa nesta turma para ser desvinculado.",
+      );
+    }
+
+    await this.matriculaRepository.transferirMatriculaERendimentos(
+      matriculaAtiva.id,
+    );
   }
 }

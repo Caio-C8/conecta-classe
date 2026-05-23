@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -15,8 +16,8 @@ import { UpdateTurmaDto } from "./dtos/update-turma.dto";
 import { GetTurmasDto } from "./dtos/get-turmas.dto";
 import { Papeis } from "src/common/decorators/papeis.decorator";
 import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decorator";
-import { VincularProfessorDto } from "./dtos/vincular-professor.dto";
-import { VincularAlunoDto } from "./dtos/vincular-aluno.dto";
+import { VincularEDesvincularProfessorDto } from "./dtos/vincular-desvincular-professor.dto";
+import { VincularEDesvincularAlunoDto } from "./dtos/vincular-desvincular-aluno.dto";
 
 @Controller("turmas")
 export class TurmaController {
@@ -34,17 +35,17 @@ export class TurmaController {
   @MensagemResposta("Professor vinculado com sucesso.")
   async vincularProfessor(
     @Param("id", ParseIntPipe) id: number,
-    @Body() dados: VincularProfessorDto,
+    @Body() dados: VincularEDesvincularProfessorDto,
   ): Promise<Turma | null> {
     return await this.turmaService.vincularProfessor(id, dados);
   }
 
   @Post("/:id/vincular/aluno")
   @Papeis("ADMINISTRADOR")
-  @MensagemResposta("Professor vinculado com sucesso.")
+  @MensagemResposta("Aluno vinculado com sucesso.")
   async vincularAluno(
     @Param("id", ParseIntPipe) id: number,
-    @Body() dados: VincularAlunoDto,
+    @Body() dados: VincularEDesvincularAlunoDto,
   ): Promise<Turma | null> {
     return await this.turmaService.vincularAluno(id, dados);
   }
@@ -99,5 +100,25 @@ export class TurmaController {
   @MensagemResposta("Turma retomada com sucesso.")
   async retomarTurma(@Param("id", ParseIntPipe) id: number): Promise<Turma> {
     return await this.turmaService.retomar(id);
+  }
+
+  @Patch("/:id/desvincular/aluno")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Aluno desvinculado com sucesso.")
+  async desvincularAluno(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dados: VincularEDesvincularAlunoDto,
+  ): Promise<void> {
+    return await this.turmaService.desvincularAluno(id, dados);
+  }
+
+  @Delete("/:id/desvincular/professor")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Professor desvinculado com sucesso.")
+  async desvincularProfessor(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dados: VincularEDesvincularProfessorDto,
+  ): Promise<void> {
+    return await this.turmaService.desvincularProfessor(id, dados);
   }
 }

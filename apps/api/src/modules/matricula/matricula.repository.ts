@@ -1,11 +1,50 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@repo/database";
-import { Matricula, StatusMatricula } from "@repo/types";
+import { Matricula, SituacaoRendimento, StatusMatricula } from "@repo/types";
 import { PrismaService } from "src/common/prisma/prisma.service";
 
 @Injectable()
 export class MatriculaRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async createMatriculaComRendimentos(
+    alunoId: number,
+    turmaId: number,
+    anoLetivo: number,
+    disciplinaIds: number[],
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula> {
+    const prismaClient = tx || this.prisma;
+
+    const matricula = await prismaClient.matricula.create({
+      data: {
+        aluno_id: alunoId,
+        turma_id: turmaId,
+        ano_letivo: anoLetivo,
+        status: StatusMatricula.CURSANDO,
+        rendimentos_disciplinas: {
+          create: disciplinaIds.map((id) => ({
+            disciplina_id: id,
+            nota_total: 0,
+            situacao: SituacaoRendimento.CURSANDO,
+          })),
+        },
+      },
+      include: {
+        rendimentos_disciplinas: true,
+      },
+    });
+
+    return {
+      ...matricula,
+      rendimentos_disciplinas: matricula.rendimentos_disciplinas.map(
+        (rendimento) => ({
+          ...rendimento,
+          nota_total: rendimento.nota_total.toNumber(),
+        }),
+      ),
+    };
+  }
 
   async findMatriculaPorAluno(
     usuarioId: number,
@@ -73,6 +112,37 @@ export class MatriculaRepository {
         status: {
           in: [StatusMatricula.APROVADO, StatusMatricula.REPROVADO],
         },
+      },
+    });
+  }
+
+  async findMatriculaPorAlunoETurma(
+    alunoId: number,
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.matricula.findFirst({
+      where: {
+        aluno_id: alunoId,
+        turma_id: turmaId,
+      },
+    });
+  }
+
+  async findMatriculaPorAlunoEAnoLetivo(
+    alunoId: number,
+    anoLetivo: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.matricula.findFirst({
+      where: {
+        aluno_id: alunoId,
+        ano_letivo: anoLetivo,
+        status: StatusMatricula.CURSANDO,
       },
     });
   }

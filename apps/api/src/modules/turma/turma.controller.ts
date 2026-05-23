@@ -15,6 +15,8 @@ import { UpdateTurmaDto } from "./dtos/update-turma.dto";
 import { GetTurmasDto } from "./dtos/get-turmas.dto";
 import { Papeis } from "src/common/decorators/papeis.decorator";
 import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decorator";
+import { VincularProfessorDto } from "./dtos/vincular-professor.dto";
+import { VincularAlunoDto } from "./dtos/vincular-aluno.dto";
 
 @Controller("turmas")
 export class TurmaController {
@@ -25,6 +27,26 @@ export class TurmaController {
   @MensagemResposta("Turma criada com sucesso.")
   async criarTurma(@Body() dados: CreateTurmaDto): Promise<Turma> {
     return await this.turmaService.create(dados);
+  }
+
+  @Post("/:id/vincular/professor")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Professor vinculado com sucesso.")
+  async vincularProfessor(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dados: VincularProfessorDto,
+  ): Promise<Turma | null> {
+    return await this.turmaService.vincularProfessor(id, dados);
+  }
+
+  @Post("/:id/vincular/aluno")
+  @Papeis("ADMINISTRADOR")
+  @MensagemResposta("Professor vinculado com sucesso.")
+  async vincularAluno(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dados: VincularAlunoDto,
+  ): Promise<Turma | null> {
+    return await this.turmaService.vincularAluno(id, dados);
   }
 
   @Get()

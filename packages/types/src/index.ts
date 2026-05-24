@@ -13,3 +13,4 @@ export * from "./professor-turma";
 export * from "./professor";
 export * from "./rendimento-disciplina";
 export * from "./turma";
+export * from "./resposta";

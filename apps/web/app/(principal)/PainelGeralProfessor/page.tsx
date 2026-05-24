@@ -1,9 +1,6 @@
-'use client';
+"use client";
 
-import {
-  FaGraduationCap,
-  FaSignOutAlt,
-} from 'react-icons/fa';
+import { FaGraduationCap, FaSignOutAlt } from "react-icons/fa";
 
 export default function Page() {
   return (
@@ -54,13 +51,9 @@ export default function Page() {
       <main className="grid grid-cols-1 gap-8 px-6 py-8 md:px-14 lg:grid-cols-[2fr_1fr]">
         {/* ESQUERDA */}
         <section>
-          <h1 className="mb-8 text-3xl font-medium">
-            Olá, João Lucas
-          </h1>
+          <h1 className="mb-8 text-3xl font-medium">Olá, João Lucas</h1>
 
-          <h2 className="mb-4 text-lg font-medium">
-            Minhas Turmas:
-          </h2>
+          <h2 className="mb-4 text-lg font-medium">Minhas Turmas:</h2>
 
           {/* TURMAS */}
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -155,38 +148,28 @@ export default function Page() {
 
             <div className="mb-3 flex items-center justify-between rounded-xl border-l-4 border-red-500 bg-slate-50 p-3">
               <div>
-                <h4 className="text-sm font-medium">
-                  Avaliação Mensal
-                </h4>
+                <h4 className="text-sm font-medium">Avaliação Mensal</h4>
 
                 <small className="text-gray-500">
                   8º Ano A • Ocorreu há 3 dias
                 </small>
               </div>
 
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline"
-              >
+              <a href="#" className="text-sm text-blue-600 hover:underline">
                 Lançar
               </a>
             </div>
 
             <div className="flex items-center justify-between rounded-xl border-l-4 border-red-500 bg-slate-50 p-3">
               <div>
-                <h4 className="text-sm font-medium">
-                  Trabalho de Relevo
-                </h4>
+                <h4 className="text-sm font-medium">Trabalho de Relevo</h4>
 
                 <small className="text-gray-500">
                   9º Ano B • Ocorreu ontem
                 </small>
               </div>
 
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline"
-              >
+              <a href="#" className="text-sm text-blue-600 hover:underline">
                 Lançar
               </a>
             </div>
@@ -200,38 +183,26 @@ export default function Page() {
 
             <div className="mb-3 flex items-center justify-between rounded-xl border-l-4 border-yellow-500 bg-slate-50 p-3">
               <div>
-                <h4 className="text-sm font-medium">
-                  Entrega de Maquete
-                </h4>
+                <h4 className="text-sm font-medium">Entrega de Maquete</h4>
 
                 <small className="text-gray-500">
                   1º Ano C • Encerra amanhã
                 </small>
               </div>
 
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline"
-              >
+              <a href="#" className="text-sm text-blue-600 hover:underline">
                 Ver
               </a>
             </div>
 
             <div className="flex items-center justify-between rounded-xl border-l-4 border-yellow-500 bg-slate-50 p-3">
               <div>
-                <h4 className="text-sm font-medium">
-                  Seminário: Clima
-                </h4>
+                <h4 className="text-sm font-medium">Seminário: Clima</h4>
 
-                <small className="text-gray-500">
-                  8º Ano A • Em 3 dias
-                </small>
+                <small className="text-gray-500">8º Ano A • Em 3 dias</small>
               </div>
 
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline"
-              >
+              <a href="#" className="text-sm text-blue-600 hover:underline">
                 Ver
               </a>
             </div>

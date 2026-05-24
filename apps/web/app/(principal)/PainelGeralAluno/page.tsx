@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   FaGraduationCap,
@@ -6,7 +6,7 @@ import {
   FaCheckCircle,
   FaClock,
   FaCalendar,
-} from 'react-icons/fa';
+} from "react-icons/fa";
 
 export default function Page() {
   return (
@@ -73,9 +73,7 @@ export default function Page() {
 
           {/* Frequência */}
           <div className="relative rounded-2xl bg-white p-5 shadow-md">
-            <h4 className="text-sm text-gray-500">
-              Frequência Geral
-            </h4>
+            <h4 className="text-sm text-gray-500">Frequência Geral</h4>
 
             <div className="mt-2 text-3xl font-semibold">92%</div>
 
@@ -90,9 +88,7 @@ export default function Page() {
 
           {/* Próximo Evento */}
           <div className="relative rounded-2xl bg-white p-5 shadow-md">
-            <h4 className="text-sm text-gray-500">
-              Próximo Evento
-            </h4>
+            <h4 className="text-sm text-gray-500">Próximo Evento</h4>
 
             <div className="mt-2 text-2xl font-semibold">
               Trabalho de História
@@ -113,14 +109,9 @@ export default function Page() {
           {/* ESQUERDA */}
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xl font-semibold">
-                Últimas Avaliações
-              </h3>
+              <h3 className="text-xl font-semibold">Últimas Avaliações</h3>
 
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline"
-              >
+              <a href="#" className="text-sm text-blue-600 hover:underline">
                 Ver todas as notas
               </a>
             </div>
@@ -129,52 +120,38 @@ export default function Page() {
               {/* Item 1 */}
               <div className="flex items-center justify-between rounded-2xl border-l-[5px] border-green-600 bg-white p-4 shadow-md">
                 <div>
-                  <strong className="block">
-                    Prova Bimestral
-                  </strong>
+                  <strong className="block">Prova Bimestral</strong>
 
                   <small className="text-gray-500">
                     Matemática • 15/03/2026
                   </small>
                 </div>
 
-                <div className="font-semibold text-green-600">
-                  8.5 / 10
-                </div>
+                <div className="font-semibold text-green-600">8.5 / 10</div>
               </div>
 
               {/* Item 2 */}
               <div className="flex items-center justify-between rounded-2xl border-l-[5px] border-green-600 bg-white p-4 shadow-md">
                 <div>
-                  <strong className="block">
-                    Prova Bimestral
-                  </strong>
+                  <strong className="block">Prova Bimestral</strong>
 
                   <small className="text-gray-500">
                     Geografia • 18/03/2026
                   </small>
                 </div>
 
-                <div className="font-semibold text-green-600">
-                  7.0 / 10
-                </div>
+                <div className="font-semibold text-green-600">7.0 / 10</div>
               </div>
 
               {/* Item 3 */}
               <div className="flex items-center justify-between rounded-2xl border-l-[5px] border-red-500 bg-white p-4 shadow-md">
                 <div>
-                  <strong className="block">
-                    Prova Bimestral
-                  </strong>
+                  <strong className="block">Prova Bimestral</strong>
 
-                  <small className="text-gray-500">
-                    História • 22/03/2026
-                  </small>
+                  <small className="text-gray-500">História • 22/03/2026</small>
                 </div>
 
-                <div className="font-semibold text-red-500">
-                  6.5 / 10
-                </div>
+                <div className="font-semibold text-red-500">6.5 / 10</div>
               </div>
             </div>
           </div>
@@ -182,14 +159,9 @@ export default function Page() {
           {/* DIREITA */}
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-xl font-semibold">
-                Agenda
-              </h3>
+              <h3 className="text-xl font-semibold">Agenda</h3>
 
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:underline"
-              >
+              <a href="#" className="text-sm text-blue-600 hover:underline">
                 Ver calendário
               </a>
             </div>

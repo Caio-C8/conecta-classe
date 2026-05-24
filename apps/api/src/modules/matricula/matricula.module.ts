@@ -1,9 +1,10 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MatriculaService } from "./matricula.service";
 import { MatriculaRepository } from "./matricula.repository";
+import { RendimentoModule } from "../rendimento/rendimento.module";
 
 @Module({
-  imports: [],
+  imports: [forwardRef(() => RendimentoModule)],
   providers: [MatriculaService, MatriculaRepository],
   controllers: [],
   exports: [MatriculaService, MatriculaRepository],

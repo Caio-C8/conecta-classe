@@ -132,6 +132,21 @@ export class MatriculaRepository {
     });
   }
 
+  async findMatriculaPorAlunoETurma(
+    alunoId: number,
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.matricula.findFirst({
+      where: {
+        aluno_id: alunoId,
+        turma_id: turmaId,
+      },
+    });
+  }
+
   async findMatriculaAtivaPorAlunoETurma(
     alunoId: number,
     turmaId: number,
@@ -166,24 +181,59 @@ export class MatriculaRepository {
   }
 
   async transferirMatriculaERendimentos(
-    matriculaId: number,
+    id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const prismaClient = tx || this.prisma;
 
     await prismaClient.matricula.update({
       where: {
-        id: matriculaId,
+        id: id,
       },
       data: {
         status: StatusMatricula.TRANSFERIDO,
         rendimentos_disciplinas: {
           updateMany: {
-            where: { matricula_id: matriculaId },
+            where: { matricula_id: id },
             data: { situacao: SituacaoRendimento.TRANSFERIDO },
           },
         },
       },
     });
+  }
+
+  async reativarMatriculaERendimentos(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula> {
+    const prismaClient = tx || this.prisma;
+
+    const matricula = await prismaClient.matricula.update({
+      where: {
+        id,
+      },
+      data: {
+        status: StatusMatricula.CURSANDO,
+        rendimentos_disciplinas: {
+          updateMany: {
+            where: { matricula_id: id },
+            data: { situacao: SituacaoRendimento.CURSANDO },
+          },
+        },
+      },
+      include: {
+        rendimentos_disciplinas: true,
+      },
+    });
+
+    return {
+      ...matricula,
+      rendimentos_disciplinas: matricula.rendimentos_disciplinas.map(
+        (rendimento) => ({
+          ...rendimento,
+          nota_total: rendimento.nota_total.toNumber(),
+        }),
+      ),
+    };
   }
 }

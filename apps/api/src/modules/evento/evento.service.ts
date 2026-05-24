@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { EventoRepository } from "./evento.repository";
 import { MatriculaService } from "../matricula/matricula.service";
 import { Evento, NotaEvento } from "@repo/types";
@@ -8,6 +13,7 @@ import { Prisma } from "@repo/database";
 export class EventoService {
   constructor(
     private readonly eventoRepository: EventoRepository,
+    @Inject(forwardRef(() => MatriculaService))
     private readonly matriculaService: MatriculaService,
   ) {}
 

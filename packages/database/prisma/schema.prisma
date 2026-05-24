@@ -252,5 +252,6 @@ model RendimentoDisciplina {
   matricula  Matricula  @relation(fields: [matricula_id], references: [id], map: "fk_rendimento_disciplina_matricula")
   disciplina Disciplina @relation(fields: [disciplina_id], references: [id], map: "fk_rendimento_disciplina_disciplina")
 
+  @@unique([matricula_id, disciplina_id])
   @@map("rendimentos_disciplinas")
 }

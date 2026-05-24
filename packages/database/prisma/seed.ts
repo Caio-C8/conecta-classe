@@ -4,6 +4,10 @@ import * as bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE usuarios, administradores, professores, alunos, disciplinas, turmas, professores_turmas, matriculas, aulas, frequencias, eventos, notas_eventos, rendimentos_disciplinas RESTART IDENTITY CASCADE;
+  `);
+
   const administrador = {
     usuario: "adm",
     senha: await bcrypt.hash("Senha123@", 10),

@@ -55,6 +55,10 @@ export class DisciplinaService {
     };
   }
 
+  async getPorId(id: number): Promise<Disciplina | null> {
+    return await this.disciplinaRepository.findDisciplinaPorId(id);
+  }
+
   async softDelete(id: number): Promise<Disciplina> {
     const disciplina = await this.disciplinaRepository.findDisciplinaPorId(id);
 

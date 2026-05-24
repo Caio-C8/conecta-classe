@@ -212,6 +212,46 @@ export class UsuarioRepository {
     });
   }
 
+  async getProfessorPorId(
+    professorId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Usuario | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.usuario.findFirst({
+      where: {
+        professor: {
+          id: professorId,
+        },
+      },
+      include: {
+        administrador: true,
+        aluno: true,
+        professor: true,
+      },
+    });
+  }
+
+  async getAlunoPorId(
+    alunoId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Usuario | null> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.usuario.findFirst({
+      where: {
+        aluno: {
+          id: alunoId,
+        },
+      },
+      include: {
+        administrador: true,
+        aluno: true,
+        professor: true,
+      },
+    });
+  }
+
   async softDelete(id: number): Promise<Usuario> {
     return await this.prisma.usuario.update({
       where: { id },

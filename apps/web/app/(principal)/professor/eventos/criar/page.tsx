@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import React, { useState } from "react";
 import styles from "./evento.module.css";
 
@@ -45,38 +44,6 @@ export default function CriarEvento() {
 
   return (
     <div className={styles.container}>
-      {/* HEADER / NAVBAR */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <div className={styles.logoWrapper}>
-            <div className={styles.logoIcon}>C</div>
-            <span className={styles.logoText}>Conecta Classe</span>
-          </div>
-          <nav className={styles.nav}>
-            <Link href="#" className={styles.navLink}>Painel Geral</Link>
-            <Link href="/professorChamada" className={styles.navLink}>Frequência</Link>
-            <Link href="/professorEvento" className={styles.navLink}>Criar Evento</Link>
-            <Link href="/professorGerenciar" className={styles.navLink}>Gerenciar Eventos</Link>
-          </nav>
-        </div>
-        <button className={styles.exitButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className={styles.exitIcon}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M19.5 12l-3-3m0 0l-3 3m3-3H9"
-            />
-          </svg>
-        </button>
-      </header>
-
       {/* CONTEÚDO PRINCIPAL */}
       <main className={styles.main}>
         {/* Topo: Título e Seletor de Turma */}
@@ -148,7 +115,10 @@ export default function CriarEvento() {
           </div>
 
           {/* Linha 3: Checkbox Vale Nota e Valor Atividade */}
-          <div className={styles.checkboxGroup} onClick={() => setValeNota(!valeNota)}>
+          <div
+            className={styles.checkboxGroup}
+            onClick={() => setValeNota(!valeNota)}
+          >
             <input
               type="checkbox"
               checked={valeNota}

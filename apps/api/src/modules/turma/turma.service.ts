@@ -20,6 +20,8 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 import { MatriculaService } from "../matricula/matricula.service";
 import { FrequenciaService } from "../frequencia/frequencia.service";
 import { RendimentoService } from "../rendimento/rendimento.service";
+import { UsuarioService } from "../usuario/usuario.service";
+import { DisciplinaService } from "../disciplina/disciplina.service";
 
 @Injectable()
 export class TurmaService {
@@ -29,6 +31,8 @@ export class TurmaService {
     private readonly matriculaService: MatriculaService,
     private readonly frequenciaService: FrequenciaService,
     private readonly rendimentoService: RendimentoService,
+    private readonly usuarioService: UsuarioService,
+    private readonly disciplinaService: DisciplinaService,
   ) {}
 
   async create(dados: CreateTurmaInput): Promise<Turma> {
@@ -257,6 +261,22 @@ export class TurmaService {
     id: number,
     dados: VincularEDesvincularProfessorInput,
   ): Promise<Turma | null> {
+    const professor = await this.usuarioService.getProfessorPorId(
+      dados.professorId,
+    );
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const disciplina = await this.disciplinaService.getPorId(
+      dados.disciplinaId,
+    );
+
+    if (!disciplina) {
+      throw new NotFoundException("Disciplina não encontrada.");
+    }
+
     const turma = await this.turmaRepository.findTurmaPorId(id);
 
     if (!turma) {
@@ -287,17 +307,34 @@ export class TurmaService {
       );
     }
 
-    return await this.turmaRepository.vincularProfessor(
-      id,
-      dados.professorId,
-      dados.disciplinaId,
-    );
+    return await this.prisma.$transaction(async (tx) => {
+      const turmaComVinculos = await this.turmaRepository.vincularProfessor(
+        id,
+        dados.professorId,
+        dados.disciplinaId,
+        tx,
+      );
+
+      await this.matriculaService.sincronizarNovaDisciplinaParaAlunos(
+        id,
+        dados.disciplinaId,
+        tx,
+      );
+
+      return turmaComVinculos;
+    });
   }
 
   async vincularAluno(
     id: number,
     dados: VincularEDesvincularAlunoInput,
   ): Promise<Turma | null> {
+    const aluno = await this.usuarioService.getAlunoPorId(dados.alunoId);
+
+    if (!aluno) {
+      throw new NotFoundException("Aluno não encontrado.");
+    }
+
     const turma = await this.turmaRepository.findTurmaPorId(id);
 
     if (!turma) {
@@ -306,13 +343,22 @@ export class TurmaService {
 
     if (turma.deleted_at) {
       throw new BadRequestException(
-        "Não é possível vincular professores a uma turma inativa.",
+        "Não é possível vincular alunos a uma turma inativa.",
       );
     }
 
     if (turma.situacao === SituacaoTurma.ENCERRADA) {
       throw new BadRequestException(
-        "Não é possível vincular professores a uma turma encerrada.",
+        "Não é possível vincular alunos a uma turma encerrada.",
+      );
+    }
+
+    const matricularEmCurso =
+      await this.matriculaService.getMatriculasEmCursoPorTurma(id);
+
+    if (matricularEmCurso.length >= 30) {
+      throw new BadRequestException(
+        "Não é mais possível vincular alunos a esta turma. Limite de alunos atingido.",
       );
     }
 
@@ -338,6 +384,22 @@ export class TurmaService {
     turmaId: number,
     dados: VincularEDesvincularProfessorInput,
   ): Promise<void> {
+    const professor = await this.usuarioService.getProfessorPorId(
+      dados.professorId,
+    );
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const disciplina = await this.disciplinaService.getPorId(
+      dados.disciplinaId,
+    );
+
+    if (!disciplina) {
+      throw new NotFoundException("Disciplina não encontrada.");
+    }
+
     const turma = await this.turmaRepository.findTurmaPorId(turmaId);
 
     if (!turma) {
@@ -379,6 +441,12 @@ export class TurmaService {
     turmaId: number,
     dados: VincularEDesvincularAlunoInput,
   ): Promise<void> {
+    const aluno = await this.usuarioService.getAlunoPorId(dados.alunoId);
+
+    if (!aluno) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
     const turma = await this.turmaRepository.findTurmaPorId(turmaId);
 
     if (!turma) {

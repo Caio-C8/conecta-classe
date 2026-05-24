@@ -27,12 +27,19 @@ export const LoginSchema = z.object({
 
 export const TrocarSenhaSchema = z
   .object({
+    senha_atual: z
+      .string({
+        required_error: "Preencha o campo senha atual.",
+        invalid_type_error: "Senha atual inválida.",
+      })
+      .min(6, { message: "A senha atual deve ter pelo menos 6 caracteres." }),
+
     nova_senha: z
       .string({
         required_error: "Preencha o campo nova senha.",
-        invalid_type_error: "Senha inválida.",
+        invalid_type_error: "Nova senha inválida.",
       })
-      .min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
+      .min(6, { message: "A nova senha deve ter pelo menos 6 caracteres." }),
 
     confirmar_senha: z
       .string({

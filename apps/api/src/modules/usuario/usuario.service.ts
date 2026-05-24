@@ -114,10 +114,24 @@ export class UsuarioService {
   }
 
   async getUsuarioPorId(
-    usuarioId: number,
+    id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
-    return await this.usuarioRepository.getUsuarioPorId(usuarioId, tx);
+    return await this.usuarioRepository.getUsuarioPorId(id, tx);
+  }
+
+  async getProfessorPorId(
+    professorId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Usuario | null> {
+    return await this.usuarioRepository.getProfessorPorId(professorId, tx);
+  }
+
+  async getAlunoPorId(
+    alunoId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Usuario | null> {
+    return await this.usuarioRepository.getAlunoPorId(alunoId, tx);
   }
 
   async softDelte(id: number): Promise<UsuarioSemSenha> {

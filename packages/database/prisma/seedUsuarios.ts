@@ -6,24 +6,9 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🧹 Limpando dados anteriores...");
 
-  // Tabelas dependentes primeiro
-  await prisma.notaEvento.deleteMany();
-  await prisma.frequencia.deleteMany();
-  await prisma.rendimentoDisciplina.deleteMany();
-
-  await prisma.evento.deleteMany();
-  await prisma.aula.deleteMany();
-  await prisma.matricula.deleteMany();
-  await prisma.professorTurma.deleteMany();
-
-  await prisma.turma.deleteMany();
-  await prisma.disciplina.deleteMany();
-
-  // Limpando os perfis específicos e usuários
-  await prisma.aluno.deleteMany();
-  await prisma.professor.deleteMany();
-  await prisma.administrador.deleteMany();
-  await prisma.usuario.deleteMany();
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE usuarios, administradores, professores, alunos, disciplinas, turmas, professores_turmas, matriculas, aulas, frequencias, eventos, notas_eventos, rendimentos_disciplinas RESTART IDENTITY CASCADE;
+  `);
 
   console.log("🌱 Iniciando o seed de Usuários (Múltiplos Perfis)...");
 

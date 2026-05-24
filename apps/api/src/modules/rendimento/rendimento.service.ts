@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { RendimentoRepository } from "./rendimento.repository";
 import { MatriculaService } from "../matricula/matricula.service";
 import { EventoService } from "../evento/evento.service";
@@ -13,9 +18,23 @@ import { Prisma } from "@repo/database";
 export class RendimentoService {
   constructor(
     private readonly rendimentoRepository: RendimentoRepository,
+    @Inject(forwardRef(() => MatriculaService))
     private readonly matriculaService: MatriculaService,
+    @Inject(forwardRef(() => EventoService))
     private readonly eventoService: EventoService,
   ) {}
+
+  async createRendimento(
+    matriculaId: number,
+    disciplinaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<RendimentoDisciplina> {
+    return await this.rendimentoRepository.createRendimento(
+      matriculaId,
+      disciplinaId,
+      tx,
+    );
+  }
 
   async getRendimentosPorAluno(
     usuarioId: number,

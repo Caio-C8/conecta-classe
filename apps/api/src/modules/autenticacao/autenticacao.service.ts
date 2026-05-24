@@ -48,14 +48,23 @@ export class AutenticacaoService {
     id: number,
     dados: TrocarSenhaInput,
   ): Promise<RespostaLogin> {
-    if (dados.nova_senha !== dados.confirmar_senha) {
-      throw new UnauthorizedException("As senhas não coincidem.");
-    }
-
     const usuario = await this.usuarioRepository.getUsuarioPorId(id);
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário não encontrado.");
+    }
+
+    if (dados.nova_senha !== dados.confirmar_senha) {
+      throw new UnauthorizedException("As senhas não coincidem.");
+    }
+
+    const isSenhaAtualCorreta = await bcrypt.compare(
+      dados.senha_atual,
+      usuario.senha,
+    );
+
+    if (!isSenhaAtualCorreta) {
+      throw new UnauthorizedException("A senha atual não coincidem.");
     }
 
     if (!usuario.trocar_senha) {

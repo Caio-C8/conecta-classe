@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, LogOut } from "lucide-react"; // Assumindo que você usa lucide-react baseado no seu código
+import { LogOut } from "lucide-react"; // Assumindo que você usa lucide-react baseado no seu código
+import Logo from "@/assets/logo.svg";
+import Image from "next/image";
 
 // 1. Definimos os links disponíveis para cada módulo
 const navConfig = {
@@ -38,9 +40,7 @@ export default function Navbar() {
     <header className="bg-[#F5F5F6]/70 backdrop-blur-md border-b border-[#CCCCCC] px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
       <div className="flex items-center gap-14">
         <Link href={`/${currentModule}`} className="flex items-center gap-2">
-          <div className="bg-black text-[#FAFAFA] w-10 h-10 flex items-center justify-center rounded-lg">
-            <GraduationCap size={30} />
-          </div>
+          <Image src={Logo} alt="Logo Conecta Classe" width={40} height={40} />
           <span className="text-xl font-semibold">Conecta Classe</span>
         </Link>
 

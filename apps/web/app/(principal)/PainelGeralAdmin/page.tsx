@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   FaGraduationCap,
@@ -8,7 +8,7 @@ import {
   FaThLarge,
   FaBook,
   FaPlus,
-} from 'react-icons/fa';
+} from "react-icons/fa";
 
 export default function Page() {
   return (
@@ -59,9 +59,7 @@ export default function Page() {
       <main className="px-6 py-8 md:px-14">
         {/* TOP */}
         <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <h1 className="text-3xl font-medium">
-            Olá, Joana Oliveira
-          </h1>
+          <h1 className="text-3xl font-medium">Olá, Joana Oliveira</h1>
 
           <select className="rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none transition focus:border-blue-500">
             <option>2025</option>
@@ -77,18 +75,11 @@ export default function Page() {
               <FaUser />
             </div>
 
-            <h3 className="mb-2 text-sm text-gray-500">
-              Alunos Cursando
-            </h3>
+            <h3 className="mb-2 text-sm text-gray-500">Alunos Cursando</h3>
 
-            <div className="mb-2 text-3xl font-semibold">
-              104
-            </div>
+            <div className="mb-2 text-3xl font-semibold">104</div>
 
-            <a
-              href="#"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <a href="#" className="text-sm text-blue-600 hover:underline">
               Ver detalhes
             </a>
           </div>
@@ -99,18 +90,11 @@ export default function Page() {
               <FaUserTie />
             </div>
 
-            <h3 className="mb-2 text-sm text-gray-500">
-              Professores Ativos
-            </h3>
+            <h3 className="mb-2 text-sm text-gray-500">Professores Ativos</h3>
 
-            <div className="mb-2 text-3xl font-semibold">
-              18
-            </div>
+            <div className="mb-2 text-3xl font-semibold">18</div>
 
-            <a
-              href="#"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <a href="#" className="text-sm text-blue-600 hover:underline">
               Ver detalhes
             </a>
           </div>
@@ -121,18 +105,11 @@ export default function Page() {
               <FaThLarge />
             </div>
 
-            <h3 className="mb-2 text-sm text-gray-500">
-              Turmas Em Andamento
-            </h3>
+            <h3 className="mb-2 text-sm text-gray-500">Turmas Em Andamento</h3>
 
-            <div className="mb-2 text-3xl font-semibold">
-              4
-            </div>
+            <div className="mb-2 text-3xl font-semibold">4</div>
 
-            <a
-              href="#"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <a href="#" className="text-sm text-blue-600 hover:underline">
               Ver detalhes
             </a>
           </div>
@@ -147,14 +124,9 @@ export default function Page() {
               Disciplinas Cadastradas
             </h3>
 
-            <div className="mb-2 text-3xl font-semibold">
-              20
-            </div>
+            <div className="mb-2 text-3xl font-semibold">20</div>
 
-            <a
-              href="#"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <a href="#" className="text-sm text-blue-600 hover:underline">
               Ver detalhes
             </a>
           </div>
@@ -162,9 +134,7 @@ export default function Page() {
 
         {/* SHORTCUTS */}
         <section className="mt-12">
-          <h2 className="mb-5 text-2xl font-medium">
-            Atalhos Rápidos
-          </h2>
+          <h2 className="mb-5 text-2xl font-medium">Atalhos Rápidos</h2>
 
           <div className="flex flex-col gap-4 md:flex-row">
             <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">

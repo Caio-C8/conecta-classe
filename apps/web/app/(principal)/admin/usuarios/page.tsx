@@ -202,7 +202,7 @@ export default function AdminUsersPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F4F4F6] text-[#1F2937] font-sans antialiased">
+    <div>
       <main className="max-w-[1200px] mx-auto px-6 py-10">
         <div className="animate-in fade-in duration-300">
           <div className="flex justify-between items-center mb-8">

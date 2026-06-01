@@ -1,13 +1,10 @@
 "use client";
 
-import React from "react";
 import { useTrocarSenha } from "@/hooks/use-autenticacao";
 import { TrocarSenhaInput, TrocarSenhaSchema } from "@repo/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setApiFormErrors } from "@/lib/utils-form"; // Ajuste o caminho conforme onde você salvou a util
-
-// Importações dos componentes
+import { setApiFormErrors } from "@/lib/utils-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,

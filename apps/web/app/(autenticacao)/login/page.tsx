@@ -2,23 +2,22 @@
 
 import React, { useState } from "react";
 import styles from "./login.module.css";
-import { useLogin } from "@/hooks/use-autenticacao"; 
-
-type Perfil = "Aluno" | "Professor" | "Administrador";
+import { useLogin } from "@/hooks/use-autenticacao";
+import { Papel } from "@repo/types";
 
 export default function Login() {
-  const [perfil, setPerfil] = useState<Perfil>("Aluno");
+  const [papel, setPapel] = useState<Papel>(Papel.ALUNO);
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
 
   const { mutate, isPending, error, isError } = useLogin();
 
   const handleEntrar = (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (!usuario || !senha) return;
 
-    mutate({ usuario, senha });
+    mutate({ usuario, senha, papel });
   };
 
   const getErrorMessage = (error: any) => {
@@ -28,7 +27,7 @@ export default function Login() {
     return error.message || "Erro inesperado ao realizar o login.";
   };
 
-  const perfis: Perfil[] = ["Aluno", "Professor", "Administrador"];
+  const papeis: Papel[] = [Papel.ALUNO, Papel.PROFESSOR, Papel.ADMINISTRADOR];
 
   return (
     <div className={styles.pageWrapper}>
@@ -42,16 +41,17 @@ export default function Login() {
           </p>
 
           <div className={styles.perfilSelector}>
-            {perfis.map((p) => (
+            {papeis.map((p) => (
               <button
                 key={p}
                 type="button"
-                onClick={() => setPerfil(p)}
+                onClick={() => setPapel(p)}
                 className={`${styles.perfilButton} ${
-                  perfil === p ? styles.perfilButtonActive : ""
+                  papel === p ? styles.perfilButtonActive : ""
                 }`}
               >
-                {p}
+                {p.toLowerCase().charAt(0).toUpperCase() +
+                  p.toLowerCase().slice(1)}
               </button>
             ))}
           </div>

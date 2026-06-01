@@ -23,6 +23,11 @@ export const LoginSchema = z.object({
       invalid_type_error: "Senha inválida.",
     })
     .min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
+
+  papel: z.nativeEnum(Papel, {
+    required_error: "Selecione o seu papel.",
+    invalid_type_error: "Papel inválido.",
+  }),
 });
 
 export const TrocarSenhaSchema = z

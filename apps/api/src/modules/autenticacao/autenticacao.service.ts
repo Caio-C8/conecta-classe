@@ -26,6 +26,10 @@ export class AutenticacaoService {
       throw new UnauthorizedException("Usuário ou senha incorretos.");
     }
 
+    if (usuario.papel !== dados.papel) {
+      throw new UnauthorizedException("Não existe um usuário com este perfil.");
+    }
+
     const payload = {
       sub: usuario.id,
       usuario: usuario.usuario,

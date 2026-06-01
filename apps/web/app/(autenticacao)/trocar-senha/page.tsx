@@ -1,8 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import styles from "./trocar-senha.module.css";
 import { useTrocarSenha } from "@/hooks/use-autenticacao";
+
+// Importações dos componentes do Shadcn e o novo PasswordInput
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input"; // <-- Ajuste o caminho se necessário
 
 export default function AlterarSenha() {
   const [senhaAtual, setSenhaAtual] = useState("");
@@ -23,7 +34,11 @@ export default function AlterarSenha() {
       return;
     }
 
-    mutate({ senha_atual: senhaAtual, nova_senha: novaSenha, confirmar_senha: confirmarSenha });
+    mutate({
+      senha_atual: senhaAtual,
+      nova_senha: novaSenha,
+      confirmar_senha: confirmarSenha,
+    });
   };
 
   const getErrorMessage = (error: any) => {
@@ -34,74 +49,77 @@ export default function AlterarSenha() {
   };
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.background}>
-        <div className={styles.card}>
-          <h1 className={styles.title}>Altere sua senha</h1>
-          <p className={styles.subtitle}>
-            Preencha os campos com sua nova senha
-            <br />
-            para ela ser alterada
-          </p>
+    <div className="flex flex-col min-h-[100dvh] bg-background">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
+        <Card className="w-full max-w-[540px] shadow-xl border-none">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-2xl font-bold">
+              Altere sua senha
+            </CardTitle>
+            <CardDescription className="text-sm mt-1.5">
+              Preencha os campos com sua nova senha
+              <br className="hidden sm:block" /> para ela ser alterada
+            </CardDescription>
+          </CardHeader>
 
-          <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-            {(validationError || isError) && (
-              <div className={styles.errorBox}>
-                {validationError ?? getErrorMessage(error)}
-              </div>
-            )}
+          <CardContent>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {(validationError || isError) && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg text-sm text-center">
+                  {validationError ?? getErrorMessage(error)}
+                </div>
+              )}
 
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Senha atual:</label>
-              <input
-                type="password"
-                placeholder="Sua senha atual"
-                value={senhaAtual}
-                onChange={(e) => setSenhaAtual(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
+              <Field>
+                <FieldLabel htmlFor="senhaAtual">Senha atual:</FieldLabel>
+                <PasswordInput
+                  id="senhaAtual"
+                  placeholder="Sua senha atual"
+                  value={senhaAtual}
+                  onChange={(e) => setSenhaAtual(e.target.value)}
+                  required
+                  className="bg-card border-border text-[16px] sm:text-sm"
+                />
+              </Field>
 
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Nova senha:</label>
-              <input
-                type="password"
-                placeholder="Sua nova senha"
-                value={novaSenha}
-                onChange={(e) => setNovaSenha(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
+              <Field>
+                <FieldLabel htmlFor="novaSenha">Nova senha:</FieldLabel>
+                <PasswordInput
+                  id="novaSenha"
+                  placeholder="Sua nova senha"
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  required
+                  className="bg-card border-border text-[16px] sm:text-sm"
+                />
+              </Field>
 
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Confirmar senha:</label>
-              <input
-                type="password"
-                placeholder="Digite novamente sua senha"
-                value={confirmarSenha}
-                onChange={(e) => setConfirmarSenha(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
+              <Field>
+                <FieldLabel htmlFor="confirmarSenha">
+                  Confirmar senha:
+                </FieldLabel>
+                <PasswordInput
+                  id="confirmarSenha"
+                  placeholder="Digite novamente sua senha"
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
+                  required
+                  className="bg-card border-border text-[16px] sm:text-sm"
+                />
+              </Field>
 
-            <hr className={styles.divider} />
+              <hr className="my-2 border-t border-border" />
 
-            <button
-              type="submit"
-              disabled={isPending}
-              className={styles.submitButton}
-              style={{
-                opacity: isPending ? 0.7 : 1,
-                cursor: isPending ? "not-allowed" : "pointer",
-              }}
-            >
-              {isPending ? "Alterando..." : "Alterar senha e Entrar"}
-            </button>
-          </form>
-        </div>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full font-semibold text-[0.9rem] sm:text-base py-5 sm:py-2"
+              >
+                {isPending ? "Alterando..." : "Alterar senha e Entrar"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function Login() {
   const [papel, setPapel] = useState<Papel>(Papel.ALUNO);
@@ -106,14 +107,12 @@ export default function Login() {
 
               <Field>
                 <FieldLabel htmlFor="senha">Senha:</FieldLabel>
-                <Input
+                <PasswordInput
                   id="senha"
-                  type="password"
                   placeholder="Sua senha"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   required
-                  // text-[16px] evita o zoom automático no iPhone
                   className="bg-card border-border text-[16px] sm:text-sm"
                 />
               </Field>

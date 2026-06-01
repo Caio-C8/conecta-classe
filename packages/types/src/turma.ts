@@ -24,6 +24,10 @@ export interface Turma {
   eventos?: Evento[];
 }
 
+export interface ResumoTurmas {
+  quantidade: number;
+}
+
 export const CreateTurmaSchema = z.object({
   identificacao: z.string({
     required_error: "Preencha o campo identificação.",

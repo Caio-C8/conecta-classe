@@ -10,9 +10,7 @@ export default function HomeAdmin() {
         <h1 className="text-3xl font-medium">Olá, Joana Oliveira</h1>
       </section>
 
-      {/* CARDS */}
       <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {/* Card 1 */}
         <div className="relative rounded-2xl bg-white p-5 shadow-md">
           <div className="absolute right-5 top-5 text-gray-500">
             <FaUser />
@@ -75,25 +73,26 @@ export default function HomeAdmin() {
         </div>
       </section>
 
-      {/* SHORTCUTS */}
       <section className="mt-12">
         <h2 className="mb-5 text-2xl font-medium">Atalhos Rápidos</h2>
 
-        <div className="flex flex-col gap-4 md:flex-row">
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">
-            <FaPlus />
-            Novo usuário
-          </button>
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col gap-8 md:flex-row">
+            <button className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] px-6 py-3 text-white transition hover:opacity-90">
+              <FaPlus />
+              Novo usuário
+            </button>
 
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">
-            <FaPlus />
-            Nova turma
-          </button>
+            <button className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] px-6 py-3 text-white transition hover:opacity-90">
+              <FaPlus />
+              Nova turma
+            </button>
 
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">
-            <FaPlus />
-            Nova disciplina
-          </button>
+            <button className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] px-6 py-3 text-white transition hover:opacity-90">
+              <FaPlus />
+              Nova disciplina
+            </button>
+          </div>
         </div>
       </section>
     </>

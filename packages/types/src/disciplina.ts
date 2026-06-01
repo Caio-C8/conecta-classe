@@ -20,6 +20,10 @@ export interface Disciplina {
   rendimentos?: RendimentoDisciplina[];
 }
 
+export interface ResumoDisciplinas {
+  quantidade: number;
+}
+
 export const CreateDisciplinaSchema = z.object({
   nome: z.string({
     required_error: "Preencha o campo nome.",

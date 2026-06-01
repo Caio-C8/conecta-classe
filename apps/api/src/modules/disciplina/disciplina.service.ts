@@ -9,6 +9,7 @@ import {
   Disciplina,
   GetDisciplinasInput,
   Paginacao,
+  ResumoDisciplinas,
   UpdateDisciplinaInput,
 } from "@repo/types";
 import { Prisma } from "@repo/database";
@@ -57,6 +58,12 @@ export class DisciplinaService {
 
   async getPorId(id: number): Promise<Disciplina | null> {
     return await this.disciplinaRepository.findDisciplinaPorId(id);
+  }
+
+  async countAllDisciplinasAtivas(): Promise<ResumoDisciplinas> {
+    const quantidade =
+      await this.disciplinaRepository.countAllDisciplinasAtivas();
+    return { quantidade };
   }
 
   async softDelete(id: number): Promise<Disciplina> {

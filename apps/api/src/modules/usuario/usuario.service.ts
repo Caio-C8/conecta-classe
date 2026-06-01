@@ -9,6 +9,8 @@ import {
   GetUsuariosInput,
   Paginacao,
   Papel,
+  ResumoAlunos,
+  ResumoProfessores,
   UpdateUsuarioInput,
   Usuario,
   UsuarioSemSenha,
@@ -132,6 +134,17 @@ export class UsuarioService {
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
     return await this.usuarioRepository.getAlunoPorId(alunoId, tx);
+  }
+
+  async countAllAlunosAtivosComMatriculaCursando(): Promise<ResumoAlunos> {
+    const quantidade =
+      await this.usuarioRepository.countAllAlunosAtivosComMatriculaCursando();
+    return { quantidade };
+  }
+
+  async countAllProfessoresAtivos(): Promise<ResumoProfessores> {
+    const quantidade = await this.usuarioRepository.countAllProfessoresAtivos();
+    return { quantidade };
   }
 
   async softDelte(id: number): Promise<UsuarioSemSenha> {

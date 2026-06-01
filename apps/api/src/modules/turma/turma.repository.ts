@@ -182,6 +182,15 @@ export class TurmaRepository {
     return [...new Set(vinculos.map((v) => v.disciplina_id))];
   }
 
+  async countAllTurmasEmAndamentoAtivas(): Promise<number> {
+    return await this.prisma.turma.count({
+      where: {
+        situacao: SituacaoTurma.EM_ANDAMENTO,
+        deleted_at: null,
+      },
+    });
+  }
+
   async updateTurma(id: number, dados: UpdateTurmaInput): Promise<Turma> {
     const data: Prisma.TurmaUpdateInput = {
       identificacao: dados.identificacao ? dados.identificacao : undefined,

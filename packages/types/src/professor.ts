@@ -12,3 +12,7 @@ export interface Professor {
   aulas?: Aula[];
   eventos?: Evento[];
 }
+
+export interface ResumoProfessores {
+  quantidade: number;
+}

@@ -9,6 +9,7 @@ import {
   Status,
   UpdateUsuarioInput,
   Usuario,
+  StatusMatricula,
 } from "@repo/types";
 import { normalizarString } from "@repo/utils";
 import { PrismaService } from "src/common/prisma/prisma.service";
@@ -248,6 +249,31 @@ export class UsuarioRepository {
         administrador: true,
         aluno: true,
         professor: true,
+      },
+    });
+  }
+
+  async countAllAlunosAtivosComMatriculaCursando(): Promise<number> {
+    return await this.prisma.usuario.count({
+      where: {
+        papel: Papel.ALUNO,
+        deleted_at: null,
+        aluno: {
+          matriculas: {
+            some: {
+              status: StatusMatricula.CURSANDO,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async countAllProfessoresAtivos(): Promise<number> {
+    return await this.prisma.usuario.count({
+      where: {
+        papel: Papel.PROFESSOR,
+        deleted_at: null,
       },
     });
   }

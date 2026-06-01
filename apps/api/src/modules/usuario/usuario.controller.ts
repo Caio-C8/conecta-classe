@@ -12,7 +12,13 @@ import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decora
 import { CreateUsuarioDto } from "./dtos/create-usuario.dto";
 import { UsuarioService } from "./usuario.service";
 import { Papeis } from "src/common/decorators/papeis.decorator";
-import { Paginacao, Papel, UsuarioSemSenha } from "@repo/types";
+import {
+  Paginacao,
+  Papel,
+  ResumoAlunos,
+  ResumoProfessores,
+  UsuarioSemSenha,
+} from "@repo/types";
 import { GetAllUsuarioDto } from "./dtos/get-all-usuarios.dto";
 import { UpdateUsuarioDto } from "./dtos/update-usuario.dto";
 
@@ -35,6 +41,18 @@ export class UsuarioController {
     @Query() params: GetAllUsuarioDto,
   ): Promise<Paginacao<UsuarioSemSenha>> {
     return await this.usuarioService.getAllUsuarios(params);
+  }
+
+  @Get("resumo/alunos")
+  @Papeis(Papel.ADMINISTRADOR)
+  async buscarResumoAlunos(): Promise<ResumoAlunos> {
+    return await this.usuarioService.countAllAlunosAtivosComMatriculaCursando();
+  }
+
+  @Get("resumo/professores")
+  @Papeis(Papel.ADMINISTRADOR)
+  async buscarResumoProfessores(): Promise<ResumoProfessores> {
+    return await this.usuarioService.countAllProfessoresAtivos();
   }
 
   @Patch("/:id")

@@ -127,6 +127,14 @@ export class DisciplinaRepository {
     });
   }
 
+  async countAllDisciplinasAtivas(): Promise<number> {
+    return await this.prisma.disciplina.count({
+      where: {
+        deleted_at: null,
+      },
+    });
+  }
+
   async softDelete(id: number): Promise<Disciplina> {
     return await this.prisma.disciplina.update({
       where: {

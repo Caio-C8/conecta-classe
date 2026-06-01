@@ -8,6 +8,7 @@ import {
   CreateTurmaInput,
   GetTurmasInput,
   Paginacao,
+  ResumoTurmas,
   SituacaoRendimento,
   SituacaoTurma,
   StatusMatricula,
@@ -55,6 +56,15 @@ export class TurmaService {
     return {
       dados,
       meta,
+    };
+  }
+
+  async countAllTurmasEmAndamentoAtivas(): Promise<ResumoTurmas> {
+    const quantidade =
+      await this.turmaRepository.countAllTurmasEmAndamentoAtivas();
+
+    return {
+      quantidade,
     };
   }
 

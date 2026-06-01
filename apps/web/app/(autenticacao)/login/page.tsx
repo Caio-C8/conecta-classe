@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./login.module.css";
-import { useLogin } from "@/hooks/use-autenticacao"; // Ajuste o caminho conforme a sua pasta de hooks
+import { useLogin } from "@/hooks/use-autenticacao"; 
 
 type Perfil = "Aluno" | "Professor" | "Administrador";
 
@@ -11,19 +11,16 @@ export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
 
-  // Injeção do hook de autenticação com React Query + Axios
   const { mutate, isPending, error, isError } = useLogin();
 
   const handleEntrar = (e: React.FormEvent) => {
-    e.preventDefault(); // Evita o recarregamento nativo da página
+    e.preventDefault(); 
 
     if (!usuario || !senha) return;
 
-    // Dispara a requisição de login para o backend
     mutate({ usuario, senha });
   };
 
-  // Função utilitária para capturar a mensagem de erro da sua instância do Axios
   const getErrorMessage = (error: any) => {
     if (error.response?.data?.mensagem) {
       return error.response.data.mensagem;
@@ -35,9 +32,7 @@ export default function Login() {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* Área cinza central */}
       <div className={styles.background}>
-        {/* Card de login */}
         <div className={styles.card}>
           <h1 className={styles.title}>Acesse sua conta</h1>
           <p className={styles.subtitle}>
@@ -46,7 +41,6 @@ export default function Login() {
             para continuar
           </p>
 
-          {/* Seletor de perfil (Mantido para preservar seu design visual) */}
           <div className={styles.perfilSelector}>
             {perfis.map((p) => (
               <button
@@ -62,9 +56,7 @@ export default function Login() {
             ))}
           </div>
 
-          {/* Formulário unificado */}
           <form onSubmit={handleEntrar} style={{ width: "100%" }}>
-            {/* Bloco visual para exibir mensagens de erro do backend */}
             {isError && (
               <div
                 style={{
@@ -82,7 +74,6 @@ export default function Login() {
               </div>
             )}
 
-            {/* Campo Usuário */}
             <div className={styles.fieldGroup}>
               <label className={styles.label}>Usuário:</label>
               <input
@@ -95,7 +86,6 @@ export default function Login() {
               />
             </div>
 
-            {/* Campo Senha */}
             <div className={styles.fieldGroup}>
               <label className={styles.label}>Senha:</label>
               <input
@@ -108,10 +98,8 @@ export default function Login() {
               />
             </div>
 
-            {/* Divisor */}
             <hr className={styles.divider} />
 
-            {/* Botão Entrar com estado de carregamento controlado */}
             <button
               type="submit"
               disabled={isPending}
@@ -125,7 +113,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Rodapé do card */}
           <hr className={styles.divider} />
           <p className={styles.footerText}>
             Caso seja seu primeiro acesso ou tenha esquecido sua senha, entre em

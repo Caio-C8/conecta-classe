@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useTrocarSenha } from "@/hooks/use-autenticacao";
+import { TrocarSenhaInput, TrocarSenhaSchema } from "@repo/types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { setApiFormErrors } from "@/lib/utils-form"; // Ajuste o caminho conforme onde você salvou a util
 
-// Importações dos componentes do Shadcn e o novo PasswordInput
+// Importações dos componentes
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,39 +17,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { PasswordInput } from "@/components/ui/password-input"; // <-- Ajuste o caminho se necessário
+import { PasswordInput } from "@/components/ui/password-input";
 
-export default function AlterarSenha() {
-  const [senhaAtual, setSenhaAtual] = useState("");
-  const [novaSenha, setNovaSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [validationError, setValidationError] = useState<string | null>(null);
+export default function AlterarSenhaPage() {
+  const { mutate, isPending } = useTrocarSenha();
 
-  const { mutate, isPending, error, isError } = useTrocarSenha();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<TrocarSenhaInput>({
+    resolver: zodResolver(TrocarSenhaSchema),
+    defaultValues: {
+      senha_atual: "",
+      nova_senha: "",
+      confirmar_senha: "",
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setValidationError(null);
-
-    if (!senhaAtual || !novaSenha || !confirmarSenha) return;
-
-    if (novaSenha !== confirmarSenha) {
-      setValidationError("A nova senha e a confirmação não coincidem.");
-      return;
-    }
-
-    mutate({
-      senha_atual: senhaAtual,
-      nova_senha: novaSenha,
-      confirmar_senha: confirmarSenha,
+  const onSubmit = (values: TrocarSenhaInput) => {
+    mutate(values, {
+      onError: (error: any) => {
+        setApiFormErrors(error, setError);
+      },
     });
-  };
-
-  const getErrorMessage = (error: any) => {
-    if (error?.response?.data?.mensagem) {
-      return error.response.data.mensagem;
-    }
-    return error?.message || "Erro inesperado ao alterar a senha.";
   };
 
   return (
@@ -63,49 +59,67 @@ export default function AlterarSenha() {
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {(validationError || isError) && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg text-sm text-center">
-                  {validationError ?? getErrorMessage(error)}
-                </div>
-              )}
-
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
               <Field>
-                <FieldLabel htmlFor="senhaAtual">Senha atual:</FieldLabel>
+                <FieldLabel htmlFor="senha_atual">Senha atual:</FieldLabel>
                 <PasswordInput
-                  id="senhaAtual"
+                  id="senha_atual"
                   placeholder="Sua senha atual"
-                  value={senhaAtual}
-                  onChange={(e) => setSenhaAtual(e.target.value)}
-                  required
-                  className="bg-card border-border text-[16px] sm:text-sm"
+                  className={`bg-card text-[16px] sm:text-sm ${
+                    errors.senha_atual
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-border"
+                  }`}
+                  {...register("senha_atual")}
                 />
+                {errors.senha_atual && (
+                  <span className="text-xs text-destructive font-medium mt-1">
+                    {errors.senha_atual.message}
+                  </span>
+                )}
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="novaSenha">Nova senha:</FieldLabel>
+                <FieldLabel htmlFor="nova_senha">Nova senha:</FieldLabel>
                 <PasswordInput
-                  id="novaSenha"
+                  id="nova_senha"
                   placeholder="Sua nova senha"
-                  value={novaSenha}
-                  onChange={(e) => setNovaSenha(e.target.value)}
-                  required
-                  className="bg-card border-border text-[16px] sm:text-sm"
+                  className={`bg-card text-[16px] sm:text-sm ${
+                    errors.nova_senha
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-border"
+                  }`}
+                  {...register("nova_senha")}
                 />
+                {errors.nova_senha && (
+                  <span className="text-xs text-destructive font-medium mt-1">
+                    {errors.nova_senha.message}
+                  </span>
+                )}
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="confirmarSenha">
+                <FieldLabel htmlFor="confirmar_senha">
                   Confirmar senha:
                 </FieldLabel>
                 <PasswordInput
-                  id="confirmarSenha"
+                  id="confirmar_senha"
                   placeholder="Digite novamente sua senha"
-                  value={confirmarSenha}
-                  onChange={(e) => setConfirmarSenha(e.target.value)}
-                  required
-                  className="bg-card border-border text-[16px] sm:text-sm"
+                  className={`bg-card text-[16px] sm:text-sm ${
+                    errors.confirmar_senha
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-border"
+                  }`}
+                  {...register("confirmar_senha")}
                 />
+                {errors.confirmar_senha && (
+                  <span className="text-xs text-destructive font-medium mt-1">
+                    {errors.confirmar_senha.message}
+                  </span>
+                )}
               </Field>
 
               <hr className="my-2 border-t border-border" />

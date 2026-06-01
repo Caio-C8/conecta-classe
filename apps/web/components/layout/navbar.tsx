@@ -1,13 +1,12 @@
-"use client"; // Necessário pois estamos usando usePathname
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react"; // Assumindo que você usa lucide-react baseado no seu código
+import { LogOut } from "lucide-react";
 import Logo from "@/assets/logo.svg";
 import Image from "next/image";
 import { useLogout } from "@/hooks/use-autenticacao";
 
-// 1. Definimos os links disponíveis para cada módulo
 const navConfig = {
   admin: [
     { label: "Painel Geral", href: "/admin" },

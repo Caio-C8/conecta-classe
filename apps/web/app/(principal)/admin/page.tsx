@@ -8,11 +8,6 @@ export default function HomeAdmin() {
       {/* TOP */}
       <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 className="text-3xl font-medium">Olá, Joana Oliveira</h1>
-
-        <select className="rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none transition focus:border-blue-500">
-          <option>2025</option>
-          <option>2024</option>
-        </select>
       </section>
 
       {/* CARDS */}

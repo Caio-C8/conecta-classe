@@ -79,6 +79,12 @@ export class TurmaService {
       throw new NotFoundException("Turma não encontrada.");
     }
 
+    if (turma.deleted_at) {
+      throw new BadRequestException(
+        "Uma turma inativa não pode ser atualizada.",
+      );
+    }
+
     return await this.turmaRepository.updateTurma(id, dados);
   }
 

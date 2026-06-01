@@ -44,6 +44,12 @@ export class DisciplinaService {
       throw new NotFoundException("Disciplina não encontrada.");
     }
 
+    if (disciplina.deleted_at) {
+      throw new BadRequestException(
+        "Uma disciplina inativa não pode ser atualizada.",
+      );
+    }
+
     return await this.disciplinaRepository.udpateDisciplina(id, dados);
   }
 

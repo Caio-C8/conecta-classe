@@ -72,6 +72,12 @@ export class UsuarioService {
       throw new NotFoundException("Usuário não encontrado.");
     }
 
+    if (usuarioParaAtualizar.deleted_at) {
+      throw new BadRequestException(
+        "Um usuário inativo não pode ser atualizado.",
+      );
+    }
+
     if (dados.usuario) {
       const usuarioExistente =
         await this.usuarioRepository.getUsuarioPorUsuario(dados.usuario);

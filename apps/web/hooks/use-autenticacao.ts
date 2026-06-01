@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { api } from "@/lib/api";
@@ -105,4 +105,22 @@ export function useTrocarSenha() {
       router.refresh();
     },
   });
+}
+
+export function useLogout() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const logout = () => {
+    Cookies.remove("token", { path: "/" });
+    Cookies.remove("papel", { path: "/" });
+    Cookies.remove("trocar_senha", { path: "/" });
+
+    queryClient.clear();
+
+    router.push("/login");
+    router.refresh();
+  };
+
+  return logout;
 }

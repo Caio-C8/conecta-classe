@@ -11,7 +11,7 @@ export default function PrincipalLayout({
       <Navbar />
 
       {/* O conteúdo específico de cada página vai aqui */}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 py-[50px] px-[60px]">{children}</main>
     </div>
   );
 }

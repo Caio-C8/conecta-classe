@@ -1,150 +1,163 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  TrendingUp,
-  Clock,
-  Calendar as CalendarIcon,
-  BookOpen,
-} from "lucide-react";
+import { FaCalendar, FaCheckCircle, FaClock } from "react-icons/fa";
 
-export default function DashboardPage() {
-  const pathname = usePathname();
-  const student = {
-    name: "João Pedro",
-    year: "9º ano",
-    level: "Fundamental II",
-  };
-
-  const recentGrades = [
-    {
-      subject: "Matemática",
-      assessment: "Prova Bimestral",
-      score: 8.5,
-      date: "09/03",
-    },
-    {
-      subject: "Geografia",
-      assessment: "Trabalho em Grupo",
-      score: 7.0,
-      date: "07/03",
-    },
-    { subject: "História", assessment: "Simulado", score: 6.5, date: "05/03" },
-  ];
-
+export default function HomeAluno() {
   return (
-    <div className="min-h-screen">
-      <main className="max-w-6xl mx-auto px-8 py-12">
-        <header className="mb-10">
-          <h1 className="text-4xl font-black text-[#1A202C] mb-2 tracking-tight">
-            Olá, {student.name.split(" ")[0]}!
-          </h1>
-          <p className="text-gray-400 font-medium">
-            Aqui está o resumo do seu desempenho escolar em {student.year}.
-          </p>
-        </header>
+    <>
+      <section>
+        <h1 className="text-3xl font-medium">Olá, João!</h1>
+        <p className="mt-1 text-gray-500">
+          Acompanhe seu desempenho em 9º ano / Fundamental II - Turma B.
+        </p>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-center space-x-5 hover:shadow-md transition-all">
-            <div className="bg-green-50 p-4 rounded-2xl text-green-500">
-              <TrendingUp size={24} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                Média Geral
-              </p>
-              <h3 className="text-2xl font-black text-gray-900">7.3</h3>
-            </div>
+      {/* CARDS */}
+      <section className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Média Geral */}
+        <div className="relative rounded-2xl bg-white p-5 shadow-md">
+          <h4 className="text-sm text-gray-500">Média Geral</h4>
+
+          <div className="mt-2 text-3xl font-semibold">7.3</div>
+
+          <small className="mt-1 block text-sm text-green-600">
+            ↑ +0.5 este mês
+          </small>
+
+          <div className="absolute top-5 right-5 text-blue-600 text-lg">
+            <FaCheckCircle />
           </div>
-          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-center space-x-5 hover:shadow-md transition-all">
-            <div className="bg-blue-50 p-4 rounded-2xl text-blue-500">
-              <Clock size={24} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                Frequência
-              </p>
-              <h3 className="text-2xl font-black text-gray-900">92%</h3>
-            </div>
+        </div>
+
+        {/* Frequência */}
+        <div className="relative rounded-2xl bg-white p-5 shadow-md">
+          <h4 className="text-sm text-gray-500">Frequência Geral</h4>
+
+          <div className="mt-2 text-3xl font-semibold">92%</div>
+
+          <small className="mt-1 block text-sm text-yellow-500">
+            Atualizado em tempo real
+          </small>
+
+          <div className="absolute top-5 right-5 text-yellow-500 text-lg">
+            <FaClock />
           </div>
-          <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm flex items-center space-x-5 hover:shadow-md transition-all">
-            <div className="bg-red-50 p-4 rounded-2xl text-red-500">
-              <CalendarIcon size={24} />
+        </div>
+
+        {/* Próximo Evento */}
+        <div className="relative rounded-2xl bg-white p-5 shadow-md">
+          <h4 className="text-sm text-gray-500">Próximo Evento</h4>
+
+          <div className="mt-2 text-2xl font-semibold">
+            Trabalho de História
+          </div>
+
+          <small className="mt-1 block text-sm text-red-500">25/03/2026</small>
+
+          <div className="absolute top-5 right-5 text-red-500 text-lg">
+            <FaCalendar />
+          </div>
+        </div>
+      </section>
+
+      {/* MAIN GRID */}
+      <section className="mt-10 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+        {/* ESQUERDA */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-xl font-semibold">Últimas Avaliações</h3>
+
+            <a href="#" className="text-sm text-blue-600 hover:underline">
+              Ver todas as notas
+            </a>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {/* Item 1 */}
+            <div className="flex items-center justify-between rounded-2xl border-l-[5px] border-green-600 bg-white p-4 shadow-md">
+              <div>
+                <strong className="block">Prova Bimestral</strong>
+
+                <small className="text-gray-500">Matemática • 15/03/2026</small>
+              </div>
+
+              <div className="font-semibold text-green-600">8.5 / 10</div>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                Próxima Prova
-              </p>
-              <h3 className="text-lg font-black text-gray-900">Em 5 dias</h3>
+
+            {/* Item 2 */}
+            <div className="flex items-center justify-between rounded-2xl border-l-[5px] border-green-600 bg-white p-4 shadow-md">
+              <div>
+                <strong className="block">Prova Bimestral</strong>
+
+                <small className="text-gray-500">Geografia • 18/03/2026</small>
+              </div>
+
+              <div className="font-semibold text-green-600">7.0 / 10</div>
+            </div>
+
+            {/* Item 3 */}
+            <div className="flex items-center justify-between rounded-2xl border-l-[5px] border-red-500 bg-white p-4 shadow-md">
+              <div>
+                <strong className="block">Prova Bimestral</strong>
+
+                <small className="text-gray-500">História • 22/03/2026</small>
+              </div>
+
+              <div className="font-semibold text-red-500">6.5 / 10</div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <h2 className="text-xl font-black text-gray-900 tracking-tight">
-              Avaliações Recentes
-            </h2>
-            <div className="space-y-4">
-              {recentGrades.map((grade, i) => (
-                <div
-                  key={i}
-                  className="bg-white p-5 rounded-[24px] border border-gray-50 shadow-sm flex items-center justify-between group hover:border-blue-100 transition-all"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div
-                      className={`w-1.5 h-10 rounded-full ${grade.score >= 7 ? "bg-green-500" : "bg-red-500"}`}
-                    ></div>
-                    <div>
-                      <h4 className="font-bold text-gray-900">
-                        {grade.assessment}
-                      </h4>
-                      <p className="text-xs font-medium text-gray-400">
-                        {grade.subject} • {grade.date}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span
-                      className={`text-xl font-black ${grade.score >= 7 ? "text-green-500" : "text-red-500"}`}
-                    >
-                      {grade.score}
-                    </span>
-                    <span className="text-[10px] font-bold text-gray-300 block">
-                      / 10.0
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* DIREITA */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-xl font-semibold">Agenda</h3>
+
+            <a href="#" className="text-sm text-blue-600 hover:underline">
+              Ver calendário
+            </a>
           </div>
 
-          <div className="space-y-6">
-            <h2 className="text-xl font-black text-gray-900 tracking-tight">
-              Agenda Próxima
-            </h2>
-            <div className="bg-white p-6 rounded-[32px] border border-gray-50 shadow-sm space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="text-center min-w-[45px]">
-                  <span className="block text-[10px] font-black text-gray-300 uppercase">
-                    MAR
-                  </span>
-                  <span className="block text-xl font-black text-gray-900">
-                    10
-                  </span>
-                </div>
-                <div className="flex-1 p-3 rounded-2xl border-l-4 bg-red-50 border-red-500 text-red-700">
-                  <p className="text-xs font-bold leading-tight">
-                    Prova de Matemática
-                  </p>
-                </div>
+          <div className="rounded-2xl bg-white p-5 shadow-md">
+            {/* Item agenda */}
+            <div className="mb-4 flex items-center gap-4">
+              <div className="w-10 text-center text-sm text-gray-500">
+                <strong>ABR</strong>
+                <br />
+                15
+              </div>
+
+              <div className="flex-1 rounded-full bg-yellow-100 px-4 py-2 text-sm">
+                Entrega de Trabalho de História
+              </div>
+            </div>
+
+            <div className="mb-4 flex items-center gap-4">
+              <div className="w-10 text-center text-sm text-gray-500">
+                <strong>ABR</strong>
+                <br />
+                18
+              </div>
+
+              <div className="flex-1 rounded-full bg-red-100 px-4 py-2 text-sm">
+                Prova Bimestral de Matemática
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="w-10 text-center text-sm text-gray-500">
+                <strong>ABR</strong>
+                <br />
+                22
+              </div>
+
+              <div className="flex-1 rounded-full bg-blue-100 px-4 py-2 text-sm">
+                Feira de Ciências
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }

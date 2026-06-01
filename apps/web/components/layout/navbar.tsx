@@ -1,12 +1,12 @@
-"use client"; // Necessário pois estamos usando usePathname
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut } from "lucide-react"; // Assumindo que você usa lucide-react baseado no seu código
+import { LogOut } from "lucide-react";
 import Logo from "@/assets/logo.svg";
 import Image from "next/image";
+import { useLogout } from "@/hooks/use-autenticacao";
 
-// 1. Definimos os links disponíveis para cada módulo
 const navConfig = {
   admin: [
     { label: "Painel Geral", href: "/admin" },
@@ -35,6 +35,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const currentModule = pathname.split("/")[1] as keyof typeof navConfig;
   const currentLinks = navConfig[currentModule] || [];
+
+  const logout = useLogout();
 
   return (
     <header className="bg-[#F5F5F6]/70 backdrop-blur-md border-b border-[#CCCCCC] px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
@@ -73,7 +75,10 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="hover:text-[#EF4444] transition-colors cursor-pointer">
+        <button
+          onClick={logout}
+          className="hover:text-[#EF4444] transition-colors cursor-pointer"
+        >
           <LogOut />
         </button>
       </div>

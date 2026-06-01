@@ -1,58 +1,9 @@
-"use client";
-
-import { FaGraduationCap, FaSignOutAlt } from "react-icons/fa";
-
-export default function Page() {
+export default function HomeProfessor() {
   return (
-    <div className="min-h-screen bg-[#f5f6fa] font-sans">
-      {/* HEADER */}
-      <header className="flex items-center justify-between border-b border-gray-300 bg-white px-6 py-4 md:px-10">
-        <div className="flex items-center gap-2 text-lg font-semibold">
-          <FaGraduationCap />
-          <span>Conecta Classe</span>
-        </div>
-
-        <nav className="hidden md:flex gap-8">
-          <a
-            href="#"
-            className="border-b-2 border-black pb-1 font-medium text-black"
-          >
-            Painel Geral
-          </a>
-
-          <a
-            href="#"
-            className="font-medium text-gray-600 hover:text-black transition"
-          >
-            Frequência
-          </a>
-
-          <a
-            href="#"
-            className="font-medium text-gray-600 hover:text-black transition"
-          >
-            Criar Evento
-          </a>
-
-          <a
-            href="#"
-            className="font-medium text-gray-600 hover:text-black transition"
-          >
-            Gerenciar Eventos
-          </a>
-        </nav>
-
-        <button className="text-xl text-gray-700 hover:text-red-500 transition">
-          <FaSignOutAlt />
-        </button>
-      </header>
-
-      {/* CONTAINER */}
-      <main className="grid grid-cols-1 gap-8 px-6 py-8 md:px-14 lg:grid-cols-[2fr_1fr]">
-        {/* ESQUERDA */}
+    <>
+      <h1 className="mb-8 text-3xl font-medium">Olá, João Lucas</h1>
+      <main className="grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
         <section>
-          <h1 className="mb-8 text-3xl font-medium">Olá, João Lucas</h1>
-
           <h2 className="mb-4 text-lg font-medium">Minhas Turmas:</h2>
 
           {/* TURMAS */}
@@ -209,6 +160,6 @@ export default function Page() {
           </div>
         </aside>
       </main>
-    </div>
+    </>
   );
 }

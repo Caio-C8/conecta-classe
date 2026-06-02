@@ -12,9 +12,7 @@ export class AutenticacaoService {
   ) {}
 
   async login(dados: LoginInput): Promise<RespostaLogin> {
-    const usuario = await this.usuarioRepository.getUsuarioPorUsuario(
-      dados.usuario,
-    );
+    const usuario = await this.usuarioRepository.findByUsuario(dados.usuario);
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário ou senha incorretos.");
@@ -52,7 +50,7 @@ export class AutenticacaoService {
     id: number,
     dados: TrocarSenhaInput,
   ): Promise<RespostaLogin> {
-    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
+    const usuario = await this.usuarioRepository.findById(id);
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário não encontrado.");
@@ -79,7 +77,7 @@ export class AutenticacaoService {
 
     dados.nova_senha = await bcrypt.hash(dados.nova_senha, 10);
 
-    const usuarioAtualizado = await this.usuarioRepository.updateSenhaUsuario(
+    const usuarioAtualizado = await this.usuarioRepository.updateSenhaById(
       id,
       dados.nova_senha,
     );

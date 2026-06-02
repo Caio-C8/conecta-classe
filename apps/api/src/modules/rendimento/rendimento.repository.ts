@@ -7,7 +7,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class RendimentoRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createRendimento(
+  async save(
     matriculaId: number,
     disciplinaId: number,
     tx?: Prisma.TransactionClient,
@@ -29,7 +29,7 @@ export class RendimentoRepository {
     };
   }
 
-  async findRendimentosPorMatricula(
+  async findByMatriculaId(
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina[]> {
@@ -50,7 +50,7 @@ export class RendimentoRepository {
     }));
   }
 
-  async updateSituacaoRendimento(
+  async updateSituacaoById(
     id: number,
     situacao: SituacaoRendimento,
     tx?: Prisma.TransactionClient,

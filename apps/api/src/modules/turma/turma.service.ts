@@ -37,11 +37,11 @@ export class TurmaService {
   ) {}
 
   async create(dados: CreateTurmaInput): Promise<Turma> {
-    return await this.turmaRepository.create(dados);
+    return await this.turmaRepository.save(dados);
   }
 
   async getOne(id: number): Promise<Turma> {
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -61,7 +61,7 @@ export class TurmaService {
 
   async countAllTurmasEmAndamentoAtivas(): Promise<ResumoTurmas> {
     const quantidade =
-      await this.turmaRepository.countAllTurmasEmAndamentoAtivas();
+      await this.turmaRepository.countBySituacaoEmAndamentoAndDeletedAtIsNull();
 
     return {
       quantidade,
@@ -73,7 +73,7 @@ export class TurmaService {
       throw new BadRequestException("Nenhum dado fornecido para atualização.");
     }
 
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -85,11 +85,11 @@ export class TurmaService {
       );
     }
 
-    return await this.turmaRepository.updateTurma(id, dados);
+    return await this.turmaRepository.updateById(id, dados);
   }
 
   async softDelete(id: number): Promise<Turma> {
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -99,11 +99,11 @@ export class TurmaService {
       throw new BadRequestException("Turma já está inativada.");
     }
 
-    return await this.turmaRepository.softDelete(id);
+    return await this.turmaRepository.deleteById(id);
   }
 
   async restore(id: number): Promise<Turma> {
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -113,11 +113,11 @@ export class TurmaService {
       throw new BadRequestException("Turma já está ativada.");
     }
 
-    return await this.turmaRepository.restore(id);
+    return await this.turmaRepository.restoreById(id);
   }
 
   async encerrar(id: number): Promise<Turma> {
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -209,7 +209,7 @@ export class TurmaService {
         );
       }
 
-      return await this.turmaRepository.updateSituacaoTurma(
+      return await this.turmaRepository.updateSituacaoById(
         id,
         SituacaoTurma.ENCERRADA,
         tx,
@@ -218,7 +218,7 @@ export class TurmaService {
   }
 
   async retomar(id: number): Promise<Turma> {
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -265,7 +265,7 @@ export class TurmaService {
         );
       }
 
-      return await this.turmaRepository.updateSituacaoTurma(
+      return await this.turmaRepository.updateSituacaoById(
         id,
         SituacaoTurma.EM_ANDAMENTO,
         tx,
@@ -293,7 +293,7 @@ export class TurmaService {
       throw new NotFoundException("Disciplina não encontrada.");
     }
 
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -311,7 +311,7 @@ export class TurmaService {
       );
     }
 
-    const vinculoExistente = await this.turmaRepository.findProfessorTurma(
+    const vinculoExistente = await this.turmaRepository.findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
       id,
       dados.professorId,
       dados.disciplinaId,
@@ -324,7 +324,7 @@ export class TurmaService {
     }
 
     return await this.prisma.$transaction(async (tx) => {
-      const turmaComVinculos = await this.turmaRepository.vincularProfessor(
+      const turmaComVinculos = await this.turmaRepository.saveProfessorTurma(
         id,
         dados.professorId,
         dados.disciplinaId,
@@ -351,7 +351,7 @@ export class TurmaService {
       throw new NotFoundException("Aluno não encontrado.");
     }
 
-    const turma = await this.turmaRepository.findTurmaPorId(id);
+    const turma = await this.turmaRepository.findById(id);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -379,7 +379,7 @@ export class TurmaService {
     }
 
     return await this.prisma.$transaction(async (tx) => {
-      const disciplinaIds = await this.turmaRepository.findDisciplinasPorTurma(
+      const disciplinaIds = await this.turmaRepository.findDisciplinasByTurmaId(
         id,
         tx,
       );
@@ -392,7 +392,7 @@ export class TurmaService {
         tx,
       );
 
-      return this.turmaRepository.findTurmaComMatriculasPorId(id, tx);
+      return this.turmaRepository.findByIdWithMatriculas(id, tx);
     });
   }
 
@@ -416,7 +416,7 @@ export class TurmaService {
       throw new NotFoundException("Disciplina não encontrada.");
     }
 
-    const turma = await this.turmaRepository.findTurmaPorId(turmaId);
+    const turma = await this.turmaRepository.findById(turmaId);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");
@@ -434,7 +434,7 @@ export class TurmaService {
       );
     }
 
-    const vinculoExistente = await this.turmaRepository.findProfessorTurma(
+    const vinculoExistente = await this.turmaRepository.findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
       turmaId,
       dados.professorId,
       dados.disciplinaId,
@@ -446,7 +446,7 @@ export class TurmaService {
       );
     }
 
-    await this.turmaRepository.desvincularProfessor(
+    await this.turmaRepository.deleteProfessorTurma(
       turmaId,
       dados.professorId,
       dados.disciplinaId,
@@ -463,7 +463,7 @@ export class TurmaService {
       throw new NotFoundException("Professor não encontrado.");
     }
 
-    const turma = await this.turmaRepository.findTurmaPorId(turmaId);
+    const turma = await this.turmaRepository.findById(turmaId);
 
     if (!turma) {
       throw new NotFoundException("Turma não encontrada.");

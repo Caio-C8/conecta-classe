@@ -29,7 +29,7 @@ export class RendimentoService {
     disciplinaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina> {
-    return await this.rendimentoRepository.createRendimento(
+    return await this.rendimentoRepository.save(
       matriculaId,
       disciplinaId,
       tx,
@@ -54,7 +54,7 @@ export class RendimentoService {
     }
 
     const [rendimentos, notasEventos] = await Promise.all([
-      this.rendimentoRepository.findRendimentosPorMatricula(matricula.id, tx),
+      this.rendimentoRepository.findByMatriculaId(matricula.id, tx),
       this.eventoService.getNotasEventosPorMatricula(matricula.id, tx),
     ]);
 
@@ -110,7 +110,7 @@ export class RendimentoService {
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina[]> {
-    return await this.rendimentoRepository.findRendimentosPorMatricula(
+    return await this.rendimentoRepository.findByMatriculaId(
       matriculaId,
       tx,
     );
@@ -121,7 +121,7 @@ export class RendimentoService {
     situacao: SituacaoRendimento,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina> {
-    return await this.rendimentoRepository.updateSituacaoRendimento(
+    return await this.rendimentoRepository.updateSituacaoById(
       id,
       situacao,
       tx,

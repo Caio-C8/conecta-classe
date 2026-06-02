@@ -7,7 +7,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class FrequenciaRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async sumFaltasPorMatricula(
+  async sumNumeroFaltasByMatriculaId(
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<number> {
@@ -28,7 +28,7 @@ export class FrequenciaRepository {
     return resultado._sum.numero_faltas || 0;
   }
 
-  async findFrequenciasPorMatricula(
+  async findByMatriculaId(
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Frequencia[]> {

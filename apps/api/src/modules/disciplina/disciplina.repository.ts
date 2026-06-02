@@ -15,7 +15,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class DisciplinaRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createDisciplina(dados: CreateDisciplinaInput): Promise<Disciplina> {
+  async save(dados: CreateDisciplinaInput): Promise<Disciplina> {
     const data: Prisma.DisciplinaCreateInput = {
       nome: dados.nome,
       nome_search: normalizarString(dados.nome),
@@ -26,7 +26,7 @@ export class DisciplinaRepository {
     });
   }
 
-  async udpateDisciplina(
+  async updateById(
     id: number,
     dados: UpdateDisciplinaInput,
   ): Promise<Disciplina> {
@@ -43,7 +43,7 @@ export class DisciplinaRepository {
     });
   }
 
-  async findDisciplinaPorId(id: number): Promise<Disciplina | null> {
+  async findById(id: number): Promise<Disciplina | null> {
     return await this.prisma.disciplina.findUnique({
       where: {
         id,
@@ -92,7 +92,7 @@ export class DisciplinaRepository {
     };
   }
 
-  async findDisciplinaPorNome(nome: string): Promise<Disciplina | null> {
+  async findByNome(nome: string): Promise<Disciplina | null> {
     return await this.prisma.disciplina.findFirst({
       where: {
         OR: [
@@ -111,7 +111,7 @@ export class DisciplinaRepository {
     });
   }
 
-  async findDisciplinasPorTurma(
+  async findByTurmaId(
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Disciplina[]> {
@@ -127,7 +127,7 @@ export class DisciplinaRepository {
     });
   }
 
-  async countAllDisciplinasAtivas(): Promise<number> {
+  async countByDeletedAtIsNull(): Promise<number> {
     return await this.prisma.disciplina.count({
       where: {
         deleted_at: null,
@@ -135,7 +135,7 @@ export class DisciplinaRepository {
     });
   }
 
-  async softDelete(id: number): Promise<Disciplina> {
+  async deleteById(id: number): Promise<Disciplina> {
     return await this.prisma.disciplina.update({
       where: {
         id,
@@ -146,7 +146,7 @@ export class DisciplinaRepository {
     });
   }
 
-  async restore(id: number): Promise<Disciplina> {
+  async restoreById(id: number): Promise<Disciplina> {
     return await this.prisma.disciplina.update({
       where: {
         id,

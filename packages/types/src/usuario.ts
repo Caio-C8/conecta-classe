@@ -25,22 +25,32 @@ export interface Usuario {
 export type UsuarioSemSenha = Omit<Usuario, "senha">;
 
 const CreateUsuarioSchemaBase = z.object({
-  usuario: z.string({
-    required_error: "Preencha o campo usuário.",
-    invalid_type_error: "Usuário inválido.",
-  }),
-
-  senha: z
+  usuario: z
     .string({
-      required_error: "Preencha o campo senha.",
-      invalid_type_error: "Senha inválida.",
+      required_error: "Preencha o campo usuário.",
+      invalid_type_error: "Usuário inválido.",
     })
-    .min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
+    .trim()
+    .min(1, "Preencha o campo usuário."),
 
-  nome: z.string({
-    required_error: "Preencha o campo nome.",
-    invalid_type_error: "Nome inválido.",
-  }),
+  senha: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z
+      .string({
+        required_error: "Preencha o campo senha.",
+        invalid_type_error: "Senha inválida.",
+      })
+      .trim()
+      .min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
+  ),
+
+  nome: z
+    .string({
+      required_error: "Preencha o campo nome.",
+      invalid_type_error: "Nome inválido.",
+    })
+    .trim()
+    .min(1, "Preencha o campo nome."),
 
   trocar_senha: z.boolean().default(true).optional(),
 });
@@ -62,7 +72,7 @@ export const CreateUsuarioSchema = z.discriminatedUnion("papel", [
 ]);
 
 export const GetUsuariosSchema = PaginacaoSchema.extend({
-  pesquisa: z.string().optional(),
+  pesquisa: z.string().trim().optional(),
 
   papel: z.nativeEnum(Papel).optional(),
 
@@ -79,19 +89,27 @@ export const UpdateUsuarioSchema = z.object({
     .string({
       invalid_type_error: "Usuário inválido.",
     })
+    .trim()
+    .min(1, "Preencha o campo usuário.")
     .optional(),
 
-  senha: z
-    .string({
-      invalid_type_error: "Senha inválida.",
-    })
-    .min(6, { message: "A senha deve ter pelo menos 6 caracteres." })
-    .optional(),
+  senha: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z
+      .string({
+        invalid_type_error: "Senha inválida.",
+      })
+      .trim()
+      .min(6, { message: "A senha deve ter pelo menos 6 caracteres." })
+      .optional(),
+  ),
 
   nome: z
     .string({
       invalid_type_error: "Nome inválido.",
     })
+    .trim()
+    .min(1, "Preencha o campo nome.")
     .optional(),
 
   cargo: z.nativeEnum(Cargo).optional(),

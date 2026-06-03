@@ -32,14 +32,14 @@ export class EventoService {
       );
     }
 
-    return await this.eventoRepository.findEventosPorTurma(matricula.turma_id);
+    return await this.eventoRepository.findByTurmaId(matricula.turma_id);
   }
 
   async getNotasEventosPorMatricula(
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<NotaEvento[]> {
-    return await this.eventoRepository.findNotasEventosPorMatricula(
+    return await this.eventoRepository.findNotasByMatriculaId(
       matriculaId,
       tx,
     );

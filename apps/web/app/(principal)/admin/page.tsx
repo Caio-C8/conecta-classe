@@ -1,101 +1,186 @@
 "use client";
 
+import Link from "next/link";
 import { FaBook, FaPlus, FaThLarge, FaUser, FaUserTie } from "react-icons/fa";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useResumoAlunos, useResumoProfessores } from "@/hooks/use-usuarios";
+import { useResumoTurmas } from "@/hooks/use-turmas";
+import { useResumoDisciplinas } from "@/hooks/use-disciplinas";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { ModalCriarUsuario } from "@/components/ui/modais/criar/modal-criar-usuario";
+import { ModalCriarTurma } from "@/components/ui/modais/criar/modal-criar-turma";
+import { ModalCriarDisciplina } from "@/components/ui/modais/criar/moda-criar-disciplina";
 
 export default function HomeAdmin() {
+  const [nomeUsuario, setNomeUsuario] = useState<string>("Carregando...");
+  const [modalCriarUsuarioAberto, setModalCriarUsuarioAberto] = useState(false);
+  const [modalCriarTurmaAberto, setModalCriarTurmaAberto] = useState(false);
+  const [modalCriarDisciplinaAberto, setModalCriarDisciplinaAberto] =
+    useState(false);
+
+  const { data: reqAlunos, isLoading: loadAlunos } = useResumoAlunos();
+  const { data: reqProfessores, isLoading: loadProfessores } =
+    useResumoProfessores();
+  const { data: reqTurmas, isLoading: loadTurmas } = useResumoTurmas();
+  const { data: reqDisciplinas, isLoading: loadDisciplinas } =
+    useResumoDisciplinas();
+
+  useEffect(() => {
+    const nomeSalvo = Cookies.get("nome");
+    setNomeUsuario(nomeSalvo || "Administrador");
+  }, []);
+
+  const exibirValor = (isLoading: boolean, valor?: number) => {
+    if (isLoading) {
+      return (
+        <span className="animate-pulse text-muted-foreground/50">...</span>
+      );
+    }
+    return valor ?? 0;
+  };
+
   return (
     <>
-      {/* TOP */}
       <section className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <h1 className="text-3xl font-medium">Olá, Joana Oliveira</h1>
+        <h1 className="text-3xl font-medium">Olá, {nomeUsuario}!</h1>
       </section>
 
-      {/* CARDS */}
       <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {/* Card 1 */}
-        <div className="relative rounded-2xl bg-white p-5 shadow-md">
-          <div className="absolute right-5 top-5 text-gray-500">
-            <FaUser />
-          </div>
+        <Card className="rounded-2xl shadow-md border-none">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-normal text-muted-foreground">
+              Alunos Cursando
+            </CardTitle>
+            <FaUser className="text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="mb-2 text-3xl font-semibold">
+              {exibirValor(loadAlunos, reqAlunos?.dados.quantidade)}
+            </div>
+            <Link
+              href="/admin/usuarios?papel=ALUNO&status=ATIVO"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Ver detalhes
+            </Link>
+          </CardContent>
+        </Card>
 
-          <h3 className="mb-2 text-sm text-gray-500">Alunos Cursando</h3>
+        <Card className="rounded-2xl shadow-md border-none">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-normal text-muted-foreground">
+              Professores Ativos
+            </CardTitle>
+            <FaUserTie className="text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="mb-2 text-3xl font-semibold">
+              {exibirValor(loadProfessores, reqProfessores?.dados.quantidade)}
+            </div>
+            <Link
+              href="/admin/usuarios?papel=PROFESSOR&status=ATIVO"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Ver detalhes
+            </Link>
+          </CardContent>
+        </Card>
 
-          <div className="mb-2 text-3xl font-semibold">104</div>
+        <Card className="rounded-2xl shadow-md border-none">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-normal text-muted-foreground">
+              Turmas Em Andamento
+            </CardTitle>
+            <FaThLarge className="text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="mb-2 text-3xl font-semibold">
+              {exibirValor(loadTurmas, reqTurmas?.dados.quantidade)}
+            </div>
+            <Link
+              href="/admin/turmas?status=ATIVO"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Ver detalhes
+            </Link>
+          </CardContent>
+        </Card>
 
-          <a href="#" className="text-sm text-blue-600 hover:underline">
-            Ver detalhes
-          </a>
-        </div>
-
-        {/* Card 2 */}
-        <div className="relative rounded-2xl bg-white p-5 shadow-md">
-          <div className="absolute right-5 top-5 text-gray-500">
-            <FaUserTie />
-          </div>
-
-          <h3 className="mb-2 text-sm text-gray-500">Professores Ativos</h3>
-
-          <div className="mb-2 text-3xl font-semibold">18</div>
-
-          <a href="#" className="text-sm text-blue-600 hover:underline">
-            Ver detalhes
-          </a>
-        </div>
-
-        {/* Card 3 */}
-        <div className="relative rounded-2xl bg-white p-5 shadow-md">
-          <div className="absolute right-5 top-5 text-gray-500">
-            <FaThLarge />
-          </div>
-
-          <h3 className="mb-2 text-sm text-gray-500">Turmas Em Andamento</h3>
-
-          <div className="mb-2 text-3xl font-semibold">4</div>
-
-          <a href="#" className="text-sm text-blue-600 hover:underline">
-            Ver detalhes
-          </a>
-        </div>
-
-        {/* Card 4 */}
-        <div className="relative rounded-2xl bg-white p-5 shadow-md">
-          <div className="absolute right-5 top-5 text-gray-500">
-            <FaBook />
-          </div>
-
-          <h3 className="mb-2 text-sm text-gray-500">
-            Disciplinas Cadastradas
-          </h3>
-
-          <div className="mb-2 text-3xl font-semibold">20</div>
-
-          <a href="#" className="text-sm text-blue-600 hover:underline">
-            Ver detalhes
-          </a>
-        </div>
+        <Card className="rounded-2xl shadow-md border-none">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-normal text-muted-foreground">
+              Disciplinas Cadastradas
+            </CardTitle>
+            <FaBook className="text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="mb-2 text-3xl font-semibold">
+              {exibirValor(loadDisciplinas, reqDisciplinas?.dados.quantidade)}
+            </div>
+            <Link
+              href="/admin/disciplinas?status=ATIVO"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Ver detalhes
+            </Link>
+          </CardContent>
+        </Card>
       </section>
 
-      {/* SHORTCUTS */}
       <section className="mt-12">
         <h2 className="mb-5 text-2xl font-medium">Atalhos Rápidos</h2>
 
-        <div className="flex flex-col gap-4 md:flex-row">
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">
-            <FaPlus />
-            Novo usuário
-          </button>
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col gap-6 md:flex-row md:gap-8">
+            <Button
+              size="lg"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+              onClick={() => setModalCriarUsuarioAberto(true)}
+            >
+              <FaPlus />
+              Novo usuário
+            </Button>
 
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">
-            <FaPlus />
-            Nova turma
-          </button>
+            <Button
+              size="lg"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+              onClick={() => setModalCriarTurmaAberto(true)}
+            >
+              <FaPlus />
+              Nova turma
+            </Button>
 
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white transition hover:opacity-90">
-            <FaPlus />
-            Nova disciplina
-          </button>
+            <Button
+              size="lg"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+              onClick={() => setModalCriarDisciplinaAberto(true)}
+            >
+              <FaPlus />
+              Nova disciplina
+            </Button>
+          </div>
         </div>
       </section>
+
+      <ModalCriarUsuario
+        open={modalCriarUsuarioAberto}
+        onOpenChange={setModalCriarUsuarioAberto}
+        redirecionar={true}
+      />
+
+      <ModalCriarTurma
+        open={modalCriarTurmaAberto}
+        onOpenChange={setModalCriarTurmaAberto}
+        redirecionar={true}
+      />
+
+      <ModalCriarDisciplina
+        open={modalCriarDisciplinaAberto}
+        onOpenChange={setModalCriarDisciplinaAberto}
+        redirecionar={true}
+      />
     </>
   );
 }

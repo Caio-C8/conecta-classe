@@ -24,11 +24,18 @@ export interface Turma {
   eventos?: Evento[];
 }
 
+export interface ResumoTurmas {
+  quantidade: number;
+}
+
 export const CreateTurmaSchema = z.object({
-  identificacao: z.string({
-    required_error: "Preencha o campo identificação.",
-    invalid_type_error: "Identificação inválida.",
-  }),
+  identificacao: z
+    .string({
+      required_error: "Preencha o campo identificação.",
+      invalid_type_error: "Identificação inválida.",
+    })
+    .trim()
+    .min(1, "Preencha o campo identificação."),
 
   serie: z.coerce
     .number({
@@ -41,10 +48,13 @@ export const CreateTurmaSchema = z.object({
     message: "Nível de ensino inválido.",
   }),
 
-  sala: z.string({
-    required_error: "Preencha o campo sala.",
-    invalid_type_error: "Sala inválida.",
-  }),
+  sala: z
+    .string({
+      required_error: "Preencha o campo sala.",
+      invalid_type_error: "Sala inválida.",
+    })
+    .trim()
+    .min(1, "Preencha o campo sala."),
 
   ano_letivo: z.coerce
     .number({
@@ -59,7 +69,7 @@ export const CreateTurmaSchema = z.object({
 export const UpdateTurmaSchema = CreateTurmaSchema.partial();
 
 export const GetTurmasSchema = PaginacaoSchema.extend({
-  pesquisa: z.string().optional(),
+  pesquisa: z.string().trim().optional(),
 
   status: z.nativeEnum(Status).optional().default(Status.TODOS),
 });

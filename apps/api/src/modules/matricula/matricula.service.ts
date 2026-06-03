@@ -26,7 +26,7 @@ export class MatriculaService {
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula> {
     const matriculaExistenteNaTurma =
-      await this.matriculaRepository.findMatriculaPorAlunoETurma(
+      await this.matriculaRepository.findByAlunoIdAndTurmaId(
         alunoId,
         turmaId,
         tx,
@@ -40,7 +40,7 @@ export class MatriculaService {
       } else if (
         matriculaExistenteNaTurma.status === StatusMatricula.TRANSFERIDO
       ) {
-        return await this.matriculaRepository.reativarMatriculaERendimentos(
+        return await this.matriculaRepository.updateStatusCursandoById(
           matriculaExistenteNaTurma.id,
           tx,
         );
@@ -52,7 +52,7 @@ export class MatriculaService {
     }
 
     const matriculaExistenteNoAnoLetivo =
-      await this.matriculaRepository.findMatriculaPorAlunoEAnoLetivo(
+      await this.matriculaRepository.findByAlunoIdAndAnoLetivo(
         alunoId,
         anoLetivo,
         tx,
@@ -64,7 +64,7 @@ export class MatriculaService {
       );
     }
 
-    return await this.matriculaRepository.createMatriculaComRendimentos(
+    return await this.matriculaRepository.saveWithRendimentos(
       alunoId,
       turmaId,
       anoLetivo,
@@ -78,7 +78,7 @@ export class MatriculaService {
     anoLetivo: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula | null> {
-    return await this.matriculaRepository.findMatriculaPorAluno(
+    return await this.matriculaRepository.findByAlunoId(
       usuarioId,
       anoLetivo,
       tx,
@@ -89,7 +89,7 @@ export class MatriculaService {
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula[]> {
-    return await this.matriculaRepository.findMatriculasEmCursoPorTurma(
+    return await this.matriculaRepository.findByTurmaIdAndStatusCursando(
       turmaId,
       tx,
     );
@@ -99,7 +99,7 @@ export class MatriculaService {
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula[]> {
-    return await this.matriculaRepository.findMatriculasEncerradasPorTurma(
+    return await this.matriculaRepository.findByTurmaIdAndStatusNotCursando(
       turmaId,
       tx,
     );
@@ -110,7 +110,7 @@ export class MatriculaService {
     status: StatusMatricula,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula> {
-    return await this.matriculaRepository.updateStatusMatricula(id, status, tx);
+    return await this.matriculaRepository.updateStatusById(id, status, tx);
   }
 
   async transferirAlunoDaTurma(
@@ -118,7 +118,7 @@ export class MatriculaService {
     turmaId: number,
   ): Promise<void> {
     const matriculaAtiva =
-      await this.matriculaRepository.findMatriculaAtivaPorAlunoETurma(
+      await this.matriculaRepository.findByAlunoIdAndTurmaIdAndStatusCursando(
         alunoId,
         turmaId,
       );
@@ -129,7 +129,7 @@ export class MatriculaService {
       );
     }
 
-    await this.matriculaRepository.transferirMatriculaERendimentos(
+    await this.matriculaRepository.updateStatusTransferidoById(
       matriculaAtiva.id,
     );
   }
@@ -140,7 +140,7 @@ export class MatriculaService {
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const matriculas =
-      await this.matriculaRepository.findMatriculasEmCursoPorTurma(turmaId, tx);
+      await this.matriculaRepository.findByTurmaIdAndStatusCursando(turmaId, tx);
 
     for (const matricula of matriculas) {
       const jaPossuiDisciplina = matricula.rendimentos_disciplinas?.some(

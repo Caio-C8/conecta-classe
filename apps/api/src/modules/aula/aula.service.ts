@@ -10,7 +10,7 @@ export class AulaService {
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<number> {
-    return await this.aulaRepository.findTotalAulasPorTurma(turmaId, tx);
+    return await this.aulaRepository.countByTurmaId(turmaId, tx);
   }
 
   async getAulasPorDisciplinaPorTurma(
@@ -22,7 +22,7 @@ export class AulaService {
       _sum: { quantidade: number | null };
     }[]
   > {
-    return await this.aulaRepository.findAulasPorDisciplinaPorTurma(
+    return await this.aulaRepository.countByTurmaIdGroupByDisciplinaId(
       turmaId,
       tx,
     );

@@ -7,7 +7,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class MatriculaRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createMatriculaComRendimentos(
+  async saveWithRendimentos(
     alunoId: number,
     turmaId: number,
     anoLetivo: number,
@@ -46,7 +46,7 @@ export class MatriculaRepository {
     };
   }
 
-  async findMatriculaPorAluno(
+  async findByAlunoId(
     usuarioId: number,
     anoLetivo: number,
     tx?: Prisma.TransactionClient,
@@ -69,7 +69,7 @@ export class MatriculaRepository {
     });
   }
 
-  async findMatriculasEmCursoPorTurma(
+  async findByTurmaIdAndStatusCursando(
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula[]> {
@@ -100,7 +100,7 @@ export class MatriculaRepository {
     }));
   }
 
-  async findMatriculasEncerradasPorTurma(
+  async findByTurmaIdAndStatusNotCursando(
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula[]> {
@@ -116,7 +116,7 @@ export class MatriculaRepository {
     });
   }
 
-  async findMatriculaPorAlunoEAnoLetivo(
+  async findByAlunoIdAndAnoLetivo(
     alunoId: number,
     anoLetivo: number,
     tx?: Prisma.TransactionClient,
@@ -132,7 +132,7 @@ export class MatriculaRepository {
     });
   }
 
-  async findMatriculaPorAlunoETurma(
+  async findByAlunoIdAndTurmaId(
     alunoId: number,
     turmaId: number,
     tx?: Prisma.TransactionClient,
@@ -147,7 +147,7 @@ export class MatriculaRepository {
     });
   }
 
-  async findMatriculaAtivaPorAlunoETurma(
+  async findByAlunoIdAndTurmaIdAndStatusCursando(
     alunoId: number,
     turmaId: number,
     tx?: Prisma.TransactionClient,
@@ -163,7 +163,7 @@ export class MatriculaRepository {
     });
   }
 
-  async updateStatusMatricula(
+  async updateStatusById(
     id: number,
     status: StatusMatricula,
     tx?: Prisma.TransactionClient,
@@ -180,7 +180,7 @@ export class MatriculaRepository {
     });
   }
 
-  async transferirMatriculaERendimentos(
+  async updateStatusTransferidoById(
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
@@ -202,7 +202,7 @@ export class MatriculaRepository {
     });
   }
 
-  async reativarMatriculaERendimentos(
+  async updateStatusCursandoById(
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Matricula> {

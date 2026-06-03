@@ -1,107 +1,131 @@
 "use client";
 
-import React, { useState } from "react";
-import styles from "./trocar-senha.module.css";
 import { useTrocarSenha } from "@/hooks/use-autenticacao";
+import { TrocarSenhaInput, TrocarSenhaSchema } from "@repo/types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { setApiFormErrors } from "@/lib/utils-form";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
+import { FieldError } from "@/components/ui/field-error";
 
-export default function AlterarSenha() {
-  const [senhaAtual, setSenhaAtual] = useState("");
-  const [novaSenha, setNovaSenha] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [validationError, setValidationError] = useState<string | null>(null);
+export default function AlterarSenhaPage() {
+  const { mutate, isPending } = useTrocarSenha();
 
-  const { mutate, isPending, error, isError } = useTrocarSenha();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<TrocarSenhaInput>({
+    resolver: zodResolver(TrocarSenhaSchema),
+    defaultValues: {
+      senha_atual: "",
+      nova_senha: "",
+      confirmar_senha: "",
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setValidationError(null);
-
-    if (!senhaAtual || !novaSenha || !confirmarSenha) return;
-
-    if (novaSenha !== confirmarSenha) {
-      setValidationError("A nova senha e a confirmação não coincidem.");
-      return;
-    }
-
-    mutate({ senha_atual: senhaAtual, nova_senha: novaSenha, confirmar_senha: confirmarSenha });
-  };
-
-  const getErrorMessage = (error: any) => {
-    if (error?.response?.data?.mensagem) {
-      return error.response.data.mensagem;
-    }
-    return error?.message || "Erro inesperado ao alterar a senha.";
+  const onSubmit = (values: TrocarSenhaInput) => {
+    mutate(values, {
+      onError: (error: any) => {
+        setApiFormErrors(error, setError);
+      },
+    });
   };
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.background}>
-        <div className={styles.card}>
-          <h1 className={styles.title}>Altere sua senha</h1>
-          <p className={styles.subtitle}>
-            Preencha os campos com sua nova senha
-            <br />
-            para ela ser alterada
-          </p>
+    <div className="flex flex-col min-h-[100dvh] bg-background">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
+        <Card className="w-full max-w-[540px] shadow-xl border-none">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-2xl font-bold">
+              Altere sua senha
+            </CardTitle>
+            <CardDescription className="text-sm mt-1.5">
+              Preencha os campos com sua nova senha
+              <br className="hidden sm:block" /> para ela ser alterada
+            </CardDescription>
+          </CardHeader>
 
-          <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-            {(validationError || isError) && (
-              <div className={styles.errorBox}>
-                {validationError ?? getErrorMessage(error)}
-              </div>
-            )}
-
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Senha atual:</label>
-              <input
-                type="password"
-                placeholder="Sua senha atual"
-                value={senhaAtual}
-                onChange={(e) => setSenhaAtual(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
-
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Nova senha:</label>
-              <input
-                type="password"
-                placeholder="Sua nova senha"
-                value={novaSenha}
-                onChange={(e) => setNovaSenha(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
-
-            <div className={styles.fieldGroup}>
-              <label className={styles.label}>Confirmar senha:</label>
-              <input
-                type="password"
-                placeholder="Digite novamente sua senha"
-                value={confirmarSenha}
-                onChange={(e) => setConfirmarSenha(e.target.value)}
-                className={styles.input}
-                required
-              />
-            </div>
-
-            <hr className={styles.divider} />
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className={styles.submitButton}
-              style={{
-                opacity: isPending ? 0.7 : 1,
-                cursor: isPending ? "not-allowed" : "pointer",
-              }}
+          <CardContent>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
             >
-              {isPending ? "Alterando..." : "Alterar senha e Entrar"}
-            </button>
-          </form>
-        </div>
+              <Field>
+                <FieldLabel htmlFor="senha_atual">Senha atual:</FieldLabel>
+                <PasswordInput
+                  id="senha_atual"
+                  placeholder="Sua senha atual"
+                  className={`bg-card text-[16px] sm:text-sm ${
+                    errors.senha_atual
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-border"
+                  }`}
+                  {...register("senha_atual")}
+                />
+                {errors.senha_atual && (
+                  <FieldError message={errors.senha_atual.message} />
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="nova_senha">Nova senha:</FieldLabel>
+                <PasswordInput
+                  id="nova_senha"
+                  placeholder="Sua nova senha"
+                  className={`bg-card text-[16px] sm:text-sm ${
+                    errors.nova_senha
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-border"
+                  }`}
+                  {...register("nova_senha")}
+                />
+                {errors.nova_senha && (
+                  <FieldError message={errors.nova_senha.message} />
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="confirmar_senha">
+                  Confirmar senha:
+                </FieldLabel>
+                <PasswordInput
+                  id="confirmar_senha"
+                  placeholder="Digite novamente sua senha"
+                  className={`bg-card text-[16px] sm:text-sm ${
+                    errors.confirmar_senha
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : "border-border"
+                  }`}
+                  {...register("confirmar_senha")}
+                />
+                {errors.confirmar_senha && (
+                  <FieldError message={errors.confirmar_senha.message} />
+                )}
+              </Field>
+
+              <hr className="my-2 border-t border-border" />
+
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full font-semibold text-[0.9rem] sm:text-base py-5 sm:py-2"
+              >
+                {isPending ? "Alterando..." : "Alterar senha e Entrar"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

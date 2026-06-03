@@ -7,7 +7,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class EventoRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findEventosPorTurma(turmaId: number): Promise<Evento[]> {
+  async findByTurmaId(turmaId: number): Promise<Evento[]> {
     const eventos = await this.prisma.evento.findMany({
       where: {
         turma_id: turmaId,
@@ -28,7 +28,7 @@ export class EventoRepository {
     });
   }
 
-  async findNotasEventosPorMatricula(
+  async findNotasByMatriculaId(
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<NotaEvento[]> {

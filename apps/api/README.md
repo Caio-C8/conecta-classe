@@ -278,6 +278,38 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+- `GET /usuarios/resumo/alunos`
+  - descricao: Retorna a quantidade total de alunos ativos que possuem matrícula cursando.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "quantidade": 1
+      }
+    }
+    ```
+
+- `GET /usuarios/resumo/professores`
+  - descricao: Retorna a quantidade total de professores ativos.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "quantidade": 1
+      }
+    }
+    ```
+
 ### Disciplinas
 
 - `POST /disciplinas`
@@ -402,6 +434,22 @@ Todas as rotas têm um padrão de resposta sendo eles:
         "deleted_at": null,
         "created_at": "string",
         "updated_at": "string"
+      }
+    }
+    ```
+
+- `GET /disciplinas/resumo`
+  - descricao: Retorna a quantidade total de disciplinas ativas.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "quantidade": 1
       }
     }
     ```
@@ -1028,6 +1076,22 @@ Todas as rotas têm um padrão de resposta sendo eles:
       "sucesso": true,
       "mensagem": "Aluno desvinculado com sucesso.",
       "dados": null
+    }
+    ```
+
+- `GET /turmas/resumo`
+  - descricao: Retorna a quantidade total de turmas em andamento e ativas (não inativadas).
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "quantidade": 1
+      }
     }
     ```
 

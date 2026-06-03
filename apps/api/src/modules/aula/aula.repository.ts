@@ -6,7 +6,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class AulaRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findTotalAulasPorTurma(
+  async countByTurmaId(
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<number> {
@@ -25,7 +25,7 @@ export class AulaRepository {
     return resultado._sum.quantidade || 0;
   }
 
-  async findAulasPorDisciplinaPorTurma(
+  async countByTurmaIdGroupByDisciplinaId(
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<

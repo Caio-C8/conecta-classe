@@ -9,6 +9,8 @@ import {
   GetUsuariosInput,
   Paginacao,
   Papel,
+  ResumoAlunos,
+  ResumoProfessores,
   UpdateUsuarioInput,
   Usuario,
   UsuarioSemSenha,
@@ -24,9 +26,7 @@ export class UsuarioService {
   constructor(private readonly usuarioRepository: UsuarioRepository) {}
 
   async createUsuario(dados: CreateUsuarioDto): Promise<UsuarioSemSenha> {
-    const usuario = await this.usuarioRepository.getUsuarioPorUsuario(
-      dados.usuario,
-    );
+    const usuario = await this.usuarioRepository.findByUsuario(dados.usuario);
 
     if (usuario) {
       throw new BadRequestException(
@@ -39,11 +39,11 @@ export class UsuarioService {
     let novoUsuario: Usuario | null;
 
     if (dados.papel === Papel.ADMINISTRADOR) {
-      novoUsuario = await this.usuarioRepository.createAdministrador(dados);
+      novoUsuario = await this.usuarioRepository.saveAdministrador(dados);
     } else if (dados.papel === Papel.PROFESSOR) {
-      novoUsuario = await this.usuarioRepository.createProfessor(dados);
+      novoUsuario = await this.usuarioRepository.saveProfessor(dados);
     } else {
-      novoUsuario = await this.usuarioRepository.createAluno(dados);
+      novoUsuario = await this.usuarioRepository.saveAluno(dados);
     }
 
     if (!novoUsuario) {
@@ -63,16 +63,22 @@ export class UsuarioService {
       throw new BadRequestException("Nenhum dado fornecido para a atuaização.");
     }
 
-    const usuarioParaAtualizar =
-      await this.usuarioRepository.getUsuarioPorId(id);
+    const usuarioParaAtualizar = await this.usuarioRepository.findById(id);
 
     if (!usuarioParaAtualizar) {
       throw new NotFoundException("Usuário não encontrado.");
     }
 
+    if (usuarioParaAtualizar.deleted_at) {
+      throw new BadRequestException(
+        "Um usuário inativo não pode ser atualizado.",
+      );
+    }
+
     if (dados.usuario) {
-      const usuarioExistente =
-        await this.usuarioRepository.getUsuarioPorUsuario(dados.usuario);
+      const usuarioExistente = await this.usuarioRepository.findByUsuario(
+        dados.usuario,
+      );
 
       if (usuarioExistente && usuarioExistente.id !== id) {
         throw new BadRequestException("Este usuário já está em uso.");
@@ -87,7 +93,7 @@ export class UsuarioService {
 
     dados.senha = dados.senha ? await bcrypt.hash(dados.senha, 10) : undefined;
 
-    const usuarioAtualizado = await this.usuarioRepository.updateUsuario(id, {
+    const usuarioAtualizado = await this.usuarioRepository.updateById(id, {
       ...dados,
       nome_search,
     });
@@ -100,7 +106,7 @@ export class UsuarioService {
   async getAllUsuarios(
     params: GetUsuariosInput,
   ): Promise<Paginacao<UsuarioSemSenha>> {
-    const { dados, meta } = await this.usuarioRepository.getAllUsuarios(params);
+    const { dados, meta } = await this.usuarioRepository.findAll(params);
 
     const usuariosSemSenha = dados.map((usuario) => {
       const { senha, ...usuarioSemSenha } = usuario;
@@ -117,25 +123,37 @@ export class UsuarioService {
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
-    return await this.usuarioRepository.getUsuarioPorId(id, tx);
+    return await this.usuarioRepository.findById(id, tx);
   }
 
   async getProfessorPorId(
     professorId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
-    return await this.usuarioRepository.getProfessorPorId(professorId, tx);
+    return await this.usuarioRepository.findByProfessorId(professorId, tx);
   }
 
   async getAlunoPorId(
     alunoId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
-    return await this.usuarioRepository.getAlunoPorId(alunoId, tx);
+    return await this.usuarioRepository.findByAlunoId(alunoId, tx);
+  }
+
+  async countAllAlunosAtivosComMatriculaCursando(): Promise<ResumoAlunos> {
+    const quantidade =
+      await this.usuarioRepository.countByPapelAlunoAndDeletedAtIsNullAndMatriculaStatusCursando();
+    return { quantidade };
+  }
+
+  async countAllProfessoresAtivos(): Promise<ResumoProfessores> {
+    const quantidade =
+      await this.usuarioRepository.countByPapelProfessorAndDeletedAtIsNull();
+    return { quantidade };
   }
 
   async softDelte(id: number): Promise<UsuarioSemSenha> {
-    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
+    const usuario = await this.usuarioRepository.findById(id);
 
     if (!usuario) {
       throw new NotFoundException("Usuário não encontrado.");
@@ -146,13 +164,13 @@ export class UsuarioService {
     }
 
     const { senha, ...usuarioInativado } =
-      await this.usuarioRepository.softDelete(id);
+      await this.usuarioRepository.deleteById(id);
 
     return usuarioInativado;
   }
 
   async restore(id: number): Promise<UsuarioSemSenha> {
-    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
+    const usuario = await this.usuarioRepository.findById(id);
 
     if (!usuario) {
       throw new NotFoundException("Usuário não encontrado.");
@@ -163,7 +181,7 @@ export class UsuarioService {
     }
 
     const { senha, ...usuarioInativado } =
-      await this.usuarioRepository.restore(id);
+      await this.usuarioRepository.restoreById(id);
 
     return usuarioInativado;
   }

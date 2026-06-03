@@ -16,7 +16,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class TurmaRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dados: CreateTurmaInput): Promise<Turma> {
+  async save(dados: CreateTurmaInput): Promise<Turma> {
     const data: Prisma.TurmaCreateInput = {
       identificacao: dados.identificacao,
       serie: dados.serie,
@@ -30,7 +30,7 @@ export class TurmaRepository {
     });
   }
 
-  async findTurmaPorId(
+  async findById(
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Turma | null> {
@@ -88,7 +88,7 @@ export class TurmaRepository {
     });
   }
 
-  async findTurmaComMatriculasPorId(
+  async findByIdWithMatriculas(
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Turma | null> {
@@ -147,7 +147,7 @@ export class TurmaRepository {
     };
   }
 
-  async findProfessorTurma(
+  async findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
     turmaId: number,
     professorId: number,
     disciplinaId: number,
@@ -164,7 +164,7 @@ export class TurmaRepository {
     });
   }
 
-  async findDisciplinasPorTurma(
+  async findDisciplinasByTurmaId(
     turmaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<number[]> {
@@ -182,7 +182,16 @@ export class TurmaRepository {
     return [...new Set(vinculos.map((v) => v.disciplina_id))];
   }
 
-  async updateTurma(id: number, dados: UpdateTurmaInput): Promise<Turma> {
+  async countBySituacaoEmAndamentoAndDeletedAtIsNull(): Promise<number> {
+    return await this.prisma.turma.count({
+      where: {
+        situacao: SituacaoTurma.EM_ANDAMENTO,
+        deleted_at: null,
+      },
+    });
+  }
+
+  async updateById(id: number, dados: UpdateTurmaInput): Promise<Turma> {
     const data: Prisma.TurmaUpdateInput = {
       identificacao: dados.identificacao ? dados.identificacao : undefined,
       serie: dados.serie ? dados.serie : undefined,
@@ -199,7 +208,7 @@ export class TurmaRepository {
     });
   }
 
-  async updateSituacaoTurma(
+  async updateSituacaoById(
     id: number,
     situacao: SituacaoTurma,
     tx?: Prisma.TransactionClient,
@@ -216,7 +225,7 @@ export class TurmaRepository {
     });
   }
 
-  async softDelete(id: number): Promise<Turma> {
+  async deleteById(id: number): Promise<Turma> {
     return await this.prisma.turma.update({
       where: {
         id,
@@ -227,7 +236,7 @@ export class TurmaRepository {
     });
   }
 
-  async restore(id: number): Promise<Turma> {
+  async restoreById(id: number): Promise<Turma> {
     return await this.prisma.turma.update({
       where: {
         id,
@@ -238,7 +247,7 @@ export class TurmaRepository {
     });
   }
 
-  async vincularProfessor(
+  async saveProfessorTurma(
     turmaId: number,
     professorId: number,
     disciplinaId: number,
@@ -278,7 +287,7 @@ export class TurmaRepository {
     });
   }
 
-  async desvincularProfessor(
+  async deleteProfessorTurma(
     turmaId: number,
     professorId: number,
     disciplinaId: number,

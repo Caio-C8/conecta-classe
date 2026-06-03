@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { LoginInput, RespostaLogin, TrocarSenhaInput } from "@repo/types";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -12,9 +16,7 @@ export class AutenticacaoService {
   ) {}
 
   async login(dados: LoginInput): Promise<RespostaLogin> {
-    const usuario = await this.usuarioRepository.getUsuarioPorUsuario(
-      dados.usuario,
-    );
+    const usuario = await this.usuarioRepository.findByUsuario(dados.usuario);
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário ou senha incorretos.");
@@ -24,6 +26,10 @@ export class AutenticacaoService {
 
     if (!senhaCorreta) {
       throw new UnauthorizedException("Usuário ou senha incorretos.");
+    }
+
+    if (usuario.papel !== dados.papel) {
+      throw new UnauthorizedException("Não existe um usuário com este perfil.");
     }
 
     const payload = {
@@ -48,23 +54,10 @@ export class AutenticacaoService {
     id: number,
     dados: TrocarSenhaInput,
   ): Promise<RespostaLogin> {
-    const usuario = await this.usuarioRepository.getUsuarioPorId(id);
+    const usuario = await this.usuarioRepository.findById(id);
 
     if (!usuario) {
       throw new UnauthorizedException("Usuário não encontrado.");
-    }
-
-    if (dados.nova_senha !== dados.confirmar_senha) {
-      throw new UnauthorizedException("As senhas não coincidem.");
-    }
-
-    const isSenhaAtualCorreta = await bcrypt.compare(
-      dados.senha_atual,
-      usuario.senha,
-    );
-
-    if (!isSenhaAtualCorreta) {
-      throw new UnauthorizedException("A senha atual não coincidem.");
     }
 
     if (!usuario.trocar_senha) {
@@ -73,9 +66,33 @@ export class AutenticacaoService {
       );
     }
 
+    if (dados.nova_senha !== dados.confirmar_senha) {
+      throw new BadRequestException("As senhas não coincidem.");
+    }
+
+    const isSenhaAtualCorreta = await bcrypt.compare(
+      dados.senha_atual,
+      usuario.senha,
+    );
+
+    if (!isSenhaAtualCorreta) {
+      throw new BadRequestException("Senha atual incorreta.");
+    }
+
+    const isNovaSenhaIgualSenhaAtual = await bcrypt.compare(
+      dados.nova_senha,
+      usuario.senha,
+    );
+
+    if (isNovaSenhaIgualSenhaAtual) {
+      throw new BadRequestException(
+        "A nova senha não pode ser igual à senha atual.",
+      );
+    }
+
     dados.nova_senha = await bcrypt.hash(dados.nova_senha, 10);
 
-    const usuarioAtualizado = await this.usuarioRepository.updateSenhaUsuario(
+    const usuarioAtualizado = await this.usuarioRepository.updateSenhaById(
       id,
       dados.nova_senha,
     );

@@ -20,23 +20,24 @@ export interface Disciplina {
   rendimentos?: RendimentoDisciplina[];
 }
 
-export const CreateDisciplinaSchema = z.object({
-  nome: z.string({
-    required_error: "Preencha o campo nome.",
-    invalid_type_error: "Nome inválido.",
-  }),
-});
+export interface ResumoDisciplinas {
+  quantidade: number;
+}
 
-export const UpdateDisciplinaSchema = z.object({
+export const CreateDisciplinaSchema = z.object({
   nome: z
     .string({
+      required_error: "Preencha o campo nome.",
       invalid_type_error: "Nome inválido.",
     })
-    .optional(),
+    .trim()
+    .min(1, "Preencha o campo nome."),
 });
 
+export const UpdateDisciplinaSchema = CreateDisciplinaSchema.partial();
+
 export const GetDisciplinasSchema = PaginacaoSchema.extend({
-  pesquisa: z.string().optional(),
+  pesquisa: z.string().trim().optional(),
 
   status: z.nativeEnum(Status).optional().default(Status.TODOS),
 });

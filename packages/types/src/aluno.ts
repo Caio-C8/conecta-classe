@@ -8,3 +8,7 @@ export interface Aluno {
   usuario?: UsuarioSemSenha;
   matriculas?: Matricula[];
 }
+
+export interface ResumoAlunos {
+  quantidade: number;
+}

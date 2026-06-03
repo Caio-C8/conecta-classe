@@ -9,18 +9,24 @@ import {
   CreateUsuarioInput,
   UpdateUsuarioInput,
   GetUsuariosInput,
+  ResumoProfessores,
+  ResumoAlunos,
 } from "@repo/types";
+import { toast } from "sonner";
 
 // --- CHAVES DE CACHE ---
-// Centralizar as chaves evita erros de digitação ao invalidar o cache
 export const USUARIOS_QUERY_KEY = ["usuarios"];
+export const RESUMO_ALUNOS_QUERY_KEY = ["usuarios", "resumo", "alunos"];
+export const RESUMO_PROFESSORES_QUERY_KEY = [
+  "usuarios",
+  "resumo",
+  "professores",
+];
 
-// --- FUNÇÕES DE API (FETCHERS) ---
-
+// --- FETCHERS ---
 async function getUsuarios(
   params: GetUsuariosInput,
 ): Promise<Resposta<Paginacao<UsuarioSemSenha>>> {
-  // O axios converte o objeto params automaticamente para query strings na URL (?pagina=1&limite=10)
   const response = await api.get<Resposta<Paginacao<UsuarioSemSenha>>>(
     "/usuarios",
     {
@@ -68,72 +74,107 @@ async function ativarUsuario(id: number): Promise<Resposta<UsuarioSemSenha>> {
   return response.data;
 }
 
+async function getResumoAlunos(): Promise<Resposta<ResumoAlunos>> {
+  const response = await api.get<Resposta<ResumoAlunos>>(
+    "/usuarios/resumo/alunos",
+  );
+  return response.data;
+}
+
+async function getResumoProfessores(): Promise<Resposta<ResumoProfessores>> {
+  const response = await api.get<Resposta<ResumoProfessores>>(
+    "/usuarios/resumo/professores",
+  );
+  return response.data;
+}
+
 // --- HOOKS ---
 
-/**
- * Hook para buscar a lista paginada de usuários.
- */
 export function useUsuarios(params: GetUsuariosInput) {
   return useQuery({
-    // A chave inclui os parâmetros. Se a página mudar, o React Query busca a nova página e faz cache separadamente
     queryKey: [...USUARIOS_QUERY_KEY, params],
     queryFn: () => getUsuarios(params),
   });
 }
 
-/**
- * Hook para criar um novo usuário.
- */
+export function useResumoAlunos() {
+  return useQuery({
+    queryKey: RESUMO_ALUNOS_QUERY_KEY,
+    queryFn: getResumoAlunos,
+  });
+}
+
+export function useResumoProfessores() {
+  return useQuery({
+    queryKey: RESUMO_PROFESSORES_QUERY_KEY,
+    queryFn: getResumoProfessores,
+  });
+}
+
 export function useCreateUsuario() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createUsuario,
-    onSuccess: () => {
-      // Força a lista de usuários a recarregar automaticamente para exibir o novo usuário
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
 
-/**
- * Hook para atualizar os dados de um usuário existente.
- */
 export function useUpdateUsuario() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: updateUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
 
-/**
- * Hook para inativar (soft delete) um usuário.
- */
 export function useInativarUsuario() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: inativarUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
 
-/**
- * Hook para ativar um usuário que estava inativado.
- */
 export function useAtivarUsuario() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ativarUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }

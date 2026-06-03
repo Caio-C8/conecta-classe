@@ -6,6 +6,17 @@ import { LogOut } from "lucide-react";
 import Logo from "@/assets/logo.svg";
 import Image from "next/image";
 import { useLogout } from "@/hooks/use-autenticacao";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const navConfig = {
   admin: [
@@ -75,12 +86,29 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button
-          onClick={logout}
-          className="hover:text-[#EF4444] transition-colors cursor-pointer"
-        >
-          <LogOut />
-        </button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              className="hover:text-[#EF4444] transition-colors cursor-pointer"
+              title="Sair do sistema"
+            >
+              <LogOut />
+            </button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sair do sistema</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja sair?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={logout}>Sair</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </header>
   );

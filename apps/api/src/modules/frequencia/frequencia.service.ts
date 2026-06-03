@@ -52,7 +52,7 @@ export class FrequenciaService {
         tx,
       );
 
-      const totalFaltas = await this.frequenciaRepository.sumFaltasPorMatricula(
+      const totalFaltas = await this.frequenciaRepository.sumNumeroFaltasByMatriculaId(
         matricula.id,
         tx,
       );
@@ -86,7 +86,7 @@ export class FrequenciaService {
         await this.aulaService.getAulasPorDisciplinaPorTurma(turma.id, tx);
 
       const faltas =
-        await this.frequenciaRepository.findFrequenciasPorMatricula(
+        await this.frequenciaRepository.findByMatriculaId(
           matricula.id,
           tx,
         );

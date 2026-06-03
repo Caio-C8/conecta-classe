@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
 import { PersistenceModule } from "./common/prisma/prisma.module";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { RespostaInterceptor } from "./common/interceptors/resposta.interceptor";
@@ -40,7 +39,6 @@ import { TurmaModule } from "./modules/turma/turma.module";
   ],
   controllers: [AppController],
   providers: [
-    AppService,
     { provide: APP_INTERCEPTOR, useClass: RespostaInterceptor },
     { provide: APP_FILTER, useClass: ExcecaoHttp },
     { provide: APP_PIPE, useClass: ZodValidationPipe },

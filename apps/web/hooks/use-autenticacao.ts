@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { api } from "@/lib/api";
 import { RespostaLogin, Resposta, TrocarSenhaInput } from "@repo/types";
+import { toast } from "sonner"; // <-- Importação do Sonner
 
 async function loginRequest(
   credenciais: Record<string, string>,
@@ -45,10 +46,6 @@ export function useLogin() {
     onSuccess: (resposta) => {
       const { token, usuario } = resposta.dados;
 
-      console.log("=== DEBUG RESPOSTA LOGIN ===");
-      console.dir(resposta, { depth: null });
-      console.log("----------------------------");
-
       Cookies.set("token", token, {
         expires: 1,
         sameSite: "strict",
@@ -59,11 +56,18 @@ export function useLogin() {
         sameSite: "strict",
         path: "/",
       });
+      Cookies.set("nome", usuario.nome, {
+        expires: 1,
+        sameSite: "strict",
+        path: "/",
+      });
       Cookies.set("trocar_senha", String(usuario.trocar_senha), {
         expires: 1,
         sameSite: "strict",
         path: "/",
       });
+
+      toast.success(resposta.mensagem);
 
       if (usuario.trocar_senha) {
         router.push("/trocar-senha");
@@ -72,6 +76,11 @@ export function useLogin() {
       }
 
       router.refresh();
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -100,9 +109,16 @@ export function useTrocarSenha() {
         path: "/",
       });
 
+      toast.success(resposta.mensagem);
+
       redirecionarParaPainel(usuario.papel, router);
 
       router.refresh();
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -117,6 +133,8 @@ export function useLogout() {
     Cookies.remove("trocar_senha", { path: "/" });
 
     queryClient.clear();
+
+    toast.info("Sessão encerrada com sucesso.");
 
     router.push("/login");
     router.refresh();

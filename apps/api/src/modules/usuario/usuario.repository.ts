@@ -9,6 +9,7 @@ import {
   Status,
   UpdateUsuarioInput,
   Usuario,
+  StatusMatricula,
 } from "@repo/types";
 import { normalizarString } from "@repo/utils";
 import { PrismaService } from "src/common/prisma/prisma.service";
@@ -17,9 +18,7 @@ import { PrismaService } from "src/common/prisma/prisma.service";
 export class UsuarioRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createAdministrador(
-    dados: CreateUsuarioInput,
-  ): Promise<Usuario | null> {
+  async saveAdministrador(dados: CreateUsuarioInput): Promise<Usuario | null> {
     if (dados.papel !== Papel.ADMINISTRADOR) {
       return null;
     }
@@ -44,7 +43,7 @@ export class UsuarioRepository {
     });
   }
 
-  async createProfessor(dados: CreateUsuarioInput): Promise<Usuario> {
+  async saveProfessor(dados: CreateUsuarioInput): Promise<Usuario> {
     return this.prisma.usuario.create({
       data: {
         usuario: dados.usuario,
@@ -60,7 +59,7 @@ export class UsuarioRepository {
     });
   }
 
-  async createAluno(dados: CreateUsuarioInput): Promise<Usuario> {
+  async saveAluno(dados: CreateUsuarioInput): Promise<Usuario> {
     return this.prisma.usuario.create({
       data: {
         usuario: dados.usuario,
@@ -76,7 +75,7 @@ export class UsuarioRepository {
     });
   }
 
-  async updateUsuario(
+  async updateById(
     id: number,
     dados: UpdateUsuarioInput & { nome_search?: string },
   ): Promise<Usuario> {
@@ -107,7 +106,7 @@ export class UsuarioRepository {
     });
   }
 
-  async updateSenhaUsuario(id: number, novaSenha: string): Promise<Usuario> {
+  async updateSenhaById(id: number, novaSenha: string): Promise<Usuario> {
     return await this.prisma.usuario.update({
       where: {
         id,
@@ -119,7 +118,7 @@ export class UsuarioRepository {
     });
   }
 
-  async getAllUsuarios(params: GetUsuariosInput): Promise<Paginacao<Usuario>> {
+  async findAll(params: GetUsuariosInput): Promise<Paginacao<Usuario>> {
     const { limite, pagina, status, papel, pesquisa, trocar_senha } = params;
 
     const skip = (pagina - 1) * limite;
@@ -183,7 +182,7 @@ export class UsuarioRepository {
     };
   }
 
-  async getUsuarioPorUsuario(usuario: string): Promise<Usuario | null> {
+  async findByUsuario(usuario: string): Promise<Usuario | null> {
     return await this.prisma.usuario.findUnique({
       where: { usuario },
       include: {
@@ -194,7 +193,7 @@ export class UsuarioRepository {
     });
   }
 
-  async getUsuarioPorId(
+  async findById(
     id: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
@@ -212,7 +211,7 @@ export class UsuarioRepository {
     });
   }
 
-  async getProfessorPorId(
+  async findByProfessorId(
     professorId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
@@ -232,7 +231,7 @@ export class UsuarioRepository {
     });
   }
 
-  async getAlunoPorId(
+  async findByAlunoId(
     alunoId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<Usuario | null> {
@@ -252,7 +251,32 @@ export class UsuarioRepository {
     });
   }
 
-  async softDelete(id: number): Promise<Usuario> {
+  async countByPapelAlunoAndDeletedAtIsNullAndMatriculaStatusCursando(): Promise<number> {
+    return await this.prisma.usuario.count({
+      where: {
+        papel: Papel.ALUNO,
+        deleted_at: null,
+        aluno: {
+          matriculas: {
+            some: {
+              status: StatusMatricula.CURSANDO,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async countByPapelProfessorAndDeletedAtIsNull(): Promise<number> {
+    return await this.prisma.usuario.count({
+      where: {
+        papel: Papel.PROFESSOR,
+        deleted_at: null,
+      },
+    });
+  }
+
+  async deleteById(id: number): Promise<Usuario> {
     return await this.prisma.usuario.update({
       where: { id },
       data: {
@@ -266,7 +290,7 @@ export class UsuarioRepository {
     });
   }
 
-  async restore(id: number): Promise<Usuario> {
+  async restoreById(id: number): Promise<Usuario> {
     return await this.prisma.usuario.update({
       where: { id },
       data: {

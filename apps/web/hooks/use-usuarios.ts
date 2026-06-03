@@ -12,6 +12,7 @@ import {
   ResumoProfessores,
   ResumoAlunos,
 } from "@repo/types";
+import { toast } from "sonner";
 
 // --- CHAVES DE CACHE ---
 export const USUARIOS_QUERY_KEY = ["usuarios"];
@@ -115,8 +116,14 @@ export function useCreateUsuario() {
 
   return useMutation({
     mutationFn: createUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -126,8 +133,14 @@ export function useUpdateUsuario() {
 
   return useMutation({
     mutationFn: updateUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -137,8 +150,14 @@ export function useInativarUsuario() {
 
   return useMutation({
     mutationFn: inativarUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -148,8 +167,14 @@ export function useAtivarUsuario() {
 
   return useMutation({
     mutationFn: ativarUsuario,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: USUARIOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }

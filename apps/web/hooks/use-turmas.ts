@@ -13,6 +13,7 @@ import {
   VincularEDesvincularAlunoInput,
   ResumoTurmas,
 } from "@repo/types";
+import { toast } from "sonner";
 
 // --- CHAVES DE CACHE ---
 export const TURMAS_QUERY_KEY = ["turmas"];
@@ -160,8 +161,14 @@ export function useCreateTurma() {
 
   return useMutation({
     mutationFn: createTurma,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -171,8 +178,14 @@ export function useUpdateTurma() {
 
   return useMutation({
     mutationFn: updateTurma,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -182,8 +195,14 @@ export function useInativarTurma() {
 
   return useMutation({
     mutationFn: inativarTurma,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -193,8 +212,14 @@ export function useAtivarTurma() {
 
   return useMutation({
     mutationFn: ativarTurma,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -204,8 +229,14 @@ export function useEncerrarTurma() {
 
   return useMutation({
     mutationFn: encerrarTurma,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -215,8 +246,14 @@ export function useRetomarTurma() {
 
   return useMutation({
     mutationFn: retomarTurma,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -226,8 +263,14 @@ export function useVincularProfessor() {
 
   return useMutation({
     mutationFn: vincularProfessor,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -237,8 +280,14 @@ export function useDesvincularProfessor() {
 
   return useMutation({
     mutationFn: desvincularProfessor,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -248,8 +297,14 @@ export function useVincularAluno() {
 
   return useMutation({
     mutationFn: vincularAluno,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -259,8 +314,14 @@ export function useDesvincularAluno() {
 
   return useMutation({
     mutationFn: desvincularAluno,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: TURMAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }

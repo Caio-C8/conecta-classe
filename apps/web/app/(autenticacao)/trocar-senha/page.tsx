@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
+import { FieldError } from "@/components/ui/field-error";
 
 export default function AlterarSenhaPage() {
   const { mutate, isPending } = useTrocarSenha();
@@ -73,9 +74,7 @@ export default function AlterarSenhaPage() {
                   {...register("senha_atual")}
                 />
                 {errors.senha_atual && (
-                  <span className="text-xs text-destructive font-medium mt-1">
-                    {errors.senha_atual.message}
-                  </span>
+                  <FieldError message={errors.senha_atual.message} />
                 )}
               </Field>
 
@@ -92,9 +91,7 @@ export default function AlterarSenhaPage() {
                   {...register("nova_senha")}
                 />
                 {errors.nova_senha && (
-                  <span className="text-xs text-destructive font-medium mt-1">
-                    {errors.nova_senha.message}
-                  </span>
+                  <FieldError message={errors.nova_senha.message} />
                 )}
               </Field>
 
@@ -113,9 +110,7 @@ export default function AlterarSenhaPage() {
                   {...register("confirmar_senha")}
                 />
                 {errors.confirmar_senha && (
-                  <span className="text-xs text-destructive font-medium mt-1">
-                    {errors.confirmar_senha.message}
-                  </span>
+                  <FieldError message={errors.confirmar_senha.message} />
                 )}
               </Field>
 

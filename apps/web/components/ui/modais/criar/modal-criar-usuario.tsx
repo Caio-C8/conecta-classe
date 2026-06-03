@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,8 +12,6 @@ import {
 import { useCreateUsuario } from "@/hooks/use-usuarios";
 import { setApiFormErrors } from "@/lib/utils-form";
 import { toast } from "sonner";
-
-// Componentes do Shadcn
 import {
   Dialog,
   DialogContent,
@@ -25,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
+import { FieldError } from "@/components/ui/field-error";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,7 +39,6 @@ interface ModalCriarUsuarioProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// 1. Tipo plano para satisfazer o React Hook Form de forma estrita
 type FormValues = {
   nome: string;
   usuario: string;
@@ -64,11 +61,9 @@ export function ModalCriarUsuario({
     setValue,
     watch,
     reset,
-    control, // <-- Necessário para usar o Checkbox e Select do Shadcn
+    control,
     formState: { errors },
   } = useForm<FormValues>({
-    // 2. Type Casting seguro em vez de "as any".
-    // Mantém a validação estrita do servidor e satisfaz o formulário.
     resolver: zodResolver(
       CreateUsuarioSchema as z.ZodType<any, any, FormValues>,
     ),
@@ -89,7 +84,6 @@ export function ModalCriarUsuario({
   };
 
   const onSubmit = (values: FormValues) => {
-    // Garantimos que a tipagem final está correta antes de enviar
     const dadosFormatados = values as CreateUsuarioInput;
 
     mutate(dadosFormatados, {
@@ -123,7 +117,6 @@ export function ModalCriarUsuario({
             value={papelSelecionado}
             onValueChange={(value) => {
               setValue("papel", value as Papel);
-              // Limpa o cargo se mudar para Aluno/Professor
               if (value !== Papel.ADMINISTRADOR) {
                 setValue("cargo", undefined);
               }
@@ -139,7 +132,7 @@ export function ModalCriarUsuario({
                     flex-1 py-1.5 text-xs sm:text-sm transition-colors rounded-md shadow-none 
                     border-r border-border last:border-r-0 
                     data-[state=inactive]:bg-card data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:bg-muted data-[state=inactive]:hover:text-foreground
-                    data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold data-[state=active]:shadow-none
+                    data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-semibold data-[state=active]:shadow-none data-[state=active]:hover:text-primary-foreground
                   "
                 >
                   {p.toLowerCase().charAt(0).toUpperCase() +
@@ -158,11 +151,7 @@ export function ModalCriarUsuario({
                 className={`bg-card text-[16px] sm:text-sm ${errors.nome ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
                 {...register("nome")}
               />
-              {errors.nome && (
-                <span className="text-xs text-destructive mt-1">
-                  {errors.nome.message}
-                </span>
-              )}
+              {errors.nome && <FieldError message={errors.nome.message} />}
             </Field>
 
             <Field>
@@ -174,9 +163,7 @@ export function ModalCriarUsuario({
                 {...register("usuario")}
               />
               {errors.usuario && (
-                <span className="text-xs text-destructive mt-1">
-                  {errors.usuario.message}
-                </span>
+                <FieldError message={errors.usuario.message} />
               )}
             </Field>
           </div>
@@ -189,14 +176,9 @@ export function ModalCriarUsuario({
               className={`bg-card text-[16px] sm:text-sm ${errors.senha ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
               {...register("senha")}
             />
-            {errors.senha && (
-              <span className="text-xs text-destructive mt-1">
-                {errors.senha.message}
-              </span>
-            )}
+            {errors.senha && <FieldError message={errors.senha.message} />}
           </Field>
 
-          {/* Integração do Checkbox do Shadcn */}
           <div className="flex items-center space-x-2">
             <Controller
               name="trocar_senha"
@@ -217,7 +199,6 @@ export function ModalCriarUsuario({
             </label>
           </div>
 
-          {/* Integração do Select do Shadcn (condicional) */}
           {papelSelecionado === Papel.ADMINISTRADOR && (
             <Field>
               <FieldLabel htmlFor="cargo">Cargo:</FieldLabel>
@@ -241,11 +222,7 @@ export function ModalCriarUsuario({
                   </Select>
                 )}
               />
-              {errors.cargo && (
-                <span className="text-xs text-destructive mt-1">
-                  {errors.cargo.message}
-                </span>
-              )}
+              {errors.cargo && <FieldError message={errors.cargo.message} />}
             </Field>
           )}
 

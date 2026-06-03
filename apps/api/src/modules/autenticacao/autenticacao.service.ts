@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { LoginInput, RespostaLogin, TrocarSenhaInput } from "@repo/types";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -56,8 +60,14 @@ export class AutenticacaoService {
       throw new UnauthorizedException("Usuário não encontrado.");
     }
 
+    if (!usuario.trocar_senha) {
+      throw new UnauthorizedException(
+        "Você não tem permissão para alterar a senha.",
+      );
+    }
+
     if (dados.nova_senha !== dados.confirmar_senha) {
-      throw new UnauthorizedException("As senhas não coincidem.");
+      throw new BadRequestException("As senhas não coincidem.");
     }
 
     const isSenhaAtualCorreta = await bcrypt.compare(
@@ -66,12 +76,17 @@ export class AutenticacaoService {
     );
 
     if (!isSenhaAtualCorreta) {
-      throw new UnauthorizedException("A senha atual não coincidem.");
+      throw new BadRequestException("Senha atual incorreta.");
     }
 
-    if (!usuario.trocar_senha) {
-      throw new UnauthorizedException(
-        "Você não tem permissão para alterar a senha.",
+    const isNovaSenhaIgualSenhaAtual = await bcrypt.compare(
+      dados.nova_senha,
+      usuario.senha,
+    );
+
+    if (isNovaSenhaIgualSenhaAtual) {
+      throw new BadRequestException(
+        "A nova senha não pode ser igual à senha atual.",
       );
     }
 

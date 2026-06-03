@@ -18,6 +18,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { setApiFormErrors } from "@/lib/utils-form";
+import { FieldError } from "@/components/ui/field-error";
 
 export default function LoginPage() {
   const { mutate, isPending } = useLogin();
@@ -100,9 +101,7 @@ export default function LoginPage() {
                   {...register("usuario")}
                 />
                 {errors.usuario && (
-                  <span className="text-xs text-destructive font-medium mt-1">
-                    {errors.usuario.message}
-                  </span>
+                  <FieldError message={errors.usuario.message} />
                 )}
               </Field>
 
@@ -114,11 +113,7 @@ export default function LoginPage() {
                   className={`bg-card text-[16px] sm:text-sm ${errors.senha ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
                   {...register("senha")}
                 />
-                {errors.senha && (
-                  <span className="text-xs text-destructive font-medium mt-1">
-                    {errors.senha.message}
-                  </span>
-                )}
+                {errors.senha && <FieldError message={errors.senha.message} />}
               </Field>
 
               <hr className="my-2 border-t border-border" />

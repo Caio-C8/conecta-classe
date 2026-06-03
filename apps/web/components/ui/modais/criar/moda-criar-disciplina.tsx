@@ -55,8 +55,6 @@ export function ModalCriarDisciplina({
       onSuccess: () => {
         if (redirecionar) {
           router.push("/admin/disciplinas");
-        } else {
-          handleClose();
         }
       },
       onError: (error: any) => {

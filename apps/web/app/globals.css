@@ -58,3 +58,12 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+.link {
+  color: #3580e9;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: #3580e9bf;
+}

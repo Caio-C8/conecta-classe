@@ -179,7 +179,7 @@ export default function HomeAdmin() {
       <ModalCriarDisciplina
         open={modalCriarDisciplinaAberto}
         onOpenChange={setModalCriarDisciplinaAberto}
-        redirecionar={true}
+        // redirecionar={true}
       />
     </>
   );

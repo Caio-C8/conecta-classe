@@ -52,7 +52,7 @@ type FormValues = {
 export function ModalCriarUsuario({
   open,
   onOpenChange,
-  redirecionar = true,
+  redirecionar = false,
 }: ModalCriarUsuarioProps) {
   const router = useRouter();
   const { mutate, isPending } = useCreateUsuario();

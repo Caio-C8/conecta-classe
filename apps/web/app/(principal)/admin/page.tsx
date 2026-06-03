@@ -11,11 +11,14 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { ModalCriarUsuario } from "@/components/ui/modais/criar/modal-criar-usuario";
 import { ModalCriarTurma } from "@/components/ui/modais/criar/modal-criar-turma";
+import { ModalCriarDisciplina } from "@/components/ui/modais/criar/moda-criar-disciplina";
 
 export default function HomeAdmin() {
   const [nomeUsuario, setNomeUsuario] = useState<string>("Carregando...");
   const [modalCriarUsuarioAberto, setModalCriarUsuarioAberto] = useState(false);
   const [modalCriarTurmaAberto, setModalCriarTurmaAberto] = useState(false);
+  const [modalCriarDisciplinaAberto, setModalCriarDisciplinaAberto] =
+    useState(false);
 
   const { data: reqAlunos, isLoading: loadAlunos } = useResumoAlunos();
   const { data: reqProfessores, isLoading: loadProfessores } =
@@ -65,7 +68,6 @@ export default function HomeAdmin() {
           </CardContent>
         </Card>
 
-        {/* Card 2 - Professores */}
         <Card className="rounded-2xl shadow-md border-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-normal text-muted-foreground">
@@ -86,7 +88,6 @@ export default function HomeAdmin() {
           </CardContent>
         </Card>
 
-        {/* Card 3 - Turmas */}
         <Card className="rounded-2xl shadow-md border-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-normal text-muted-foreground">
@@ -107,7 +108,6 @@ export default function HomeAdmin() {
           </CardContent>
         </Card>
 
-        {/* Card 4 - Disciplinas */}
         <Card className="rounded-2xl shadow-md border-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-normal text-muted-foreground">
@@ -155,6 +155,7 @@ export default function HomeAdmin() {
             <Button
               size="lg"
               className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+              onClick={() => setModalCriarDisciplinaAberto(true)}
             >
               <FaPlus />
               Nova disciplina
@@ -166,11 +167,19 @@ export default function HomeAdmin() {
       <ModalCriarUsuario
         open={modalCriarUsuarioAberto}
         onOpenChange={setModalCriarUsuarioAberto}
+        redirecionar={true}
       />
 
       <ModalCriarTurma
         open={modalCriarTurmaAberto}
         onOpenChange={setModalCriarTurmaAberto}
+        redirecionar={true}
+      />
+
+      <ModalCriarDisciplina
+        open={modalCriarDisciplinaAberto}
+        onOpenChange={setModalCriarDisciplinaAberto}
+        redirecionar={true}
       />
     </>
   );

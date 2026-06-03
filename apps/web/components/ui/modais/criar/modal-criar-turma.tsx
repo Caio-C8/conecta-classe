@@ -35,7 +35,7 @@ interface ModalCriarTurmaProps {
 export function ModalCriarTurma({
   open,
   onOpenChange,
-  redirecionar = true,
+  redirecionar = false,
 }: ModalCriarTurmaProps) {
   const router = useRouter();
   const { mutate, isPending } = useCreateTurma();

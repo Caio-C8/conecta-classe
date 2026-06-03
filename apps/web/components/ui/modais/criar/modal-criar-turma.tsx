@@ -54,7 +54,7 @@ export function ModalCriarTurma({
       sala: undefined,
       serie: undefined,
       nivel_ensino: undefined,
-      ano_letivo: new Date().getFullYear(),
+      ano_letivo: undefined,
     },
   });
 

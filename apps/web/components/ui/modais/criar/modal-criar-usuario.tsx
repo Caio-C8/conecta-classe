@@ -33,10 +33,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 interface ModalCriarUsuarioProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  redirecionar?: boolean;
 }
 
 type FormValues = {
@@ -51,7 +53,9 @@ type FormValues = {
 export function ModalCriarUsuario({
   open,
   onOpenChange,
+  redirecionar = true,
 }: ModalCriarUsuarioProps) {
+  const router = useRouter();
   const { mutate, isPending } = useCreateUsuario();
 
   const {
@@ -89,7 +93,12 @@ export function ModalCriarUsuario({
     mutate(dadosFormatados, {
       onSuccess: () => {
         toast.success("Usuário criado com sucesso!");
-        handleClose();
+
+        if (redirecionar) {
+          router.push("/admin/usuarios");
+        } else {
+          handleClose();
+        }
       },
       onError: (error: any) => {
         setApiFormErrors(error, setError);

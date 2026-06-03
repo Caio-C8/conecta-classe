@@ -56,6 +56,11 @@ export function useLogin() {
         sameSite: "strict",
         path: "/",
       });
+      Cookies.set("nome", usuario.nome, {
+        expires: 1,
+        sameSite: "strict",
+        path: "/",
+      });
       Cookies.set("trocar_senha", String(usuario.trocar_senha), {
         expires: 1,
         sameSite: "strict",

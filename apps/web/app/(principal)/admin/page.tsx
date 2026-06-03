@@ -10,10 +10,13 @@ import { useResumoDisciplinas } from "@/hooks/use-disciplinas";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { ModalCriarUsuario } from "@/components/ui/modais/criar/modal-criar-usuario";
+import { ModalCriarTurma } from "@/components/ui/modais/criar/modal-criar-turma";
 
 export default function HomeAdmin() {
   const [nomeUsuario, setNomeUsuario] = useState<string>("Carregando...");
   const [modalCriarUsuarioAberto, setModalCriarUsuarioAberto] = useState(false);
+  const [modalCriarTurmaAberto, setModalCriarTurmaAberto] = useState(false);
+
   const { data: reqAlunos, isLoading: loadAlunos } = useResumoAlunos();
   const { data: reqProfessores, isLoading: loadProfessores } =
     useResumoProfessores();
@@ -143,6 +146,7 @@ export default function HomeAdmin() {
             <Button
               size="lg"
               className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base"
+              onClick={() => setModalCriarTurmaAberto(true)}
             >
               <FaPlus />
               Nova turma
@@ -162,6 +166,11 @@ export default function HomeAdmin() {
       <ModalCriarUsuario
         open={modalCriarUsuarioAberto}
         onOpenChange={setModalCriarUsuarioAberto}
+      />
+
+      <ModalCriarTurma
+        open={modalCriarTurmaAberto}
+        onOpenChange={setModalCriarTurmaAberto}
       />
     </>
   );

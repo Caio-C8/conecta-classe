@@ -10,6 +10,7 @@ import {
   UpdateDisciplinaInput,
   GetDisciplinasInput,
 } from "@repo/types";
+import { toast } from "sonner";
 
 // --- CHAVES DE CACHE ---
 export const DISCIPLINAS_QUERY_KEY = ["disciplinas"];
@@ -92,8 +93,14 @@ export function useCreateDisciplina() {
 
   return useMutation({
     mutationFn: createDisciplina,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: DISCIPLINAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -103,8 +110,14 @@ export function useUpdateDisciplina() {
 
   return useMutation({
     mutationFn: updateDisciplina,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: DISCIPLINAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -114,8 +127,14 @@ export function useInativarDisciplina() {
 
   return useMutation({
     mutationFn: inativarDisciplina,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: DISCIPLINAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }
@@ -125,8 +144,14 @@ export function useAtivarDisciplina() {
 
   return useMutation({
     mutationFn: ativarDisciplina,
-    onSuccess: () => {
+    onSuccess: (resposta) => {
       queryClient.invalidateQueries({ queryKey: DISCIPLINAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
     },
   });
 }

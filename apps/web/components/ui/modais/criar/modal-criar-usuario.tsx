@@ -11,7 +11,6 @@ import {
 } from "@repo/types";
 import { useCreateUsuario } from "@/hooks/use-usuarios";
 import { setApiFormErrors } from "@/lib/utils-form";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -92,8 +91,6 @@ export function ModalCriarUsuario({
 
     mutate(dadosFormatados, {
       onSuccess: () => {
-        toast.success("Usuário criado com sucesso!");
-
         if (redirecionar) {
           router.push("/admin/usuarios");
         } else {
@@ -102,9 +99,6 @@ export function ModalCriarUsuario({
       },
       onError: (error: any) => {
         setApiFormErrors(error, setError);
-        toast.error(
-          error.response?.data?.mensagem || "Erro ao criar utilizador.",
-        );
       },
     });
   };

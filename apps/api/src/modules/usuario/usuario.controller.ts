@@ -65,6 +65,7 @@ export class UsuarioController {
 
   @Patch("/:id")
   @Papeis(Papel.ADMINISTRADOR)
+  @MensagemResposta("Usuário atualizado com sucesso.")
   async atualizarUsuario(
     @Param("id", ParseIntPipe) id: number,
     @Body() dados: UpdateUsuarioDto,
@@ -74,6 +75,7 @@ export class UsuarioController {
 
   @Patch("/:id/inativar")
   @Papeis(Papel.ADMINISTRADOR)
+  @MensagemResposta("Usuário inativado com sucesso.")
   async inativarUsuario(
     @Param("id", ParseIntPipe) id: number,
   ): Promise<UsuarioSemSenha> {
@@ -82,6 +84,7 @@ export class UsuarioController {
 
   @Patch("/:id/ativar")
   @Papeis(Papel.ADMINISTRADOR)
+  @MensagemResposta("Usuário ativado com sucesso.")
   async ativarUsuario(
     @Param("id", ParseIntPipe) id: number,
   ): Promise<UsuarioSemSenha> {

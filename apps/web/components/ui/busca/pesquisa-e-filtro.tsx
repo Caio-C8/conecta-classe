@@ -18,13 +18,15 @@ export function PesquisaEFiltro<T extends Record<string, any>>({
   const [isFiltrosVisiveis, setIsFiltrosVisiveis] = useState(false);
 
   return (
-    <div className="flex flex-col w-full gap-4 max-w-7xl items-center">
-      <PesquisaComToggleFiltro
-        placeholder={placeholderPesquisa}
-        isFiltrosVisiveis={isFiltrosVisiveis}
-        onToggleFiltros={() => setIsFiltrosVisiveis(!isFiltrosVisiveis)}
-        className={className}
-      />
+    <div className="flex flex-col w-full gap-4 max-w-7xl">
+      <div className="flex justify-center">
+        <PesquisaComToggleFiltro
+          placeholder={placeholderPesquisa}
+          isFiltrosVisiveis={isFiltrosVisiveis}
+          onToggleFiltros={() => setIsFiltrosVisiveis(!isFiltrosVisiveis)}
+          className={className}
+        />
+      </div>
 
       {isFiltrosVisiveis && camposFiltro.length > 0 && (
         <div className="animate-in fade-in slide-in-from-top-2 duration-200">

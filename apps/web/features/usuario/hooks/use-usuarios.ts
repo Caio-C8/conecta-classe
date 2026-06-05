@@ -36,6 +36,11 @@ async function getUsuarios(
   return response.data;
 }
 
+async function getUsuarioById(id: number): Promise<Resposta<UsuarioSemSenha>> {
+  const response = await api.get<Resposta<UsuarioSemSenha>>(`/usuarios/${id}`);
+  return response.data;
+}
+
 async function createUsuario(
   dados: CreateUsuarioInput,
 ): Promise<Resposta<UsuarioSemSenha>> {
@@ -94,6 +99,14 @@ export function useUsuarios(params: GetUsuariosInput) {
   return useQuery({
     queryKey: [...USUARIOS_QUERY_KEY, params],
     queryFn: () => getUsuarios(params),
+  });
+}
+
+export function useUsuario(id: number) {
+  return useQuery({
+    queryKey: [...USUARIOS_QUERY_KEY, id],
+    queryFn: () => getUsuarioById(id),
+    enabled: !!id,
   });
 }
 

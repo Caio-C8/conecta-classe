@@ -43,6 +43,14 @@ export class UsuarioController {
     return await this.usuarioService.getAllUsuarios(params);
   }
 
+  @Get("/:id")
+  @Papeis(Papel.ADMINISTRADOR)
+  async buscarUsuario(
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<UsuarioSemSenha | null> {
+    return await this.usuarioService.getUsuarioPorId(id);
+  }
+
   @Get("resumo/alunos")
   @Papeis(Papel.ADMINISTRADOR)
   async buscarResumoAlunos(): Promise<ResumoAlunos> {

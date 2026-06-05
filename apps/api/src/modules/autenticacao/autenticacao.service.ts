@@ -32,6 +32,12 @@ export class AutenticacaoService {
       throw new UnauthorizedException("Não existe um usuário com este perfil.");
     }
 
+    if (usuario.deleted_at) {
+      throw new UnauthorizedException(
+        "Usuário inativado. Entre em contato com a direção.",
+      );
+    }
+
     const payload = {
       sub: usuario.id,
       usuario: usuario.usuario,

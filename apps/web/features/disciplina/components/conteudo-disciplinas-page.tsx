@@ -8,7 +8,7 @@ import { useDisciplinas } from "@/features/disciplina/hooks/use-disciplinas";
 import { PesquisaEFiltro } from "@/components/ui/busca/pesquisa-e-filtro";
 import { useFiltrosDisciplinas } from "@/features/disciplina/hooks/use-filtros-disciplina";
 
-export function ConteudoPage() {
+export function ConteudoDisciplinasPage() {
   const FILTROS_DISCIPLINAS = useFiltrosDisciplinas();
   const { parametros, atualizarParametros } = useFiltroUrl();
 
@@ -24,7 +24,7 @@ export function ConteudoPage() {
   return (
     <>
       <div className="flex flex-row justify-between items-center w-full">
-        <h1 className="text-3xl">Disciplinas cadastradas</h1>
+        <h1 className="text-3xl font-medium">Disciplinas cadastradas</h1>
 
         <ModalCriarDisciplina />
       </div>

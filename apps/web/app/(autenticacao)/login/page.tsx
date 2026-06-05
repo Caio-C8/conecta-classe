@@ -7,11 +7,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Logo from "@/assets/logo.svg";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
     <div className="flex flex-col min-h-[100dvh] bg-background">
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 flex-col gap-10">
+        <div className="flex flex-col items-center">
+          <Image
+            src={Logo}
+            alt="Logo Conecta Classe"
+            width={128}
+            height={128}
+            className="mb-4"
+          />
+          <span className="text-2xl font-bold">
+            Conecta<span className="font-medium">Classe</span>
+          </span>
+        </div>
         <Card className="w-full max-w-[540px] shadow-xl border-none">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl font-bold">

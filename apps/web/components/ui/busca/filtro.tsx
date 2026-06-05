@@ -90,7 +90,7 @@ export function Filtro<T extends Record<string, any>>({
   };
 
   return (
-    <div className="bg-card p-4 rounded-lg border border-border mb-6">
+    <div className="bg-card p-4 rounded-lg border border-border">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {campos.map((campo) => {
           const nomeCampo = String(campo.nome);

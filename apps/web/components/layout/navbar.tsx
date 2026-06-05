@@ -54,7 +54,9 @@ export default function Navbar() {
       <div className="flex items-center gap-14">
         <Link href={`/${currentModule}`} className="flex items-center gap-2">
           <Image src={Logo} alt="Logo Conecta Classe" width={40} height={40} />
-          <span className="text-xl font-semibold">Conecta Classe</span>
+          <span className="text-2xl font-bold">
+            Conecta<span className="font-medium">Classe</span>
+          </span>
         </Link>
 
         <nav className="flex gap-6">

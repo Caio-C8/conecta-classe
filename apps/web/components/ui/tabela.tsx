@@ -42,7 +42,7 @@ export function Tabela<T>({
   obterChaveLinha,
 }: TabelaProps<T>) {
   return (
-    <Card className="w-full overflow-visible">
+    <Card className="w-full overflow-visible border border-[#E4E4E7] ring-transparent!">
       <Table>
         {metadados && metadados.total > 0 ? (
           <TableCaption className="text-right pr-4">

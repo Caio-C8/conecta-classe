@@ -11,26 +11,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { FieldError } from "@/components/ui/field-error";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FaPlus } from "react-icons/fa";
 
 interface ModalCriarDisciplinaProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   redirecionar?: boolean;
 }
 
 export function ModalCriarDisciplina({
-  open,
-  onOpenChange,
   redirecionar = false,
 }: ModalCriarDisciplinaProps) {
   const router = useRouter();
   const { mutate, isPending } = useCreateDisciplina();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     register,
@@ -47,7 +48,11 @@ export function ModalCriarDisciplina({
 
   const handleClose = () => {
     reset();
-    onOpenChange(false);
+    setIsOpen(false);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
   };
 
   const onSubmit = (values: CreateDisciplinaInput) => {
@@ -56,6 +61,7 @@ export function ModalCriarDisciplina({
         if (redirecionar) {
           router.push("/admin/disciplinas");
         }
+        reset();
       },
       onError: (error: any) => {
         setApiFormErrors(error, setError);
@@ -64,7 +70,17 @@ export function ModalCriarDisciplina({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button
+          size="lg"
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+        >
+          <FaPlus />
+          Nova disciplina
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">

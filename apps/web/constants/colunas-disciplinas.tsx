@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ModalEditarDisciplina } from "@/components/ui/modais/editar/modal-editar-disciplina";
 import { Coluna } from "@/components/ui/tabela";
 import { Disciplina } from "@repo/types";
 
@@ -24,10 +24,6 @@ export const COLUNAS_DISCIPLINAS: Coluna<Disciplina>[] = [
   },
   {
     cabecalho: "",
-    celula: () => (
-      <Button variant="link" className="link cursor-pointer">
-        Editar
-      </Button>
-    ),
+    celula: (disciplina) => <ModalEditarDisciplina disciplina={disciplina} />,
   },
 ];

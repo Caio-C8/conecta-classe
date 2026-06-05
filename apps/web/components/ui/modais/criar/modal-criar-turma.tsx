@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,20 +26,20 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { NumberInput } from "../../number-input";
+import { FaPlus } from "react-icons/fa";
+import { useState } from "react";
 
 interface ModalCriarTurmaProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   redirecionar?: boolean;
 }
 
 export function ModalCriarTurma({
-  open,
-  onOpenChange,
   redirecionar = false,
 }: ModalCriarTurmaProps) {
   const router = useRouter();
   const { mutate, isPending } = useCreateTurma();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     register,
@@ -60,7 +61,11 @@ export function ModalCriarTurma({
 
   const handleClose = () => {
     reset();
-    onOpenChange(false);
+    setIsOpen(false);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
   };
 
   const onSubmit = (values: CreateTurmaInput) => {
@@ -68,9 +73,8 @@ export function ModalCriarTurma({
       onSuccess: () => {
         if (redirecionar) {
           router.push("/admin/turmas");
-        } else {
-          handleClose();
         }
+        reset();
       },
       onError: (error: any) => {
         setApiFormErrors(error, setError);
@@ -79,7 +83,17 @@ export function ModalCriarTurma({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button
+          size="lg"
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+        >
+          <FaPlus />
+          Nova turma
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Criar turma</DialogTitle>

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ConfigCampoFiltro } from "@/components/ui/filtro";
+import { ConfigCampoFiltro } from "@/components/ui/busca/filtro";
 import { GetDisciplinasInput, Status } from "@repo/types";
 
 export const useFiltrosDisciplinas =

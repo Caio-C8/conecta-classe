@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateDisciplinaSchema, CreateDisciplinaInput } from "@repo/types";
-import { useCreateDisciplina } from "@/hooks/use-disciplinas";
+import { useCreateDisciplina } from "@/features/disciplina/hooks/use-disciplinas";
 import { setApiFormErrors } from "@/lib/utils-form";
 import {
   Dialog,

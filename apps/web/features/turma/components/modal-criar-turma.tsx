@@ -3,7 +3,7 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateTurmaSchema, CreateTurmaInput, NivelEnsino } from "@repo/types";
-import { useCreateTurma } from "@/hooks/use-turmas";
+import { useCreateTurma } from "@/features/turma/hooks/use-turmas";
 import { setApiFormErrors } from "@/lib/utils-form";
 import {
   Dialog,
@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-import { NumberInput } from "../../number-input";
+import { NumberInput } from "@/components/ui/number-input";
 import { FaPlus } from "react-icons/fa";
 import { useState } from "react";
 

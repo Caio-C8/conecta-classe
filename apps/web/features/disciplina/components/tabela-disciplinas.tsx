@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabela } from "@/components/ui/tabela";
-import { COLUNAS_DISCIPLINAS } from "@/constants/colunas-disciplinas";
+import { COLUNAS_DISCIPLINAS } from "@/features/disciplina/constants/colunas-disciplinas";
 import { Disciplina, Paginacao } from "@repo/types";
 
 interface TabelaDisciplinasProps {

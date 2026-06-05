@@ -9,7 +9,7 @@ import {
   Papel,
   Cargo,
 } from "@repo/types";
-import { useCreateUsuario } from "@/hooks/use-usuarios";
+import { useCreateUsuario } from "@/features/usuario/hooks/use-usuarios";
 import { setApiFormErrors } from "@/lib/utils-form";
 import {
   Dialog,

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import Logo from "@/assets/logo.svg";
 import Image from "next/image";
-import { useLogout } from "@/hooks/use-autenticacao";
+import { useLogout } from "@/features/autenticacao/hooks/use-autenticacao";
 import {
   AlertDialog,
   AlertDialogAction,

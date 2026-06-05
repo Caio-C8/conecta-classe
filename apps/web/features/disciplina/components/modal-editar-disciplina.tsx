@@ -12,7 +12,7 @@ import {
   useUpdateDisciplina,
   useInativarDisciplina,
   useAtivarDisciplina,
-} from "@/hooks/use-disciplinas";
+} from "@/features/disciplina/hooks/use-disciplinas";
 import { setApiFormErrors } from "@/lib/utils-form";
 import {
   Dialog,

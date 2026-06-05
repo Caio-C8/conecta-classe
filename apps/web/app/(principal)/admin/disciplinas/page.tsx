@@ -1,4 +1,4 @@
-import { ConteudoPage } from "./conteudo-page";
+import { ConteudoPage } from "@/features/disciplina/components/conteudo-page";
 
 export default function DisciplinasPage() {
   return (

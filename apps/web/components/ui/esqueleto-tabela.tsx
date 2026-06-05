@@ -13,7 +13,7 @@ export function EsqueletoTabela({
   return (
     <>
       {Array.from({ length: quantidadeLinhas }).map((_, indiceLinha) => (
-        <TableRow key={indiceLinha} className="h-[50px]">
+        <TableRow key={indiceLinha} className="h-[50px] border-[#E4E4E7]">
           {Array.from({ length: quantidadeColunas }).map((_, indiceColuna) => (
             <TableCell key={indiceColuna}>
               <Skeleton className="h-4 w-full rounded-md" />

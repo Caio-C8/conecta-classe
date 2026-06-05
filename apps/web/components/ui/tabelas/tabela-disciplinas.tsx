@@ -1,26 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import { Tabela } from "@/components/ui/tabela";
 import { COLUNAS_DISCIPLINAS } from "@/constants/colunas-disciplinas";
-import { useDisciplinas } from "@/hooks/use-disciplinas";
-import { Status } from "@repo/types";
+import { Disciplina, Paginacao } from "@repo/types";
 
-export function TabelaDisciplinas() {
-  const [pagina, setPagina] = useState(1);
-  const limite = 20;
+interface TabelaDisciplinasProps {
+  disciplinas: Paginacao<Disciplina>;
+  isLoading: boolean;
+  onMudancaPagina: (pagina: number) => void;
+}
 
-  const { data: resposta, isLoading } = useDisciplinas({
-    pagina,
-    limite,
-    status: Status.TODOS,
-  });
-
-  const disciplinasPaginadas = resposta?.dados;
-
+export function TabelaDisciplinas({
+  disciplinas,
+  isLoading,
+  onMudancaPagina,
+}: TabelaDisciplinasProps) {
   const mostrarTabela =
-    isLoading ||
-    (disciplinasPaginadas && disciplinasPaginadas.dados.length > 0);
+    isLoading || (disciplinas && disciplinas.dados.length > 0);
 
   if (!mostrarTabela) {
     return (
@@ -31,26 +27,22 @@ export function TabelaDisciplinas() {
   }
 
   return (
-    <div className="max-w-7xl w-full mt-6">
+    <div className="max-w-7xl w-full">
       <Tabela
         colunas={COLUNAS_DISCIPLINAS}
-        dados={disciplinasPaginadas?.dados}
+        dados={disciplinas.dados}
         carregando={isLoading}
         metadados={{
-          pagina: disciplinasPaginadas?.meta.pagina
-            ? Number(disciplinasPaginadas.meta.pagina)
-            : 1,
-          limite: disciplinasPaginadas?.meta.limite
-            ? Number(disciplinasPaginadas.meta.limite)
-            : limite,
-          total: disciplinasPaginadas?.meta.total
-            ? Number(disciplinasPaginadas.meta.total)
-            : 0,
-          ultimaPagina: disciplinasPaginadas?.meta.ultima_pagina
-            ? Number(disciplinasPaginadas.meta.ultima_pagina)
+          pagina: disciplinas.meta.pagina ? Number(disciplinas.meta.pagina) : 1,
+          limite: disciplinas?.meta.limite
+            ? Number(disciplinas.meta.limite)
+            : 20,
+          total: disciplinas?.meta.total ? Number(disciplinas.meta.total) : 0,
+          ultimaPagina: disciplinas?.meta.ultima_pagina
+            ? Number(disciplinas.meta.ultima_pagina)
             : 1,
         }}
-        onMudancaPagina={(novaPagina) => setPagina(novaPagina)}
+        onMudancaPagina={onMudancaPagina}
         obterChaveLinha={(disciplina) => disciplina.id}
       />
     </div>

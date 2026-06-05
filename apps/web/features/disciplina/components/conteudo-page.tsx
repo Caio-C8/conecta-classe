@@ -1,12 +1,12 @@
 "use client";
 
-import { TabelaDisciplinas } from "@/components/ui/tabelas/tabela-disciplinas";
-import { ModalCriarDisciplina } from "@/components/ui/modais/criar/moda-criar-disciplina";
+import { TabelaDisciplinas } from "@/features/disciplina/components/tabela-disciplinas";
+import { ModalCriarDisciplina } from "@/features/disciplina/components/moda-criar-disciplina";
 import { useFiltroUrl } from "@/hooks/use-filtro-url";
 import { GetDisciplinasSchema } from "@repo/types";
-import { useDisciplinas } from "@/hooks/use-disciplinas";
-import { PesquisaEFiltro } from "@/components/ui/pesquisa-e-filtro";
-import { useFiltrosDisciplinas } from "@/hooks/use-filtros-disciplina";
+import { useDisciplinas } from "@/features/disciplina/hooks/use-disciplinas";
+import { PesquisaEFiltro } from "@/components/ui/busca/pesquisa-e-filtro";
+import { useFiltrosDisciplinas } from "@/features/disciplina/hooks/use-filtros-disciplina";
 
 export function ConteudoPage() {
   const FILTROS_DISCIPLINAS = useFiltrosDisciplinas();

@@ -1,6 +1,6 @@
 "use client";
 
-import { Pesquisa } from "./pesquisa";
+import { Pesquisa } from "../pesquisa";
 import { BotaoToggleFiltro } from "./botao-toggle-filtro";
 import { cn } from "@/lib/utils";
 

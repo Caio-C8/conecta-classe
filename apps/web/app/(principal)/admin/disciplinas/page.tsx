@@ -2,7 +2,7 @@ import { ConteudoDisciplinasPage } from "@/features/disciplina/components/conteu
 
 export default function DisciplinasPage() {
   return (
-    <div className="flex flex-col gap-10 overflow-y-auto w-full">
+    <div className="flex flex-col gap-10 overflow-y-auto w-full items-center">
       <ConteudoDisciplinasPage />
     </div>
   );

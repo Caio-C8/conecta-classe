@@ -205,8 +205,20 @@ export class UsuarioRepository {
       },
       include: {
         administrador: true,
-        aluno: true,
-        professor: true,
+        aluno: {
+          include: {
+            matriculas: {
+              include: {
+                turma: true,
+              },
+            },
+          },
+        },
+        professor: {
+          include: {
+            turmas: true,
+          },
+        },
       },
     });
   }

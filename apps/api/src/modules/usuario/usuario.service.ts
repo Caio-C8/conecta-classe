@@ -122,8 +122,16 @@ export class UsuarioService {
   async getUsuarioPorId(
     id: number,
     tx?: Prisma.TransactionClient,
-  ): Promise<Usuario | null> {
-    return await this.usuarioRepository.findById(id, tx);
+  ): Promise<UsuarioSemSenha | null> {
+    const usuario = await this.usuarioRepository.findById(id, tx);
+
+    if (!usuario) {
+      return null;
+    }
+
+    const { senha, ...usuarioSemSenha } = usuario;
+
+    return usuarioSemSenha;
   }
 
   async getProfessorPorId(

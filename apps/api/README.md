@@ -197,6 +197,76 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+- `GET /usuarios/:id`
+  - descricao: Busca dados de um usuário pelo ID.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "id": 1,
+        "usuario": "string",
+        "nome": "string",
+        "nome_search": "string",
+        "papel": "ALUNO",
+        "trocar_senha": false,
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string",
+        "administrador": null,
+        "aluno": {
+          // Só virá se o usuário for aluno
+          "id": 1,
+          "usuario_id": 2,
+          "matriculas": [] // traz dados das turmas também
+        },
+        "professor": {
+          // Só virá se o usuário for professor
+          "id": 1,
+          "usuario_id": 4,
+          "turmas": []
+        }
+      }
+    }
+    ```
+
+- `PATCH /usuarios/:id`
+  - descricao: Atualiza dados de um usuário.
+  - requerimentos: Autenticação: Sim | Acessível por: Administrador
+  - corpo da requisicao:
+    ```json
+    {
+      "usuario": "string",
+      "senha": "string",
+      "nome": "string",
+      "cargo": "DIRETOR | COORDENADOR | SECRETARIO",
+      "trocar_senha": false
+    }
+    ```
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": {
+        "id": 1,
+        "usuario": "string",
+        "nome": "string",
+        "nome_search": "string",
+        "papel": "ALUNO",
+        "trocar_senha": false,
+        "deleted_at": null,
+        "created_at": "string",
+        "updated_at": "string"
+      }
+    }
+    ```
+
 - `PATCH /usuarios/:id`
   - descricao: Atualiza dados de um usuário.
   - requerimentos: Autenticação: Sim | Acessível por: Administrador

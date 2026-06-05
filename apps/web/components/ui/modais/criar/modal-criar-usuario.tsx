@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,10 +34,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import { FaPlus } from "react-icons/fa";
+import { useState } from "react";
 
 interface ModalCriarUsuarioProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   redirecionar?: boolean;
 }
 
@@ -50,12 +51,12 @@ type FormValues = {
 };
 
 export function ModalCriarUsuario({
-  open,
-  onOpenChange,
   redirecionar = false,
 }: ModalCriarUsuarioProps) {
   const router = useRouter();
   const { mutate, isPending } = useCreateUsuario();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     register,
@@ -83,7 +84,11 @@ export function ModalCriarUsuario({
 
   const handleClose = () => {
     reset();
-    onOpenChange(false);
+    setIsOpen(false);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
   };
 
   const onSubmit = (values: FormValues) => {
@@ -93,9 +98,8 @@ export function ModalCriarUsuario({
       onSuccess: () => {
         if (redirecionar) {
           router.push("/admin/usuarios");
-        } else {
-          handleClose();
         }
+        reset();
       },
       onError: (error: any) => {
         setApiFormErrors(error, setError);
@@ -106,7 +110,17 @@ export function ModalCriarUsuario({
   const papeis = [Papel.ALUNO, Papel.PROFESSOR, Papel.ADMINISTRADOR];
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button
+          size="lg"
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+        >
+          <FaPlus />
+          Novo usuário
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Criar usuário</DialogTitle>

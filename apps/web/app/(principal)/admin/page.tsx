@@ -134,53 +134,14 @@ export default function HomeAdmin() {
 
         <div className="flex items-center justify-center">
           <div className="flex flex-col gap-6 md:flex-row md:gap-8">
-            <Button
-              size="lg"
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
-              onClick={() => setModalCriarUsuarioAberto(true)}
-            >
-              <FaPlus />
-              Novo usuário
-            </Button>
+            <ModalCriarUsuario redirecionar={true} />
 
-            <Button
-              size="lg"
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
-              onClick={() => setModalCriarTurmaAberto(true)}
-            >
-              <FaPlus />
-              Nova turma
-            </Button>
+            <ModalCriarTurma redirecionar={true} />
 
-            <Button
-              size="lg"
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
-              onClick={() => setModalCriarDisciplinaAberto(true)}
-            >
-              <FaPlus />
-              Nova disciplina
-            </Button>
+            <ModalCriarDisciplina redirecionar={true} />
           </div>
         </div>
       </section>
-
-      <ModalCriarUsuario
-        open={modalCriarUsuarioAberto}
-        onOpenChange={setModalCriarUsuarioAberto}
-        redirecionar={true}
-      />
-
-      <ModalCriarTurma
-        open={modalCriarTurmaAberto}
-        onOpenChange={setModalCriarTurmaAberto}
-        redirecionar={true}
-      />
-
-      <ModalCriarDisciplina
-        open={modalCriarDisciplinaAberto}
-        onOpenChange={setModalCriarDisciplinaAberto}
-        redirecionar={true}
-      />
     </>
   );
 }

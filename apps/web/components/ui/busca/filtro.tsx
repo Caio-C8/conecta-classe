@@ -152,6 +152,7 @@ export function Filtro<T extends Record<string, any>>({
           variant="outline"
           size="sm"
           onClick={handleLimpar}
+          className="cursor-pointer"
         >
           <X className="mr-2 h-4 w-4" /> Limpar
         </Button>

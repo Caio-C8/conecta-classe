@@ -216,7 +216,12 @@ export class UsuarioRepository {
         },
         professor: {
           include: {
-            turmas: true,
+            turmas: {
+              distinct: ["turma_id"],
+              include: {
+                turma: true,
+              },
+            },
           },
         },
       },

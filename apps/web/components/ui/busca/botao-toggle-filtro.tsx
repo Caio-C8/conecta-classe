@@ -19,7 +19,7 @@ export function BotaoToggleFiltro({
       size="icon"
       onClick={onClick}
       title="Filtros avançados"
-      className="h-10 w-10 shrink-0"
+      className="h-10 w-10 shrink-0 cursor-pointer"
     >
       <FunnelIcon className="h-5 w-5" />
     </Button>

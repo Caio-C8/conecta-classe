@@ -649,6 +649,33 @@ Todas as rotas têm um padrão de resposta sendo eles:
     }
     ```
 
+### Matrículas
+
+- `GET /matriculas/me`
+  - descricao: Busca as matrículas do aluno.
+  - requerimentos: Autenticação: Sim | Acessível por: Aluno
+  - corpo da requisicao: Nenhum.
+  - resposta de sucesso:
+    ```json
+    {
+      "status": 200,
+      "sucesso": true,
+      "mensagem": "Operação realizada com sucesso",
+      "dados": [
+        {
+          "id": 3,
+          "aluno_id": 3,
+          "turma_id": 2,
+          "ano_letivo": 2026,
+          "status": "APROVADO",
+          "created_at": "2026-06-06T02:38:08.816Z",
+          "updated_at": "2026-06-06T04:09:39.278Z"
+        },
+        "..."
+      ]
+    }
+    ```
+
 ### Professores
 
 - `GET /professor/turmas`

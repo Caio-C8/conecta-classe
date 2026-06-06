@@ -9,6 +9,7 @@ import { MatriculaRepository } from "./matricula.repository";
 import { Matricula, StatusMatricula } from "@repo/types";
 import { Prisma } from "@repo/database";
 import { RendimentoService } from "../rendimento/rendimento.service";
+import { UsuarioService } from "../usuario/usuario.service";
 
 @Injectable()
 export class MatriculaService {
@@ -16,6 +17,7 @@ export class MatriculaService {
     private readonly matriculaRepository: MatriculaRepository,
     @Inject(forwardRef(() => RendimentoService))
     private readonly rendimentoService: RendimentoService,
+    private readonly usuarioService: UsuarioService,
   ) {}
 
   async createMatriculaComRendimentos(
@@ -71,6 +73,22 @@ export class MatriculaService {
       disciplinaIds,
       tx,
     );
+  }
+
+  async getMatriculasPorAluno(usuarioId: number): Promise<Matricula[]> {
+    const usuario = await this.usuarioService.getUsuarioPorId(usuarioId);
+
+    if (!usuario) {
+      throw new NotFoundException("Usuário não encontrado.");
+    }
+
+    if (!usuario.aluno) {
+      throw new NotFoundException(
+        "Este usuário não possui uma matrícula de aluno.",
+      );
+    }
+
+    return await this.matriculaRepository.findAllByAlunoId(usuario.aluno.id);
   }
 
   async getMatriculaPorAluno(
@@ -140,7 +158,10 @@ export class MatriculaService {
     tx?: Prisma.TransactionClient,
   ): Promise<void> {
     const matriculas =
-      await this.matriculaRepository.findByTurmaIdAndStatusCursando(turmaId, tx);
+      await this.matriculaRepository.findByTurmaIdAndStatusCursando(
+        turmaId,
+        tx,
+      );
 
     for (const matricula of matriculas) {
       const jaPossuiDisciplina = matricula.rendimentos_disciplinas?.some(

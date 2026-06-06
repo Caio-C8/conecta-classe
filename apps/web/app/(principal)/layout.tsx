@@ -9,7 +9,9 @@ export default function PrincipalLayout({
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      <main className="flex-1 py-[50px] px-[60px]">{children}</main>
+      <main className="flex-1 w-full py-6 px-4 md:py-[50px] md:px-[60px]">
+        {children}
+      </main>
     </div>
   );
 }

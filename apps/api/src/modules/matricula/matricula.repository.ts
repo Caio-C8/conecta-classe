@@ -46,6 +46,22 @@ export class MatriculaRepository {
     };
   }
 
+  async findAllByAlunoId(
+    alunoId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Matricula[]> {
+    const prismaClient = tx || this.prisma;
+
+    return await prismaClient.matricula.findMany({
+      where: {
+        aluno_id: alunoId,
+      },
+      orderBy: {
+        ano_letivo: "desc",
+      },
+    });
+  }
+
   async findByAlunoId(
     usuarioId: number,
     anoLetivo: number,

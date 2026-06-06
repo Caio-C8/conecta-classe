@@ -31,6 +31,11 @@ export class ProfessorController {
   async getProximosEventos(@GetUsuario("id") usuarioId: number) {
     return this.professorService.buscarProximosEventos(usuarioId);
   }
+  
+  @Get("eventos/pendentes")
+  async getEventosPendentes(@GetUsuario("id") usuarioId: number) {
+    return this.professorService.buscarEventosPendentes(usuarioId);
+  }
 
   @Get("eventos/:id/notas")
   async getDiarioDeNotas(
@@ -55,4 +60,6 @@ export class ProfessorController {
   ) {
     return this.professorService.salvarChamada(usuarioId, dto);
   }
+
+  
 }

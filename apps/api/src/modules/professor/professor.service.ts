@@ -263,4 +263,60 @@ export class ProfessorService {
 
     return { aulaId: novaAula.id };
   }
+
+  async buscarEventosPendentes(professorId: number) {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: professorId }
+    });
+
+    if (!professor) {
+      throw new Error("Professor não encontrado.");
+    }
+
+    const hoje = new Date();
+
+    const eventosPassados = await this.prisma.evento.findMany({
+      where: {
+        criador_id: professor.id,
+        data_evento: { lt: hoje }, 
+        valor_nota: { not: null }  
+      },
+      include: {
+        turma: {
+          select: {
+            serie: true,
+            identificacao: true,
+            _count: {
+              select: { matriculas: { where: { status: 'CURSANDO' } } } 
+            }
+          }
+        },
+        _count: {
+          select: { notas_eventos: true } 
+        },
+        disciplina: {
+          select: { nome: true }
+        }
+      },
+      orderBy: {
+        data_evento: 'asc' 
+      }
+    });
+
+    const eventosPendentes = eventosPassados.filter(evento => {
+      const totalAlunos = evento.turma._count.matriculas;
+      const notasLancadas = evento._count.notas_eventos;
+      
+      return notasLancadas < totalAlunos;
+    });
+
+    return eventosPendentes.map(evento => ({
+      id: evento.id,
+      titulo: evento.titulo,
+      data_evento: evento.data_evento,
+      disciplina: evento.disciplina.nome,
+      turma: `${evento.turma.serie}º Ano ${evento.turma.identificacao}`,
+      progresso: `${evento._count.notas_eventos}/${evento.turma._count.matriculas} notas lançadas`
+    }));
+  }
 }

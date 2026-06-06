@@ -1,35 +1,35 @@
 "use client";
 
 import { Tabela } from "@/components/ui/tabela";
-import { Matricula } from "@repo/types";
-import { COLUNAS_MATRICULAS } from "../constants/colunas-matriculas";
+import { ProfessorTurma } from "@repo/types";
 import { useState } from "react";
+import { COLUNAS_PROFESSORES_TURMA } from "../../constants/colunas-professores-turma";
 
-interface TabelaMatriculasProps {
-  matriculas: Matricula[];
+interface TabelaProfessoresTurmaProps {
+  professores: ProfessorTurma[];
   isLoading: boolean;
 }
 
-export function TabelaMatriculas({
-  matriculas = [],
+export function TabelaProfessoresTurma({
+  professores = [],
   isLoading,
-}: TabelaMatriculasProps) {
+}: TabelaProfessoresTurmaProps) {
   const [pagina, setPagina] = useState(1);
-  const limite = 5;
-  const total = matriculas.length;
+  const limite = 10;
+  const total = professores.length;
   const ultimaPagina = Math.max(1, Math.ceil(total / limite));
 
-  const matriculasPaginadas = matriculas.slice(
+  const professoresPaginadas = professores.slice(
     (pagina - 1) * limite,
     pagina * limite,
   );
 
-  const mostrarTabela = isLoading || matriculas.length > 0;
+  const mostrarTabela = isLoading || professores.length > 0;
 
   if (!mostrarTabela) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-muted/30 border border-dashed rounded-lg text-muted-foreground w-full max-w-7xl mt-6">
-        Nenhuma matrícula encontrada.
+        Nenhum professor encontrado.
       </div>
     );
   }
@@ -37,8 +37,8 @@ export function TabelaMatriculas({
   return (
     <div className="max-w-7xl w-full">
       <Tabela
-        colunas={COLUNAS_MATRICULAS}
-        dados={matriculasPaginadas}
+        colunas={COLUNAS_PROFESSORES_TURMA}
+        dados={professoresPaginadas}
         carregando={isLoading}
         metadados={{
           pagina: pagina,

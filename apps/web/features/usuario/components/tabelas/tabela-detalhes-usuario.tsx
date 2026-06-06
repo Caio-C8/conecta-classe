@@ -1,24 +1,24 @@
 "use client";
 
 import { Tabela } from "@/components/ui/tabela";
-import { Turma } from "@repo/types";
-import { COLUNAS_DETALHES_TURMA } from "../constants/colunas-detalhes-turma";
+import { UsuarioSemSenha } from "@repo/types";
+import { COLUNAS_DETALHES_USUARIO } from "../../constants/colunas-detalhes-usuario";
 
-interface TabelaDetalhesTurmaProps {
-  turma: Turma;
+interface TabelaDetalhesUsuarioProps {
+  usuario: UsuarioSemSenha;
   isLoading: boolean;
 }
 
-export function TabelaDetalhesTurma({
-  turma,
+export function TabelaDetalhesUsuario({
+  usuario,
   isLoading,
-}: TabelaDetalhesTurmaProps) {
-  const mostrarTabela = isLoading || turma;
+}: TabelaDetalhesUsuarioProps) {
+  const mostrarTabela = isLoading || usuario;
 
   if (!mostrarTabela) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-muted/30 border border-dashed rounded-lg text-muted-foreground w-full max-w-7xl mt-6">
-        Nenhuma turma encontrada.
+        Nenhum usuário encontrado.
       </div>
     );
   }
@@ -26,8 +26,8 @@ export function TabelaDetalhesTurma({
   return (
     <div className="max-w-7xl w-full">
       <Tabela
-        colunas={COLUNAS_DETALHES_TURMA}
-        dados={turma ? [turma] : []}
+        colunas={COLUNAS_DETALHES_USUARIO}
+        dados={usuario ? [usuario] : []}
         carregando={isLoading}
         metadados={{
           pagina: 0,
@@ -35,7 +35,7 @@ export function TabelaDetalhesTurma({
           total: 0,
           ultimaPagina: 0,
         }}
-        obterChaveLinha={(turma) => turma.id}
+        obterChaveLinha={(usuario) => usuario.id}
       />
     </div>
   );

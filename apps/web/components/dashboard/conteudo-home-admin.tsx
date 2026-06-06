@@ -11,9 +11,9 @@ import { useResumoTurmas } from "@/features/turma/hooks/use-turmas";
 import { useResumoDisciplinas } from "@/features/disciplina/hooks/use-disciplinas";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { ModalCriarUsuario } from "@/features/usuario/components/modal-criar-usuario";
-import { ModalCriarTurma } from "@/features/turma/components/modal-criar-turma";
-import { ModalCriarDisciplina } from "@/features/disciplina/components/moda-criar-disciplina";
+import { ModalCriarUsuario } from "@/features/usuario/components/modais/modal-criar-usuario";
+import { ModalCriarTurma } from "@/features/turma/components/modais/modal-criar-turma";
+import { ModalCriarDisciplina } from "@/features/disciplina/components/modais/modal-criar-disciplina";
 
 export function ConteudoHomeAdmin() {
   const [nomeUsuario, setNomeUsuario] = useState<string>("Carregando...");

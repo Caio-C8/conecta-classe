@@ -5,8 +5,8 @@ import { GetUsuariosSchema } from "@repo/types";
 import { PesquisaEFiltro } from "@/components/ui/busca/pesquisa-e-filtro";
 import { useFiltrosUsuarios } from "../hooks/use-filtros-usuarios";
 import { useUsuarios } from "@/features/usuario/hooks/use-usuarios";
-import { ModalCriarUsuario } from "./modal-criar-usuario";
-import { TabelaUsuarios } from "./tabela-usuarios";
+import { ModalCriarUsuario } from "./modais/modal-criar-usuario";
+import { TabelaUsuarios } from "./tabelas/tabela-usuarios";
 
 export function ConteudoUsuariosPage() {
   const FILTROS_USUARIOS = useFiltrosUsuarios();

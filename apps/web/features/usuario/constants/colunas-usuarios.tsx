@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Coluna } from "@/components/ui/tabela";
 import { Papel, UsuarioSemSenha } from "@repo/types";
 import Link from "next/link";
-import { ModalEditarUsuario } from "../components/modal-editar-usuario";
+import { ModalEditarUsuario } from "../components/modais/modal-editar-usuario";
 
 export const COLUNAS_USUARIOS: Coluna<UsuarioSemSenha>[] = [
   {

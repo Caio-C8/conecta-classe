@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Coluna } from "@/components/ui/tabela";
 import { ProfessorTurma } from "@repo/types";
-import { BotaoDesvincularProfessor } from "../components/botao-desvincular-professor";
+import { BotaoDesvincularProfessor } from "../components/botoes/botao-desvincular-professor";
 
 export const COLUNAS_PROFESSORES_TURMA: Coluna<ProfessorTurma>[] = [
   {

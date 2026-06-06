@@ -2,15 +2,15 @@
 
 import { useParams } from "next/navigation";
 import { useTurma } from "../hooks/use-turmas";
-import { ModalEditarTurma } from "./modal-editar-turma";
-import { TabelaDetalhesTurma } from "./tabela-detalhes-turma";
-import { BotaoRetomarTurma } from "./botao-retomar-turma";
-import { BotaoEncerrarTurma } from "./botao-encerrar-turma";
+import { ModalEditarTurma } from "./modais/modal-editar-turma";
+import { TabelaDetalhesTurma } from "./tabelas/tabela-detalhes-turma";
+import { BotaoRetomarTurma } from "./botoes/botao-retomar-turma";
+import { BotaoEncerrarTurma } from "./botoes/botao-encerrar-turma";
 import { SituacaoTurma } from "@repo/types";
-import { TabelaAlunosTurma } from "./tabela-alunos-turma";
-import { TabelaProfessoresTurma } from "./tabela-professores-turma";
-import { ModalVincularAluno } from "./modal-vincular-aluno";
-import { ModalVincularProfessor } from "./modal-vincular-professor";
+import { TabelaAlunosTurma } from "./tabelas/tabela-alunos-turma";
+import { TabelaProfessoresTurma } from "./tabelas/tabela-professores-turma";
+import { ModalVincularAluno } from "./modais/modal-vincular-aluno";
+import { ModalVincularProfessor } from "./modais/modal-vincular-professor";
 
 export function ConteudoDetalhesTurma() {
   const params = useParams();

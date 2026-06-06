@@ -39,9 +39,11 @@ import {
   useInativarUsuario,
   useUpdateUsuario,
 } from "@/features/usuario/hooks/use-usuarios";
+import { SquarePen } from "lucide-react";
 
 interface ModalEditarUsuarioProps {
   usuario: UsuarioSemSenha;
+  estiloTrigger?: "link" | "button";
 }
 
 type FormValues = {
@@ -52,7 +54,10 @@ type FormValues = {
   cargo?: Cargo;
 };
 
-export function ModalEditarUsuario({ usuario }: ModalEditarUsuarioProps) {
+export function ModalEditarUsuario({
+  usuario,
+  estiloTrigger = "link",
+}: ModalEditarUsuarioProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { mutate: updateUsuario, isPending: isUpdating } = useUpdateUsuario();
@@ -140,9 +145,23 @@ export function ModalEditarUsuario({ usuario }: ModalEditarUsuarioProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="link" className="link cursor-pointer">
-          Editar
-        </Button>
+        {estiloTrigger === "link" ? (
+          <Button variant="link" className="link cursor-pointer">
+            Editar
+          </Button>
+        ) : estiloTrigger === "button" ? (
+          <Button
+            size="lg"
+            className="flex items-center justify-center gap-2 rounded-xl bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-white px-6 py-6 text-base cursor-pointer"
+          >
+            <SquarePen />
+            Editar usuário
+          </Button>
+        ) : (
+          <Button variant="ghost" className="cursor-pointer">
+            Editar
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[500px]">

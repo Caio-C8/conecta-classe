@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateEventoDto } from './dto/create-evento.dto';
 import { RegistrarChamadaDto } from './dto/Registrar-chamada.dto';
+import { RegistrarNotasDto } from './dto/Registrar-notas.dto';
 
 @Injectable()
 export class ProfessorService {
@@ -318,5 +319,59 @@ export class ProfessorService {
       turma: `${evento.turma.serie}º Ano ${evento.turma.identificacao}`,
       progresso: `${evento._count.notas_eventos}/${evento.turma._count.matriculas} notas lançadas`
     }));
+  }
+
+
+  async registrarNotas(usuarioId: number, eventoId: number, dto: RegistrarNotasDto) {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: usuarioId }
+    });
+
+    if (!professor) {
+      throw new Error("Professor não encontrado.");
+    }
+
+    const evento = await this.prisma.evento.findUnique({
+      where: { id: eventoId }
+    });
+
+    if (!evento || evento.criador_id !== professor.id) {
+      throw new Error("Evento não encontrado ou você não tem permissão para editá-lo.");
+    }
+
+    if (evento.valor_nota === null) {
+      throw new Error("Este evento não é avaliativo, logo não pode receber notas.");
+    }
+
+    const valorMaximo = evento.valor_nota.toNumber(); 
+
+    for (const notaFront of dto.notas) {
+      if (notaFront.nota_obtida > valorMaximo) {
+        throw new Error(`A nota ${notaFront.nota_obtida} é maior que o valor máximo da avaliação (${valorMaximo}).`);
+      }
+    }
+
+    const idsDosAlunos = dto.notas.map(n => n.matricula_id);
+
+    await this.prisma.$transaction([
+      this.prisma.notaEvento.deleteMany({
+        where: {
+          evento_id: eventoId,
+          matricula_id: { in: idsDosAlunos }
+        }
+      }),
+      this.prisma.notaEvento.createMany({
+        data: dto.notas.map(n => ({
+          evento_id: eventoId,
+          matricula_id: n.matricula_id,
+          nota_obtida: n.nota_obtida
+        }))
+      })
+    ]);
+
+    return { 
+      sucesso: true, 
+      mensagem: "Notas registradas/atualizadas com sucesso!" 
+    };
   }
 }

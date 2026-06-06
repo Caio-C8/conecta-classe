@@ -7,9 +7,10 @@ import { GetUsuario } from "../../common/decorators/get-usuario.decorator";
 import { Papel } from "@repo/types";
 import { CreateEventoDto } from "./dto/create-evento.dto";
 import { RegistrarChamadaDto } from "./dto/Registrar-chamada.dto";
+import { RegistrarNotasDto } from "./dto/Registrar-notas.dto"; 
 
 @Controller("professor")
-@UseGuards(JwtGuard, PapeisGuard) 
+@UseGuards(JwtGuard, PapeisGuard)
 @Papeis(Papel.PROFESSOR)
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
@@ -31,7 +32,7 @@ export class ProfessorController {
   async getProximosEventos(@GetUsuario("id") usuarioId: number) {
     return this.professorService.buscarProximosEventos(usuarioId);
   }
-  
+
   @Get("eventos/pendentes")
   async getEventosPendentes(@GetUsuario("id") usuarioId: number) {
     return this.professorService.buscarEventosPendentes(usuarioId);
@@ -45,6 +46,15 @@ export class ProfessorController {
     return this.professorService.buscarDiarioDeNotas(usuarioId, +eventoId);
   }
 
+  @Post("eventos/:id/notas")
+  async registrarNotas(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id") eventoId: string,
+    @Body() dto: RegistrarNotasDto,
+  ) {
+    return this.professorService.registrarNotas(usuarioId, Number(eventoId), dto);
+  }
+
   @Get("turmas/:id/alunos")
   async buscarAlunosParaChamada(
     @Param("id") turmaId: string,
@@ -55,7 +65,7 @@ export class ProfessorController {
 
   @Post("chamada")
   async registrarChamada(
-    @GetUsuario("id") usuarioId: number, 
+    @GetUsuario("id") usuarioId: number,
     @Body() dto: RegistrarChamadaDto,
   ) {
     return this.professorService.salvarChamada(usuarioId, dto);

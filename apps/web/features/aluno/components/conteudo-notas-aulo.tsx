@@ -56,7 +56,7 @@ export function ConteudoNotasAluno() {
   if (!dados || rendimentos.length === 0) {
     return (
       <>
-        <CabecalhoAluno titulo="Notas" />
+        <CabecalhoAluno titulo="Notas" descricao={stringTurma} />
         <div className="mt-10 max-w-4xl mx-auto bg-white/50 border border-dashed border-gray-300 rounded-[32px] p-12 text-center text-gray-500">
           Nenhum registro de notas foi encontrado para o ano letivo selecionado.
         </div>
@@ -104,12 +104,20 @@ export function ConteudoNotasAluno() {
                   </div>
 
                   <div className="flex items-center space-x-4 md:space-x-6">
-                    <span
-                      className="hidden md:inline text-xl font-black"
-                      style={{ color: cor }}
-                    >
-                      {rend.nota_total.toFixed(1)}
+                    <span>
+                      <span
+                        className="hidden md:inline text-xl font-black"
+                        style={{ color: cor }}
+                      >
+                        {rend.nota_total.toFixed(1) ?? 0}
+                      </span>{" "}
+                      /
+                      {rend.eventos.reduce(
+                        (acc, ev) => acc + (ev.valor_nota ?? 0),
+                        0,
+                      )}
                     </span>
+
                     {isExpanded ? (
                       <ChevronUp size={20} className="text-gray-400" />
                     ) : (

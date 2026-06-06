@@ -164,7 +164,7 @@ export function ConteudoHomeAlunoPage() {
             <div className="order-2 lg:order-1">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg md:text-xl font-semibold">
-                  Últimas Avaliações
+                  Últimas Notas
                 </h3>
                 <Link
                   href="/aluno/notas"

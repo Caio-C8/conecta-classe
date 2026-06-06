@@ -32,8 +32,8 @@ export function ConteudoFrequenciaAluno() {
   };
 
   const stringTurma = dados?.turma
-    ? `${dados.turma.serie}º ano -   ${formatarNivel(dados.turma.nivel_ensino)} - Turma ${dados.turma.identificacao}`
-    : "Carregando informações...";
+    ? `Acompanhe suas frequências do ${dados.turma.serie}º ano - ${formatarNivel(dados.turma.nivel_ensino)}.`
+    : "Acompanhe suas presenças e faltas do ano letivo selecionado.";
 
   if (isLoading) {
     return (
@@ -51,10 +51,7 @@ export function ConteudoFrequenciaAluno() {
   if (!dados) {
     return (
       <>
-        <CabecalhoAluno
-          titulo="Frequência"
-          descricao={`Acompanhe suas frequências do ${stringTurma}`}
-        />
+        <CabecalhoAluno titulo="Frequência" descricao={stringTurma} />
         <div className="mt-6 bg-white/50 border border-dashed border-gray-300 rounded-[32px] p-12 text-center text-gray-500">
           Nenhum registro de frequência foi encontrado para o ano letivo
           selecionado.
@@ -82,7 +79,7 @@ export function ConteudoFrequenciaAluno() {
 
   return (
     <div className="flex flex-col gap-10">
-      <CabecalhoAluno titulo="Frequência" />
+      <CabecalhoAluno titulo="Frequência" descricao={stringTurma} />
 
       <main>
         {isVisaoGeral ? (

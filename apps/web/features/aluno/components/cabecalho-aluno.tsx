@@ -12,9 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface CabecalhoAlunoProps {
   titulo: string;
+  descricao?: string;
 }
 
-export function CabecalhoAluno({ titulo }: CabecalhoAlunoProps) {
+export function CabecalhoAluno({ titulo, descricao }: CabecalhoAlunoProps) {
   const { anoLetivo, setAnoLetivo, anosDisponiveis, isLoadingAnos } =
     useAnoLetivo();
 
@@ -22,6 +23,7 @@ export function CabecalhoAluno({ titulo }: CabecalhoAlunoProps) {
     <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
         <h1 className="text-2xl md:text-3xl font-medium">{titulo}</h1>
+        {descricao && <p className="text-sm text-gray-700 mt-2">{descricao}</p>}
       </div>
 
       <div className="flex items-center gap-3">

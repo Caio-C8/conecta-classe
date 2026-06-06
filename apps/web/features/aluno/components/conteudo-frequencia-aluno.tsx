@@ -5,6 +5,7 @@ import { useAnoLetivo } from "@/features/aluno/contexts/ano-letivo-context";
 import { CabecalhoAluno } from "@/features/aluno/components/cabecalho-aluno";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LayoutDashboard, CheckCircle2, AlertCircle } from "lucide-react";
+import { NivelEnsino } from "@repo/types";
 
 const getColorByPercentage = (percentage: number) => {
   if (percentage >= 75) return "#10B981";
@@ -24,14 +25,14 @@ export function ConteudoFrequenciaAluno() {
   const dados = resFrequencia?.dados;
 
   const formatarNivel = (nivel?: string | null) => {
-    if (nivel === "MEDIO") return "Ensino Médio";
-    if (nivel === "FUNDAMENTAL") return "Ensino Fundamental II";
-    if (nivel === "FUNDAMENTAL_1") return "Ensino Fundamental I";
+    if (nivel === NivelEnsino.MEDIO) return "Ensino Médio";
+    if (nivel === NivelEnsino.FUNDAMENTAL_2) return "Ensino Fundamental II";
+    if (nivel === NivelEnsino.FUNDAMENTAL_1) return "Ensino Fundamental I";
     return nivel || "";
   };
 
   const stringTurma = dados?.turma
-    ? `${dados.turma.serie}º ano / ${formatarNivel(dados.turma.nivel_ensino)} - Turma ${dados.turma.identificacao}`
+    ? `${dados.turma.serie}º ano -   ${formatarNivel(dados.turma.nivel_ensino)} - Turma ${dados.turma.identificacao}`
     : "Carregando informações...";
 
   if (isLoading) {
@@ -50,7 +51,10 @@ export function ConteudoFrequenciaAluno() {
   if (!dados) {
     return (
       <>
-        <CabecalhoAluno titulo="Frequência" />
+        <CabecalhoAluno
+          titulo="Frequência"
+          descricao={`Acompanhe suas frequências do ${stringTurma}`}
+        />
         <div className="mt-6 bg-white/50 border border-dashed border-gray-300 rounded-[32px] p-12 text-center text-gray-500">
           Nenhum registro de frequência foi encontrado para o ano letivo
           selecionado.

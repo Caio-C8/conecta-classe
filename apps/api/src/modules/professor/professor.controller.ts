@@ -1,15 +1,15 @@
-import { Controller, Get, UseGuards, Param, Query } from "@nestjs/common";
+import { Controller, Get, UseGuards, Param, Query, Body, Post } from "@nestjs/common";
 import { ProfessorService } from "./professor.service";
 import { JwtGuard } from "../../common/guards/jwt.guard";
 import { PapeisGuard } from "../../common/guards/papeis.guard";
 import { Papeis } from "../../common/decorators/papeis.decorator";
 import { GetUsuario } from "../../common/decorators/get-usuario.decorator";
 import { Papel } from "@repo/types";
-import { Body, Post } from "@nestjs/common";
 import { CreateEventoDto } from "./dto/create-evento.dto";
+import { RegistrarChamadaDto } from "./dto/Registrar-chamada.dto";
 
 @Controller("professor")
-@UseGuards(JwtGuard, PapeisGuard)
+@UseGuards(JwtGuard, PapeisGuard) 
 @Papeis(Papel.PROFESSOR)
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
@@ -41,16 +41,18 @@ export class ProfessorController {
   }
 
   @Get("turmas/:id/alunos")
-  async getAlunosDaTurma(
+  async buscarAlunosParaChamada(
     @Param("id") turmaId: string,
-    @Query("aula_id") aula_idStr?: string,
+    @Query("data") dataStr?: string,
   ) {
-    let numeroAulaId = aula_idStr ? Number(aula_idStr) : undefined;
-    let numeroTurmaId = Number(turmaId);
+    return this.professorService.buscarAlunosParaChamada(Number(turmaId), dataStr);
+  }
 
-    return this.professorService.buscarAlunosParaChamada(
-      numeroTurmaId,
-      numeroAulaId,
-    );
+  @Post("chamada")
+  async registrarChamada(
+    @GetUsuario("id") usuarioId: number, 
+    @Body() dto: RegistrarChamadaDto,
+  ) {
+    return this.professorService.salvarChamada(usuarioId, dto);
   }
 }

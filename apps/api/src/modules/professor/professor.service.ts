@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateEventoDto } from './dto/create-evento.dto';
-import { MatriculaModule } from '../matricula/matricula.module';
-import { number } from 'zod/v4';
+import { RegistrarChamadaDto } from './dto/Registrar-chamada.dto';
 
 @Injectable()
 export class ProfessorService {
@@ -40,6 +39,7 @@ export class ProfessorService {
       numeroAlunos: vinculo.turma._count.matriculas,
     }));
   }
+
   async criarEvento(professorId: number, dto: CreateEventoDto) {
     const professor = await this.prisma.professor.findUnique({
       where: { usuario_id: professorId }
@@ -85,7 +85,6 @@ export class ProfessorService {
         data_evento: 'asc' 
       },
       take: 5, 
-      
       include: {
         turma: {
           select: { serie: true, identificacao: true, nivel_ensino: true }
@@ -96,7 +95,6 @@ export class ProfessorService {
       }
     });
   }
-
 
   async buscarDiarioDeNotas(professorId: number, eventoId: number) {
     const evento = await this.prisma.evento.findUnique({
@@ -154,32 +152,115 @@ export class ProfessorService {
     };
   }
 
- async buscarAlunosParaChamada(turmaId: number, aula_id?: number) {
+  async buscarAlunosParaChamada(turmaId: number, dataStr?: string) {
+    let aulaIdInterno: number | undefined = undefined;
+
+    if (dataStr) {
+      const dataBusca = new Date(dataStr); 
+      const inicioDoDia = new Date(dataBusca);
+      inicioDoDia.setUTCHours(0, 0, 0, 0);
+      const fimDoDia = new Date(dataBusca);
+      fimDoDia.setUTCHours(23, 59, 59, 999);
+
+      const aulaExistente = await this.prisma.aula.findFirst({
+        where: {
+          turma_id: turmaId,
+          data_aula: {
+            gte: inicioDoDia, 
+            lte: fimDoDia,    
+          },
+        }
+      });
+
+      if (aulaExistente) {
+        aulaIdInterno = aulaExistente.id;
+      }
+    }
+
     const listaDeAlunos = await this.prisma.matricula.findMany({
       where:  { turma_id: turmaId, status: 'CURSANDO' },
       include: {
-          aluno: {
-            include: {
-              usuario: { select: { nome: true } }
+        aluno: {
+          include: {
+            usuario: { select: { nome: true } }
           }
         },
-        frequencias: aula_id ? {
-          where: { aula_id: aula_id }
+        frequencias: aulaIdInterno ? {
+          where: { aula_id: aulaIdInterno }
         } : false
       }
     });  
-
-    const listaDeAlunosFormatada = listaDeAlunos.map(matricula=>{
+    
+    const listaDeAlunosFormatada = listaDeAlunos.map(matricula => {
       let faltasDoAluno = matricula.frequencias?.[0]?.numero_faltas || 0;
-      return{
-        id: matricula.id,
+
+      return {
+        id: matricula.aluno_id,
+        matricula_id: matricula.id,
         nome: matricula.aluno?.usuario?.nome, 
         faltas: faltasDoAluno
       };
     });
 
-
     return listaDeAlunosFormatada;
   }
 
+  async salvarChamada(professorId: number, dto: RegistrarChamadaDto) {
+    const dataFormatada = new Date(dto.data_aula);
+    
+    const inicioDoDia = new Date(dataFormatada);
+    inicioDoDia.setUTCHours(0, 0, 0, 0);
+    const fimDoDia = new Date(dataFormatada);
+    fimDoDia.setUTCHours(23, 59, 59, 999);
+
+    const aulaExistente = await this.prisma.aula.findFirst({
+      where: {
+        turma_id: dto.turma_id,
+        data_aula: {
+          gte: inicioDoDia,
+          lte: fimDoDia,
+        },
+      }
+    });
+
+    if (aulaExistente) {
+      const aulaAtualizada = await this.prisma.aula.update({
+        where: { id: aulaExistente.id },
+        data: {
+          quantidade: dto.quantidade,
+          frequencias: {
+            deleteMany: {}, 
+            createMany: {
+              data: dto.frequencias.map(frequenciaFront => ({
+                matricula_id: frequenciaFront.matricula_id,
+                numero_faltas: frequenciaFront.numero_faltas
+              }))
+            }
+          }
+        }
+      });
+
+      return { aulaId: aulaAtualizada.id };
+    }
+
+    const novaAula = await this.prisma.aula.create({
+      data: {
+        turma_id: dto.turma_id,
+        disciplina_id: dto.disciplina_id,
+        professor_id: professorId,
+        quantidade: dto.quantidade,
+        data_aula: dataFormatada,
+        frequencias: {
+          createMany: {
+            data: dto.frequencias.map(frequenciaFront => ({
+              matricula_id: frequenciaFront.matricula_id,
+              numero_faltas: frequenciaFront.numero_faltas
+            }))
+          }
+        }
+      }
+    });
+
+    return { aulaId: novaAula.id };
+  }
 }

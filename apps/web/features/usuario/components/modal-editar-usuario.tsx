@@ -267,7 +267,6 @@ export function ModalEditarUsuario({
             </label>
           </div>
 
-          {/* Renderização condicional visual usando a prop 'usuario' */}
           {usuario.papel === Papel.ADMINISTRADOR && (
             <Field>
               <FieldLabel htmlFor="cargo">Cargo:</FieldLabel>

@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { NumberInput } from "../number-input";
 
 export type TipoCampoFiltro = "text" | "number" | "date" | "select";
 
@@ -121,24 +122,24 @@ export function Filtro<T extends Record<string, any>>({
                     ))}
                   </SelectContent>
                 </Select>
+              ) : campo.tipo === "number" ? (
+                <NumberInput
+                  id={nomeCampo}
+                  placeholder={campo.placeholder}
+                  allowNegative={false}
+                  decimalScale={0}
+                  value={valorAtual}
+                  onValueChange={(valores) => {
+                    handleChange(nomeCampo, valores.value || "");
+                  }}
+                />
               ) : (
                 <Input
                   id={nomeCampo}
-                  type={
-                    campo.tipo === "date"
-                      ? "date"
-                      : campo.tipo === "number"
-                        ? "number"
-                        : "text"
-                  }
+                  type={campo.tipo === "date" ? "date" : "text"}
                   placeholder={campo.placeholder}
                   value={valorAtual}
                   onChange={(e) => handleChange(nomeCampo, e.target.value)}
-                  onWheel={(e) => {
-                    if (campo.tipo === "number") {
-                      (e.target as HTMLInputElement).blur();
-                    }
-                  }}
                 />
               )}
             </div>

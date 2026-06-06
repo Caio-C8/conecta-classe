@@ -1,20 +1,20 @@
 import { Badge } from "@/components/ui/badge";
 import { Coluna } from "@/components/ui/tabela";
-import { NivelEnsino, ProfessorTurma, SituacaoTurma } from "@repo/types";
+import { NivelEnsino, SituacaoTurma, Turma } from "@repo/types";
 
-export const COLUNAS_TURMAS: Coluna<ProfessorTurma>[] = [
+export const COLUNAS_DETALHES_TURMA: Coluna<Turma>[] = [
   {
     cabecalho: "Identificação",
-    celula: (professorTurma) => professorTurma.turma?.identificacao,
+    celula: (turma) => turma.identificacao,
   },
   {
     cabecalho: "Série",
-    celula: (professorTurma) => `${professorTurma.turma?.serie}º ano`,
+    celula: (turma) => `${turma.serie}º ano`,
   },
   {
     cabecalho: "Nível de ensino",
-    celula: (professorTurma) => {
-      switch (professorTurma.turma?.nivel_ensino) {
+    celula: (turma) => {
+      switch (turma.nivel_ensino) {
         case NivelEnsino.FUNDAMENTAL_1:
           return "Fundamental I";
         case NivelEnsino.FUNDAMENTAL_2:
@@ -26,12 +26,12 @@ export const COLUNAS_TURMAS: Coluna<ProfessorTurma>[] = [
   },
   {
     cabecalho: "Sala",
-    celula: (professorTurma) => professorTurma.turma?.sala,
+    celula: (turma) => turma.sala,
   },
   {
     cabecalho: "Status",
-    celula: (professorTurma) => {
-      return professorTurma.turma?.deleted_at ? (
+    celula: (turma) => {
+      return turma.deleted_at ? (
         <Badge variant="destructive" className="text-sm">
           Inativa
         </Badge>
@@ -44,12 +44,12 @@ export const COLUNAS_TURMAS: Coluna<ProfessorTurma>[] = [
   },
   {
     cabecalho: "Ano letivo",
-    celula: (professorTurma) => professorTurma.turma?.ano_letivo,
+    celula: (turma) => turma.ano_letivo,
   },
   {
     cabecalho: "Situação",
-    celula: (professorTurma) => {
-      switch (professorTurma.turma?.situacao) {
+    celula: (turma) => {
+      switch (turma.situacao) {
         case SituacaoTurma.ENCERRADA:
           return "Encerrada";
         case SituacaoTurma.EM_ANDAMENTO:

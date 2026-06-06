@@ -35,37 +35,65 @@ export function ConteudoDetalhesUsuariosPage() {
 
   return (
     <>
-      <div className="flex flex-row justify-between items-center w-full">
-        <h1 className="text-3xl font-medium">Detalhes do usuário</h1>
+      <section className="flex flex-col gap-10 w-full items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
+          <h2 className="text-3xl font-semibold tracking-tight">
+            Detalhes do usuário
+          </h2>
 
-        <ModalEditarUsuario usuario={usuario} estiloTrigger="button" />
-      </div>
+          <div className="flex flex-wrap gap-3">
+            <ModalEditarUsuario usuario={usuario} estiloTrigger="button" />
+          </div>
+        </div>
 
-      <TabelaDetalhesUsuario usuario={usuario} isLoading={isLoading} />
+        <TabelaDetalhesUsuario usuario={usuario} isLoading={isLoading} />
+      </section>
 
       {usuario.papel === Papel.ALUNO && (
         <>
-          <div className="flex flex-row justify-between items-center w-full">
-            <h1 className="text-2xl font-medium">Matrículas</h1>
-          </div>
+          <hr className="border-t border-border/60" />
 
-          <TabelaMatriculas
-            matriculas={usuario.aluno?.matriculas ?? []}
-            isLoading={isLoading}
-          />
+          <section className="flex flex-col gap-10 w-full items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Matrículas
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Histórico de turmas e matrículas vinculadas a este aluno.
+                </p>
+              </div>
+            </div>
+
+            <TabelaMatriculas
+              matriculas={usuario.aluno?.matriculas ?? []}
+              isLoading={isLoading}
+            />
+          </section>
         </>
       )}
 
       {usuario.papel === Papel.PROFESSOR && (
         <>
-          <div className="flex flex-row justify-between items-center w-full">
-            <h1 className="text-2xl font-medium">Turmas</h1>
-          </div>
+          <hr className="border-t border-border/60" />
 
-          <TabelaTurmas
-            turmas={usuario.professor?.turmas ?? []}
-            isLoading={isLoading}
-          />
+          <section className="flex flex-col gap-10 w-full items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Turmas Lecionadas
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Turmas nas quais o professor ministra disciplinas.
+                </p>
+              </div>
+            </div>
+
+            <TabelaTurmas
+              turmas={usuario.professor?.turmas ?? []}
+              isLoading={isLoading}
+            />
+          </section>
         </>
       )}
     </>

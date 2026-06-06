@@ -121,7 +121,24 @@ export class TurmaRepository {
     if (pesquisa) {
       where.OR = [
         { identificacao: { contains: pesquisa, mode: "insensitive" } },
+        { sala: { contains: pesquisa, mode: "insensitive" } },
       ];
+    }
+
+    if (params.nivel_ensino) {
+      where.nivel_ensino = params.nivel_ensino;
+    }
+
+    if (params.serie) {
+      where.serie = params.serie;
+    }
+
+    if (params.ano_letivo) {
+      where.ano_letivo = params.ano_letivo;
+    }
+
+    if (params.situacao) {
+      where.situacao = params.situacao;
     }
 
     const [total, dados] = await this.prisma.$transaction([

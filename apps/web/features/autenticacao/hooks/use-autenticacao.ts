@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { api } from "@/lib/api";
 import { RespostaLogin, Resposta, TrocarSenhaInput } from "@repo/types";
-import { toast } from "sonner"; // <-- Importação do Sonner
+import { toast } from "sonner";
 
 async function loginRequest(
   credenciais: Record<string, string>,

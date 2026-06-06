@@ -72,6 +72,14 @@ export const GetTurmasSchema = PaginacaoSchema.extend({
   pesquisa: z.string().trim().optional(),
 
   status: z.nativeEnum(Status).optional().default(Status.TODOS),
+
+  nivel_ensino: z.nativeEnum(NivelEnsino).optional(),
+
+  serie: z.coerce.number().optional(),
+
+  ano_letivo: z.coerce.number().optional(),
+
+  situacao: z.nativeEnum(SituacaoTurma).optional(),
 });
 
 export const VincularEDesvincularProfessorSchema = z.object({

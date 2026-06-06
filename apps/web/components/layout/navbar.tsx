@@ -61,7 +61,10 @@ export default function Navbar() {
 
         <nav className="flex gap-6">
           {currentLinks.map((link, index) => {
-            const isActive = pathname === link.href;
+            const isActive =
+              link.href === `/${currentModule}`
+                ? pathname === link.href
+                : pathname.startsWith(link.href);
             return (
               <Link
                 key={index}

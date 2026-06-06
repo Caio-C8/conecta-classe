@@ -29,11 +29,7 @@ export class RendimentoService {
     disciplinaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina> {
-    return await this.rendimentoRepository.save(
-      matriculaId,
-      disciplinaId,
-      tx,
-    );
+    return await this.rendimentoRepository.save(matriculaId, disciplinaId, tx);
   }
 
   async getRendimentosPorAluno(
@@ -110,10 +106,7 @@ export class RendimentoService {
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina[]> {
-    return await this.rendimentoRepository.findByMatriculaId(
-      matriculaId,
-      tx,
-    );
+    return await this.rendimentoRepository.findByMatriculaId(matriculaId, tx);
   }
 
   async updateSituacaoRendimento(
@@ -121,10 +114,6 @@ export class RendimentoService {
     situacao: SituacaoRendimento,
     tx?: Prisma.TransactionClient,
   ): Promise<RendimentoDisciplina> {
-    return await this.rendimentoRepository.updateSituacaoById(
-      id,
-      situacao,
-      tx,
-    );
+    return await this.rendimentoRepository.updateSituacaoById(id, situacao, tx);
   }
 }

@@ -311,11 +311,12 @@ export class TurmaService {
       );
     }
 
-    const vinculoExistente = await this.turmaRepository.findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
-      id,
-      dados.professorId,
-      dados.disciplinaId,
-    );
+    const vinculoExistente =
+      await this.turmaRepository.findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
+        id,
+        dados.professorId,
+        dados.disciplinaId,
+      );
 
     if (vinculoExistente) {
       throw new BadRequestException(
@@ -434,11 +435,12 @@ export class TurmaService {
       );
     }
 
-    const vinculoExistente = await this.turmaRepository.findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
-      turmaId,
-      dados.professorId,
-      dados.disciplinaId,
-    );
+    const vinculoExistente =
+      await this.turmaRepository.findProfessorTurmaByTurmaIdAndProfessorIdAndDisciplinaId(
+        turmaId,
+        dados.professorId,
+        dados.disciplinaId,
+      );
 
     if (!vinculoExistente) {
       throw new NotFoundException(

@@ -2,11 +2,11 @@
 
 import { useParams } from "next/navigation";
 import { useUsuario } from "../hooks/use-usuarios";
-import { TabelaDetalhesUsuario } from "./tabela-detalhes-usuario";
-import { ModalEditarUsuario } from "./modal-editar-usuario";
-import { TabelaMatriculas } from "./tabela-matriculas";
+import { TabelaDetalhesUsuario } from "./tabelas/tabela-detalhes-usuario";
+import { ModalEditarUsuario } from "./modais/modal-editar-usuario";
+import { TabelaMatriculas } from "./tabelas/tabela-matriculas";
 import { Papel } from "@repo/types";
-import { TabelaTurmas } from "./tabela-turmas";
+import { TabelaTurmas } from "./tabelas/tabela-turmas";
 
 export function ConteudoDetalhesUsuariosPage() {
   const params = useParams();

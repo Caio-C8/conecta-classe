@@ -5,8 +5,8 @@ import { GetTurmasSchema } from "@repo/types";
 import { PesquisaEFiltro } from "@/components/ui/busca/pesquisa-e-filtro";
 import { useFiltrosTurmas } from "../hooks/use-filtros-turmas";
 import { useTurmas } from "../hooks/use-turmas";
-import { TabelaTurmas } from "./tabela-turmas";
-import { ModalCriarTurma } from "./modal-criar-turma";
+import { TabelaTurmas } from "./tabelas/tabela-turmas";
+import { ModalCriarTurma } from "./modais/modal-criar-turma";
 
 export function ConteudoTurmasPage() {
   const FILTROS_TURMAS = useFiltrosTurmas();

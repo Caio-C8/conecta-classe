@@ -10,43 +10,39 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useDesvincularAluno } from "../hooks/use-turmas";
-import { VincularEDesvincularAlunoInput } from "@repo/types";
+import { useEncerrarTurma } from "../../hooks/use-turmas";
+import { Archive } from "lucide-react";
 
-interface BotaoDesvincularAlunoProps {
-  id: number;
-  dados: VincularEDesvincularAlunoInput;
-}
+export function BotaoEncerrarTurma({ id }: { id: number }) {
+  const encerrarTurma = useEncerrarTurma();
 
-export function BotaoDesvincularAluno({
-  id,
-  dados,
-}: BotaoDesvincularAlunoProps) {
-  const { mutate: desvincularAluno } = useDesvincularAluno();
-
-  const handleDesvincular = () => {
-    desvincularAluno({ id, dados });
+  const handleEncerrar = () => {
+    encerrarTurma.mutate(id);
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="link" className="link">
-          Desvincular
+        <Button
+          size="lg"
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#EF4444] hover:bg-[#EF4444]/90 text-white px-6 py-6 text-base cursor-pointer"
+        >
+          <Archive />
+          Encerrar turma
         </Button>
       </AlertDialogTrigger>
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Desvincular Aluno</AlertDialogTitle>
+          <AlertDialogTitle>Encerrar Turma</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja desvincular o aluno desta turma?
+            Tem certeza que deseja encerrar esta turma?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDesvincular}>
-            Desvincular
+          <AlertDialogAction onClick={handleEncerrar}>
+            Encerrar
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

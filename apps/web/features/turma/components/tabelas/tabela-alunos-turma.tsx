@@ -1,29 +1,35 @@
 "use client";
 
 import { Tabela } from "@/components/ui/tabela";
-import { ProfessorTurma } from "@repo/types";
-import { COLUNAS_TURMAS } from "../constants/colunas-turmas";
+import { Matricula } from "@repo/types";
 import { useState } from "react";
+import { COLUNAS_ALUNOS_TURMA } from "../../constants/colunas-alunos-turma";
 
-interface TabelaTurmasProps {
-  turmas: ProfessorTurma[];
+interface TabelaAlunosTurmaProps {
+  matriculas: Matricula[];
   isLoading: boolean;
 }
 
-export function TabelaTurmas({ turmas = [], isLoading }: TabelaTurmasProps) {
+export function TabelaAlunosTurma({
+  matriculas = [],
+  isLoading,
+}: TabelaAlunosTurmaProps) {
   const [pagina, setPagina] = useState(1);
   const limite = 10;
-  const total = turmas.length;
+  const total = matriculas.length;
   const ultimaPagina = Math.max(1, Math.ceil(total / limite));
 
-  const turmasPaginadas = turmas.slice((pagina - 1) * limite, pagina * limite);
+  const matriculasPaginadas = matriculas.slice(
+    (pagina - 1) * limite,
+    pagina * limite,
+  );
 
-  const mostrarTabela = isLoading || turmas.length > 0;
+  const mostrarTabela = isLoading || matriculas.length > 0;
 
   if (!mostrarTabela) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-muted/30 border border-dashed rounded-lg text-muted-foreground w-full max-w-7xl mt-6">
-        Nenhuma matrícula encontrada.
+        Nenhum aluno encontrado.
       </div>
     );
   }
@@ -31,8 +37,8 @@ export function TabelaTurmas({ turmas = [], isLoading }: TabelaTurmasProps) {
   return (
     <div className="max-w-7xl w-full">
       <Tabela
-        colunas={COLUNAS_TURMAS}
-        dados={turmasPaginadas}
+        colunas={COLUNAS_ALUNOS_TURMA}
+        dados={matriculasPaginadas}
         carregando={isLoading}
         metadados={{
           pagina: pagina,
@@ -40,7 +46,7 @@ export function TabelaTurmas({ turmas = [], isLoading }: TabelaTurmasProps) {
           total: total,
           ultimaPagina: ultimaPagina,
         }}
-        obterChaveLinha={(turma) => turma.id}
+        obterChaveLinha={(matricula) => matricula.id}
         onMudancaPagina={setPagina}
       />
     </div>

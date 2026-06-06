@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Coluna } from "@/components/ui/tabela";
 import { Matricula, StatusMatricula } from "@repo/types";
-import { BotaoDesvincularAluno } from "../components/botao-desvincular-aluno";
+import { BotaoDesvincularAluno } from "../components/botoes/botao-desvincular-aluno";
 import { Button } from "@/components/ui/button";
 
 const renderizarStatusMatricula = (status: StatusMatricula) => {

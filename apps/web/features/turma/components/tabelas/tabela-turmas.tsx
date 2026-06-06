@@ -2,7 +2,7 @@
 
 import { Tabela } from "@/components/ui/tabela";
 import { Paginacao, Turma } from "@repo/types";
-import { COLUNAS_TURMAS } from "../constants/colunas-turmas";
+import { COLUNAS_TURMAS } from "../../constants/colunas-turmas";
 
 interface TabelaTurmasProps {
   turmas: Paginacao<Turma>;

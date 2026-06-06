@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useDesvincularProfessor } from "../hooks/use-turmas";
+import { useDesvincularProfessor } from "../..//hooks/use-turmas";
 import { VincularEDesvincularProfessorInput } from "@repo/types";
 
 interface BotaoDesvincularProfessorProps {

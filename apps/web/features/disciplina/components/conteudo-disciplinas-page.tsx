@@ -1,7 +1,7 @@
 "use client";
 
-import { TabelaDisciplinas } from "@/features/disciplina/components/tabela-disciplinas";
-import { ModalCriarDisciplina } from "@/features/disciplina/components/moda-criar-disciplina";
+import { TabelaDisciplinas } from "@/features/disciplina/components/tabelas/tabela-disciplinas";
+import { ModalCriarDisciplina } from "@/features/disciplina/components/modais/modal-criar-disciplina";
 import { useFiltroUrl } from "@/hooks/use-filtro-url";
 import { GetDisciplinasSchema } from "@repo/types";
 import { useDisciplinas } from "@/features/disciplina/hooks/use-disciplinas";

@@ -27,15 +27,7 @@ const navConfig = {
     { label: "Turmas", href: "/admin/turmas" },
     { label: "Disciplinas", href: "/admin/disciplinas" },
   ],
-  professor: [
-    { label: "Painel Geral", href: "/professor" },
-    { label: "Frequência", href: "/professor/frequencia" },
-    { label: "Eventos", href: "/professor/eventos" },
-    {
-      label: "Criar Evento",
-      href: "/professor/eventos/criar",
-    },
-  ],
+  professor: [{ label: "Painel Geral", href: "/professor" }],
   aluno: [
     { label: "Painel Geral", href: "/aluno" },
     { label: "Frequência", href: "/aluno/frequencia" },

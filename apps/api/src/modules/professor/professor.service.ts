@@ -362,7 +362,10 @@ export class ProfessorService {
     });
   }
 
-  async buscarAulasDoProfessor(usuarioId: number): Promise<Aula[]> {
+  async buscarEventoPorId(
+    usuarioId: number,
+    eventoId: number,
+  ): Promise<Evento> {
     const professor = await this.prisma.professor.findUnique({
       where: { usuario_id: usuarioId },
     });
@@ -371,10 +374,47 @@ export class ProfessorService {
       throw new NotFoundException("Professor não encontrado.");
     }
 
-    return await this.prisma.aula.findMany({
-      where: {
-        professor_id: professor.id,
+    const evento = await this.prisma.evento.findUnique({
+      where: { id: eventoId },
+      include: {
+        notas_eventos: true,
       },
+    });
+
+    if (!evento || evento.criador_id !== professor.id) {
+      throw new NotFoundException(
+        "Evento não encontrado ou você não tem permissão para acessá-lo.",
+      );
+    }
+
+    return {
+      ...evento,
+      valor_nota: evento.valor_nota ? Number(evento.valor_nota) : null,
+    };
+  }
+
+  async buscarAulasDoProfessor(
+    usuarioId: number,
+    turmaId?: number,
+    disciplinaId?: number,
+  ): Promise<Aula[]> {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: usuarioId },
+    });
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const whereClause: Prisma.AulaWhereInput = {
+      professor_id: professor.id,
+    };
+
+    if (turmaId) whereClause.turma_id = turmaId;
+    if (disciplinaId) whereClause.disciplina_id = disciplinaId;
+
+    return await this.prisma.aula.findMany({
+      where: whereClause,
       include: {
         turma: true,
         disciplina: true,
@@ -383,6 +423,33 @@ export class ProfessorService {
         data_aula: "desc",
       },
     });
+  }
+
+  async buscarAulaPorId(usuarioId: number, aulaId: number): Promise<Aula> {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: usuarioId },
+    });
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const aula = await this.prisma.aula.findUnique({
+      where: { id: aulaId },
+      include: {
+        turma: true,
+        disciplina: true,
+        frequencias: true,
+      },
+    });
+
+    if (!aula || aula.professor_id !== professor.id) {
+      throw new NotFoundException(
+        "Aula não encontrada ou você não tem permissão para acessá-la.",
+      );
+    }
+
+    return aula;
   }
 
   async realizarFrequencia(

@@ -427,4 +427,66 @@ export class ProfessorService {
       }
     };
   }
+
+  
+  async atualizarEvento(professorId: number, eventoId: number, dto: any) {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: professorId }
+    });
+
+    if (!professor) {
+      throw new Error("Professor não encontrado.");
+    }
+
+    const evento = await this.prisma.evento.findFirst({
+      where: { id: eventoId, criador_id: professor.id }
+    });
+
+    if (!evento) {
+      throw new Error("Evento não encontrado ou você não tem permissão para editá-lo.");
+    }
+
+    return this.prisma.evento.update({
+      where: { id: eventoId },
+      data: {
+        titulo: dto.titulo,
+        descricao: dto.descricao,
+        tipo_evento: dto.tipo_evento,
+        valor_nota: dto.valor_nota,
+        data_evento: dto.data_evento ? new Date(dto.data_evento) : undefined,
+      }
+    });
+  }
+
+  async excluirEvento(professorId: number, eventoId: number) {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: professorId }
+    });
+
+    if (!professor) {
+      throw new Error("Professor não encontrado.");
+    }
+
+    const evento = await this.prisma.evento.findFirst({
+      where: { id: eventoId, criador_id: professor.id },
+      include: { 
+        notas_eventos: true 
+      } 
+    });
+
+    if (!evento) {
+      throw new Error("Evento não encontrado ou você não tem permissão para excluí-lo.");
+    }
+
+    if (evento.notas_eventos.length > 0) {
+      throw new Error("Ação bloqueada: Não é possível excluir um evento que já possui notas lançadas.");
+    }
+
+    await this.prisma.evento.delete({
+      where: { id: eventoId }
+    });
+
+    return { sucesso: true, mensagem: "Evento excluído com sucesso." };
+  }
+
 }

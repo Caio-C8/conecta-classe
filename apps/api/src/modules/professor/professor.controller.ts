@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Param, Query, Body, Post } from "@nestjs/common";
+import { Controller, Get, UseGuards, Param, Query, Body, Post , Patch, Delete } from "@nestjs/common";
 import { ProfessorService } from "./professor.service";
 import { JwtGuard } from "../../common/guards/jwt.guard";
 import { PapeisGuard } from "../../common/guards/papeis.guard";
@@ -8,6 +8,7 @@ import { Papel } from "@repo/types";
 import { CreateEventoDto } from "./dto/create-evento.dto";
 import { RegistrarChamadaDto } from "./dto/Registrar-chamada.dto";
 import { RegistrarNotasDto } from "./dto/Registrar-notas.dto";
+import { UpdateEventoDto } from "./dto/update-evento.dto";
 
 @Controller("professor")
 @UseGuards(JwtGuard, PapeisGuard)
@@ -81,5 +82,23 @@ export class ProfessorController {
     @Body() dto: RegistrarChamadaDto,
   ) {
     return this.professorService.salvarChamada(usuarioId, dto);
+  }
+  
+
+  @Patch("eventos/:id")
+  async atualizarEvento(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id") eventoId: string,
+    @Body() dto: UpdateEventoDto 
+  ) {
+    return this.professorService.atualizarEvento(usuarioId, Number(eventoId), dto);
+  }
+
+  @Delete("eventos/:id")
+  async excluirEvento(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id") eventoId: string,
+  ) {
+    return this.professorService.excluirEvento(usuarioId, Number(eventoId));
   }
 }

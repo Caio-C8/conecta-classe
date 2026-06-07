@@ -30,8 +30,13 @@ async function getTurmasProfessor(): Promise<
   return response.data;
 }
 
-async function getAulasProfessor(): Promise<Resposta<Aula[]>> {
-  const response = await api.get<Resposta<Aula[]>>("/professor/aulas");
+async function getAulasProfessor(
+  turmaId?: number,
+  disciplinaId?: number,
+): Promise<Resposta<Aula[]>> {
+  const response = await api.get<Resposta<Aula[]>>("/professor/aulas", {
+    params: { turmaId, disciplinaId },
+  });
   return response.data;
 }
 
@@ -121,6 +126,17 @@ async function registrarNotas({
   return response.data;
 }
 
+async function getAulaById(id: number): Promise<Resposta<Aula>> {
+  const response = await api.get<Resposta<Aula>>(`/professor/aulas/${id}`);
+  return response.data;
+}
+
+// NOVO: Busca evento específico com as notas
+async function getEventoById(id: number): Promise<Resposta<Evento>> {
+  const response = await api.get<Resposta<Evento>>(`/professor/eventos/${id}`);
+  return response.data;
+}
+
 // --- HOOKS DE QUERIES ---
 export function useTurmasProfessor() {
   return useQuery({
@@ -129,10 +145,10 @@ export function useTurmasProfessor() {
   });
 }
 
-export function useAulasProfessor() {
+export function useAulasProfessor(turmaId?: number, disciplinaId?: number) {
   return useQuery({
-    queryKey: PROFESSOR_AULAS_QUERY_KEY,
-    queryFn: getAulasProfessor,
+    queryKey: [...PROFESSOR_AULAS_QUERY_KEY, { turmaId, disciplinaId }],
+    queryFn: () => getAulasProfessor(turmaId, disciplinaId),
   });
 }
 
@@ -263,5 +279,21 @@ export function useRegistrarNotas() {
         error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
       toast.error(mensagem);
     },
+  });
+}
+
+export function useAula(id: number, enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...PROFESSOR_AULAS_QUERY_KEY, id],
+    queryFn: () => getAulaById(id),
+    enabled: !!id && enabled,
+  });
+}
+
+export function useEvento(id: number, enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, id],
+    queryFn: () => getEventoById(id),
+    enabled: !!id && enabled,
   });
 }

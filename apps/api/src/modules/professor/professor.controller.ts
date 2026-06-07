@@ -98,9 +98,34 @@ export class ProfessorController {
     );
   }
 
+  @Get("eventos/:id")
+  async buscarEventoPorId(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id", ParseIntPipe) eventoId: number,
+  ): Promise<Evento> {
+    return await this.professorService.buscarEventoPorId(usuarioId, eventoId);
+  }
+
   @Get("aulas")
-  async buscarAulas(@GetUsuario("id") usuarioId: number): Promise<Aula[]> {
-    return await this.professorService.buscarAulasDoProfessor(usuarioId);
+  async buscarAulas(
+    @GetUsuario("id") usuarioId: number,
+    @Query("turmaId", new ParseIntPipe({ optional: true })) turmaId?: number,
+    @Query("disciplinaId", new ParseIntPipe({ optional: true }))
+    disciplinaId?: number,
+  ): Promise<Aula[]> {
+    return await this.professorService.buscarAulasDoProfessor(
+      usuarioId,
+      turmaId,
+      disciplinaId,
+    );
+  }
+
+  @Get("aulas/:id")
+  async buscarAulaPorId(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id", ParseIntPipe) aulaId: number,
+  ): Promise<Aula> {
+    return await this.professorService.buscarAulaPorId(usuarioId, aulaId);
   }
 
   @Post("frequencia")

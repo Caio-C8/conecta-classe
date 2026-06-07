@@ -14,3 +14,12 @@ export interface ProfessorTurma {
   turma?: Turma;
   disciplina?: Disciplina;
 }
+
+export interface ProfessorTurmaDetalhado extends Omit<
+  ProfessorTurma,
+  "turma" | "disciplina"
+> {
+  quantidade_matriculas: number;
+  turma: Turma;
+  disciplina: Disciplina;
+}

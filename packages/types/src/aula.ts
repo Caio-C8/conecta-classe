@@ -14,7 +14,7 @@ export interface Aula {
   updated_at: Date;
 
   turma?: Turma;
-  disciplina?: Disciplina;
+  disciplina?: Disciplina | null;
   professor?: Professor;
   frequencias?: Frequencia[];
 }

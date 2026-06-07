@@ -1,27 +1,6 @@
-import { IsString, IsNumber, IsDateString, IsEnum, IsOptional } from 'class-validator';
-import { TipoEvento } from '@repo/types';
+import { CreateEventoInput, CreateEventoSchema } from "@repo/types";
+import { createZodDto } from "nestjs-zod";
 
-export class CreateEventoDto {
-  @IsString()
-  titulo: string;
+export const CreateEventoDto = createZodDto(CreateEventoSchema);
 
-  @IsString()
-  @IsOptional()
-  descricao?: string;
-
-  @IsDateString()
-  data_evento: string; 
-
-  @IsNumber()
-  @IsOptional()
-  valor_nota?: number;
-
-  @IsEnum(TipoEvento)
-  tipo_evento: TipoEvento;
-
-  @IsNumber()
-  turma_id: number;
-
-  @IsNumber()
-  disciplina_id: number;
-}
+export type CreateEventoDto = CreateEventoInput;

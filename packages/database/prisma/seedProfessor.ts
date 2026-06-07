@@ -1,9 +1,8 @@
-import "dotenv/config";
 import {
+  Cargo,
+  NivelEnsino,
   Papel,
   PrismaClient,
-  NivelEnsino,
-  SituacaoTurma,
   StatusMatricula,
 } from "@prisma/client";
 import * as bcrypt from "bcrypt";
@@ -11,119 +10,137 @@ import * as bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Limpa todas as tabelas e reinicia os IDs
   await prisma.$executeRawUnsafe(`
     TRUNCATE TABLE usuarios, administradores, professores, alunos, disciplinas, turmas, professores_turmas, matriculas, aulas, frequencias, eventos, notas_eventos, rendimentos_disciplinas RESTART IDENTITY CASCADE;
   `);
 
   const senhaPadrao = await bcrypt.hash("Senha123@", 10);
 
-  console.log("1. Garantindo Professor Teste...");
-  const usuarioProfessor = await prisma.usuario.upsert({
-    where: { usuario: "prof.teste" },
-    update: {},
-    create: {
-      usuario: "prof.teste",
+  // 1. Criar Administrador
+  await prisma.usuario.create({
+    data: {
+      usuario: "adm",
       senha: senhaPadrao,
-      nome: "Professor Teste",
-      nome_search: "professor teste",
+      nome: "Administrador",
+      nome_search: "administrador",
+      papel: Papel.ADMINISTRADOR,
+      trocar_senha: false,
+      administrador: {
+        create: {
+          cargo: Cargo.DIRETORA,
+        },
+      },
+    },
+  });
+
+  // 2. Criar Professor
+  const professorUser = await prisma.usuario.create({
+    data: {
+      usuario: "professor",
+      senha: senhaPadrao,
+      nome: "Carlos Eduardo",
+      nome_search: "carlos eduardo",
       papel: Papel.PROFESSOR,
       trocar_senha: false,
-      professor: { create: {} },
-    },
-    include: { professor: true },
-  });
-
-  console.log("2. Garantindo Disciplina (Geografia)...");
-  let disciplina = await prisma.disciplina.findFirst({
-    where: { nome: "Geografia" },
-  });
-  if (!disciplina) {
-    disciplina = await prisma.disciplina.create({
-      data: { nome: "Geografia", nome_search: "geografia" },
-    });
-  }
-
-  console.log("3. Garantindo Turma Única (8º Ano A - 2026)...");
-  let turma = await prisma.turma.findFirst({
-    where: { identificacao: "A", serie: 8, ano_letivo: 2026 },
-  });
-
-  if (!turma) {
-    turma = await prisma.turma.create({
-      data: {
-        identificacao: "A",
-        serie: 8,
-        nivel_ensino: NivelEnsino.FUNDAMENTAL_2,
-        sala: "Sala 04",
-        ano_letivo: 2026,
-        situacao: SituacaoTurma.EM_ANDAMENTO,
+      professor: {
+        create: {}, // Cria o registro na tabela de professores
       },
-    });
-  }
-
-  console.log("4. Vinculando Professor à Turma...");
-  const vinculoExistente = await prisma.professorTurma.findFirst({
-    where: {
-      professor_id: usuarioProfessor.professor!.id,
-      turma_id: turma.id,
-      disciplina_id: disciplina.id,
+    },
+    include: {
+      professor: true,
     },
   });
 
-  if (!vinculoExistente) {
-    await prisma.professorTurma.create({
-      data: {
-        professor_id: usuarioProfessor.professor!.id,
-        turma_id: turma.id,
-        disciplina_id: disciplina.id,
-      },
-    });
-  }
+  // 3. Criar Disciplinas
+  const matematica = await prisma.disciplina.create({
+    data: { nome: "Matemática", nome_search: "matematica" },
+  });
 
-  const matricularAluno = async (usuario: string, nome: string) => {
-    const user = await prisma.usuario.upsert({
-      where: { usuario },
-      update: {},
-      create: {
-        usuario,
+  const fisica = await prisma.disciplina.create({
+    data: { nome: "Física", nome_search: "fisica" },
+  });
+
+  // 4. Criar Turmas
+  const turma9A = await prisma.turma.create({
+    data: {
+      identificacao: "A",
+      serie: 9,
+      nivel_ensino: NivelEnsino.FUNDAMENTAL_2,
+      sala: "Sala 101",
+      ano_letivo: 2026,
+    },
+  });
+
+  const turma1B = await prisma.turma.create({
+    data: {
+      identificacao: "B",
+      serie: 1,
+      nivel_ensino: NivelEnsino.MEDIO,
+      sala: "Sala 201",
+      ano_letivo: 2026,
+    },
+  });
+
+  // 5. Vincular o Professor às Turmas e Disciplinas
+  await prisma.professorTurma.createMany({
+    data: [
+      {
+        professor_id: professorUser.professor!.id,
+        turma_id: turma9A.id,
+        disciplina_id: matematica.id,
+      },
+      {
+        professor_id: professorUser.professor!.id,
+        turma_id: turma1B.id,
+        disciplina_id: fisica.id,
+      },
+    ],
+  });
+
+  // 6. Criar Alunos e Matriculá-los nas Turmas
+  const alunosMock = [
+    { nome: "Ana Silva", user: "aluno.ana", turmaId: turma9A.id },
+    { nome: "Bruno Souza", user: "aluno.bruno", turmaId: turma9A.id },
+    { nome: "Clara Mendes", user: "aluno.clara", turmaId: turma1B.id },
+    { nome: "Diego Costa", user: "aluno.diego", turmaId: turma1B.id },
+  ];
+
+  for (const aluno of alunosMock) {
+    await prisma.usuario.create({
+      data: {
+        usuario: aluno.user,
         senha: senhaPadrao,
-        nome,
-        nome_search: nome.toLowerCase(),
+        nome: aluno.nome,
+        nome_search: aluno.nome.toLowerCase().replace(" ", ""),
         papel: Papel.ALUNO,
         trocar_senha: false,
-        aluno: { create: {} },
-      },
-      include: { aluno: true },
-    });
-
-    const matriculaExistente = await prisma.matricula.findFirst({
-      where: { aluno_id: user.aluno!.id, turma_id: turma.id },
-    });
-
-    if (!matriculaExistente) {
-      await prisma.matricula.create({
-        data: {
-          aluno_id: user.aluno!.id,
-          turma_id: turma.id,
-          ano_letivo: 2026,
-          status: StatusMatricula.CURSANDO,
+        aluno: {
+          create: {
+            matriculas: {
+              create: {
+                turma_id: aluno.turmaId,
+                ano_letivo: 2026,
+                status: StatusMatricula.CURSANDO,
+              },
+            },
+          },
         },
-      });
-    }
-    return user;
-  };
+      },
+    });
+  }
 
-  console.log("5. Sincronizando Alunos...");
-  await matricularAluno("aluno.teste", "Aluno Teste");
-  await matricularAluno("aluno.maria", "Maria Silva");
-  await matricularAluno("aluno.pedro", "Pedro Souza");
-
-  console.log("Seed do Professor executado com sucesso!");
+  console.log("✅ Seed executado com sucesso!");
+  console.log("--------------------------------------------------");
+  console.log("👨‍🏫 Credenciais para testar as rotas (Professor):");
+  console.log("Usuário: professor");
+  console.log("Senha:   Senha123@");
+  console.log("--------------------------------------------------");
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("❌ Erro ao executar o seed:", e);
     process.exit(1);
   })
   .finally(async () => {

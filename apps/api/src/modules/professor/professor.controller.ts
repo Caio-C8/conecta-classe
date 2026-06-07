@@ -7,7 +7,7 @@ import { GetUsuario } from "../../common/decorators/get-usuario.decorator";
 import { Papel } from "@repo/types";
 import { CreateEventoDto } from "./dto/create-evento.dto";
 import { RegistrarChamadaDto } from "./dto/Registrar-chamada.dto";
-import { RegistrarNotasDto } from "./dto/Registrar-notas.dto"; 
+import { RegistrarNotasDto } from "./dto/Registrar-notas.dto";
 
 @Controller("professor")
 @UseGuards(JwtGuard, PapeisGuard)
@@ -36,6 +36,18 @@ export class ProfessorController {
   @Get("eventos/pendentes")
   async getEventosPendentes(@GetUsuario("id") usuarioId: number) {
     return this.professorService.buscarEventosPendentes(usuarioId);
+  }
+
+  @Get("eventos/historico")
+  async getHistoricoEventos(
+    @GetUsuario("id") usuarioId: number,
+    @Query("pagina") pagina?: string,
+    @Query("limite") limite?: string
+  ) {
+    const numPagina = pagina ? Number(pagina) : 1;
+    const numLimite = limite ? Number(limite) : 10;
+
+    return this.professorService.buscarHistoricoEventos(usuarioId, numPagina, numLimite);
   }
 
   @Get("eventos/:id/notas")
@@ -70,6 +82,4 @@ export class ProfessorController {
   ) {
     return this.professorService.salvarChamada(usuarioId, dto);
   }
-
-  
 }

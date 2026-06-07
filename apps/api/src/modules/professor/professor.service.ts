@@ -374,4 +374,57 @@ export class ProfessorService {
       mensagem: "Notas registradas/atualizadas com sucesso!" 
     };
   }
+
+  async buscarHistoricoEventos(professorId: number, pagina: number = 1, limite: number = 10) {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: professorId }
+    });
+
+    if (!professor) {
+      throw new Error("Professor não encontrado.");
+    }
+
+    const paginaAtual = Math.max(1, Number(pagina));
+    const itensPorPagina = Math.max(1, Number(limite));
+    
+    const pularRegistos = (paginaAtual - 1) * itensPorPagina;
+
+    const [eventos, totalEventos] = await this.prisma.$transaction([
+      this.prisma.evento.findMany({
+        where: { criador_id: professor.id },
+        orderBy: { data_evento: 'desc' }, 
+        skip: pularRegistos,
+        take: itensPorPagina,
+        include: {
+          turma: { select: { serie: true, identificacao: true } },
+          disciplina: { select: { nome: true } }
+        }
+      }),
+      this.prisma.evento.count({
+        where: { criador_id: professor.id }
+      })
+    ]);
+
+    const totalPaginas = Math.ceil(totalEventos / itensPorPagina);
+
+    const eventosFormatados = eventos.map(evento => ({
+      id: evento.id,
+      titulo: evento.titulo,
+      data_evento: evento.data_evento,
+      disciplina: evento.disciplina.nome,
+      turma: `${evento.turma.serie}º Ano ${evento.turma.identificacao}`,
+      valor_nota: evento.valor_nota,
+      tipo_evento: evento.tipo_evento
+    }));
+
+    return {
+      eventos: eventosFormatados,
+      metadados: {
+        total_registros: totalEventos,
+        total_paginas: totalPaginas,
+        pagina_atual: paginaAtual,
+        itens_por_pagina: itensPorPagina
+      }
+    };
+  }
 }

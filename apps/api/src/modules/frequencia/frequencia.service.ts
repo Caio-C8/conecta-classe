@@ -4,7 +4,7 @@ import { MatriculaService } from "../matricula/matricula.service";
 import { AulaService } from "../aula/aula.service";
 import { DisciplinaService } from "../disciplina/disciplina.service";
 import { UsuarioService } from "../usuario/usuario.service";
-import { RespostaGetFrequenciaAluno } from "@repo/types";
+import { NivelEnsino, RespostaGetFrequenciaAluno } from "@repo/types";
 import { Prisma } from "@repo/database";
 
 @Injectable()
@@ -46,16 +46,17 @@ export class FrequenciaService {
       throw new NotFoundException("Turma não encontrada.");
     }
 
-    if (turma.nivel_ensino === "FUNDAMENTAL_1") {
+    if (turma.nivel_ensino === NivelEnsino.FUNDAMENTAL_1) {
       const totalAulas = await this.aulaService.getTotalAulasPorTurma(
         turma.id,
         tx,
       );
 
-      const totalFaltas = await this.frequenciaRepository.sumNumeroFaltasByMatriculaId(
-        matricula.id,
-        tx,
-      );
+      const totalFaltas =
+        await this.frequenciaRepository.sumNumeroFaltasByMatriculaId(
+          matricula.id,
+          tx,
+        );
 
       const presencas = totalAulas > 0 ? totalAulas - totalFaltas : 0;
       const presencaPercentual =
@@ -85,11 +86,10 @@ export class FrequenciaService {
       const aulasPorDisciplina =
         await this.aulaService.getAulasPorDisciplinaPorTurma(turma.id, tx);
 
-      const faltas =
-        await this.frequenciaRepository.findByMatriculaId(
-          matricula.id,
-          tx,
-        );
+      const faltas = await this.frequenciaRepository.findByMatriculaId(
+        matricula.id,
+        tx,
+      );
 
       let totalAulas: number = 0;
       let totalFaltas: number = 0;

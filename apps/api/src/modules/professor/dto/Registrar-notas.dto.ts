@@ -1,18 +1,6 @@
-import { IsArray, IsNumber, Min, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+import { RegistrarNotasInput, RegistrarNotasSchema } from "@repo/types";
+import { createZodDto } from "nestjs-zod";
 
-class AlunoNotaDto {
-  @IsNumber() 
-  matricula_id: number;
-  
-  @IsNumber() 
-  @Min(0) 
-  nota_obtida: number;
-}
+export const RegistrarNotasDto = createZodDto(RegistrarNotasSchema);
 
-export class RegistrarNotasDto {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => AlunoNotaDto)
-  notas: AlunoNotaDto[];
-}
+export type RegistrarNotasDto = RegistrarNotasInput;

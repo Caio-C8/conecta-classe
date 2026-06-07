@@ -2,100 +2,73 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Resposta, Evento, TipoEvento } from "@repo/types";
+import {
+  Resposta,
+  Aula,
+  Evento,
+  Matricula,
+  ProfessorTurmaDetalhado,
+  CreateEventoInput,
+  UpdateEventoInput,
+  RegistrarFrequenciaInput,
+  RegistrarNotasInput,
+} from "@repo/types";
 import { toast } from "sonner";
-
-// --- TIPAGENS DE RETORNO ---
-export interface ResumoTurmaProfessor {
-  idTurma: number;
-  nomeTurma: string;
-  materia: string;
-  numeroAlunos: number;
-}
-
-export interface DiarioDeNotas {
-  evento: {
-    id: number;
-    titulo: string;
-    nota_maxima: number;
-  };
-  alunos: {
-    matricula_id: number;
-    nome_aluno: string;
-    nota_obtida: number | null;
-  }[];
-}
-
-export interface AlunoChamada {
-  id: number;
-  nome: string;
-  faltas: number;
-}
-
-export interface CreateEventoInput {
-  titulo: string;
-  descricao?: string;
-  data_evento: string | Date;
-  valor_nota?: number;
-  tipo_evento: TipoEvento;
-  turma_id: number;
-  disciplina_id: number;
-}
 
 // --- CHAVES DE CACHE ---
 export const PROFESSOR_TURMAS_QUERY_KEY = ["professor", "turmas"];
-export const PROFESSOR_PROXIMOS_EVENTOS_QUERY_KEY = [
-  "professor",
-  "eventos",
-  "proximos",
-];
-export const PROFESSOR_DIARIO_NOTAS_QUERY_KEY = [
-  "professor",
-  "diario",
-  "notas",
-];
-export const PROFESSOR_ALUNOS_CHAMADA_QUERY_KEY = [
-  "professor",
-  "alunos",
-  "chamada",
-];
+export const PROFESSOR_AULAS_QUERY_KEY = ["professor", "aulas"];
+export const PROFESSOR_EVENTOS_QUERY_KEY = ["professor", "eventos"];
+export const PROFESSOR_MATRICULAS_QUERY_KEY = ["professor", "matriculas"];
 
 // --- FETCHERS ---
-async function getTurmasProfessor(): Promise<Resposta<ResumoTurmaProfessor[]>> {
+async function getTurmasProfessor(): Promise<
+  Resposta<ProfessorTurmaDetalhado[]>
+> {
   const response =
-    await api.get<Resposta<ResumoTurmaProfessor[]>>("/professor/turmas");
+    await api.get<Resposta<ProfessorTurmaDetalhado[]>>("/professor/turmas");
   return response.data;
 }
 
-async function getProximosEventosProfessor(): Promise<Resposta<Evento[]>> {
+async function getAulasProfessor(): Promise<Resposta<Aula[]>> {
+  const response = await api.get<Resposta<Aula[]>>("/professor/aulas");
+  return response.data;
+}
+
+async function getMatriculasCursando(
+  turmaId: number,
+): Promise<Resposta<Matricula[]>> {
+  const response = await api.get<Resposta<Matricula[]>>(
+    `/professor/turmas/${turmaId}/matriculas`,
+  );
+  return response.data;
+}
+
+async function getEventosPendentes(): Promise<Resposta<Evento[]>> {
+  const response = await api.get<Resposta<Evento[]>>(
+    "/professor/eventos/pendentes",
+  );
+  return response.data;
+}
+
+async function getProximosEventos(): Promise<Resposta<Evento[]>> {
   const response = await api.get<Resposta<Evento[]>>(
     "/professor/eventos/proximos",
   );
   return response.data;
 }
 
-async function getDiarioDeNotas(
-  eventoId: number,
-): Promise<Resposta<DiarioDeNotas>> {
-  const response = await api.get<Resposta<DiarioDeNotas>>(
-    `/professor/eventos/${eventoId}/notas`,
+async function getEventosPorTurmaEDisciplina(
+  turmaId: number,
+  disciplinaId: number,
+): Promise<Resposta<Evento[]>> {
+  const response = await api.get<Resposta<Evento[]>>(
+    `/professor/eventos/turma/${turmaId}/disciplina/${disciplinaId}`,
   );
   return response.data;
 }
 
-async function getAlunosParaChamada(
-  turmaId: number,
-  aulaId?: number,
-): Promise<Resposta<AlunoChamada[]>> {
-  const url = aulaId
-    ? `/professor/turmas/${turmaId}/alunos?aula_id=${aulaId}`
-    : `/professor/turmas/${turmaId}/alunos`;
-
-  const response = await api.get<Resposta<AlunoChamada[]>>(url);
-  return response.data;
-}
-
-async function criarEvento(
+async function createEvento(
   dados: CreateEventoInput,
 ): Promise<Resposta<Evento>> {
   const response = await api.post<Resposta<Evento>>(
@@ -105,7 +78,50 @@ async function criarEvento(
   return response.data;
 }
 
-// --- HOOKS ---
+async function updateEvento({
+  id,
+  dados,
+}: {
+  id: number;
+  dados: UpdateEventoInput;
+}): Promise<Resposta<Evento>> {
+  const response = await api.patch<Resposta<Evento>>(
+    `/professor/eventos/${id}`,
+    dados,
+  );
+  return response.data;
+}
+
+async function excluirEvento(id: number): Promise<Resposta<null>> {
+  const response = await api.delete<Resposta<null>>(`/professor/eventos/${id}`);
+  return response.data;
+}
+
+async function registrarFrequencia(
+  dados: RegistrarFrequenciaInput,
+): Promise<Resposta<Aula>> {
+  const response = await api.post<Resposta<Aula>>(
+    "/professor/frequencia",
+    dados,
+  );
+  return response.data;
+}
+
+async function registrarNotas({
+  eventoId,
+  dados,
+}: {
+  eventoId: number;
+  dados: RegistrarNotasInput;
+}): Promise<Resposta<Evento>> {
+  const response = await api.post<Resposta<Evento>>(
+    `/professor/eventos/${eventoId}/notas`,
+    dados,
+  );
+  return response.data;
+}
+
+// --- HOOKS DE QUERIES ---
 export function useTurmasProfessor() {
   return useQuery({
     queryKey: PROFESSOR_TURMAS_QUERY_KEY,
@@ -113,50 +129,138 @@ export function useTurmasProfessor() {
   });
 }
 
-export function useProximosEventosProfessor() {
+export function useAulasProfessor() {
   return useQuery({
-    queryKey: PROFESSOR_PROXIMOS_EVENTOS_QUERY_KEY,
-    queryFn: getProximosEventosProfessor,
+    queryKey: PROFESSOR_AULAS_QUERY_KEY,
+    queryFn: getAulasProfessor,
   });
 }
 
-export function useDiarioNotasProfessor(
-  eventoId: number,
-  enabled: boolean = true,
-) {
-  return useQuery({
-    queryKey: [...PROFESSOR_DIARIO_NOTAS_QUERY_KEY, eventoId],
-    queryFn: () => getDiarioDeNotas(eventoId),
-    enabled: !!eventoId && enabled,
-  });
-}
-
-export function useAlunosChamadaProfessor(
+export function useMatriculasCursando(
   turmaId: number,
-  aulaId?: number,
   enabled: boolean = true,
 ) {
   return useQuery({
-    queryKey: [...PROFESSOR_ALUNOS_CHAMADA_QUERY_KEY, turmaId, aulaId],
-    queryFn: () => getAlunosParaChamada(turmaId, aulaId),
+    queryKey: [...PROFESSOR_MATRICULAS_QUERY_KEY, turmaId],
+    queryFn: () => getMatriculasCursando(turmaId),
     enabled: !!turmaId && enabled,
   });
 }
 
-export function useCriarEventoProfessor() {
+export function useEventosPendentes() {
+  return useQuery({
+    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, "pendentes"],
+    queryFn: getEventosPendentes,
+  });
+}
+
+export function useProximosEventos() {
+  return useQuery({
+    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, "proximos"],
+    queryFn: getProximosEventos,
+  });
+}
+
+export function useEventosPorTurmaEDisciplina(
+  turmaId: number,
+  disciplinaId: number,
+  enabled: boolean = true,
+) {
+  return useQuery({
+    queryKey: [
+      ...PROFESSOR_EVENTOS_QUERY_KEY,
+      "turma",
+      turmaId,
+      "disciplina",
+      disciplinaId,
+    ],
+    queryFn: () => getEventosPorTurmaEDisciplina(turmaId, disciplinaId),
+    enabled: !!turmaId && !!disciplinaId && enabled,
+  });
+}
+
+// --- HOOKS DE MUTATIONS ---
+export function useCreateEvento() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: criarEvento,
+    mutationFn: createEvento,
     onSuccess: (resposta) => {
-      queryClient.invalidateQueries({
-        queryKey: PROFESSOR_PROXIMOS_EVENTOS_QUERY_KEY,
-      });
-      toast.success(resposta.mensagem || "Evento criado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_EVENTOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
     },
     onError: (error: any) => {
       const mensagem =
-        error.response?.data?.mensagem || "Ocorreu um erro ao criar o evento.";
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
+    },
+  });
+}
+
+export function useUpdateEvento() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateEvento,
+    onSuccess: (resposta) => {
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_EVENTOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
+    },
+  });
+}
+
+export function useExcluirEvento() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: excluirEvento,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_EVENTOS_QUERY_KEY });
+      toast.success("Evento excluído com sucesso.");
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem ||
+        "Ocorreu um erro ao excluir o evento.";
+      toast.error(mensagem);
+    },
+  });
+}
+
+export function useRegistrarFrequencia() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: registrarFrequencia,
+    onSuccess: (resposta) => {
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_AULAS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
+    },
+  });
+}
+
+export function useRegistrarNotas() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: registrarNotas,
+    onSuccess: (resposta) => {
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_EVENTOS_QUERY_KEY });
+      toast.success(resposta.mensagem);
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
       toast.error(mensagem);
     },
   });

@@ -527,23 +527,44 @@ export class ProfessorService {
       },
     });
 
-    let resultado: Aula;
+    let resultado: Aula | null = null;
 
     if (aulaExistente) {
-      resultado = await this.prisma.aula.update({
-        where: { id: aulaExistente.id },
-        data: {
-          quantidade: dados.quantidade,
-          frequencias: {
-            deleteMany: {},
-            createMany: {
-              data: dados.frequencias.map((f) => ({
-                matricula_id: f.matricula_id,
-                numero_faltas: f.numero_faltas,
-              })),
+      const frequenciasAtuais = await this.prisma.frequencia.findMany({
+        where: { aula_id: aulaExistente.id },
+      });
+
+      const operacoesFrequencia = dados.frequencias.map((fFront) => {
+        const existente = frequenciasAtuais.find(
+          (fDB) => fDB.matricula_id === fFront.matricula_id,
+        );
+
+        if (existente) {
+          return this.prisma.frequencia.update({
+            where: { id: existente.id },
+            data: { numero_faltas: fFront.numero_faltas },
+          });
+        } else {
+          return this.prisma.frequencia.create({
+            data: {
+              aula_id: aulaExistente.id,
+              matricula_id: fFront.matricula_id,
+              numero_faltas: fFront.numero_faltas,
             },
-          },
-        },
+          });
+        }
+      });
+
+      await this.prisma.$transaction([
+        this.prisma.aula.update({
+          where: { id: aulaExistente.id },
+          data: { quantidade: dados.quantidade },
+        }),
+        ...operacoesFrequencia,
+      ]);
+
+      resultado = await this.prisma.aula.findUnique({
+        where: { id: aulaExistente.id },
         include: {
           turma: true,
           disciplina: true,
@@ -575,7 +596,7 @@ export class ProfessorService {
       });
     }
 
-    return resultado;
+    return resultado as Aula;
   }
 
   async buscarMatriculasCursando(turmaId: number): Promise<Matricula[]> {
@@ -653,23 +674,26 @@ export class ProfessorService {
       }
     }
 
-    const idsDosAlunos = dados.notas.map((n) => n.matricula_id);
-
-    await this.prisma.$transaction([
-      this.prisma.notaEvento.deleteMany({
+    const operacoesUpsert = dados.notas.map((n) =>
+      this.prisma.notaEvento.upsert({
         where: {
-          evento_id: eventoId,
-          matricula_id: { in: idsDosAlunos },
+          evento_id_matricula_id: {
+            evento_id: eventoId,
+            matricula_id: n.matricula_id,
+          },
         },
-      }),
-      this.prisma.notaEvento.createMany({
-        data: dados.notas.map((n) => ({
+        update: {
+          nota_obtida: n.nota_obtida,
+        },
+        create: {
           evento_id: eventoId,
           matricula_id: n.matricula_id,
           nota_obtida: n.nota_obtida,
-        })),
+        },
       }),
-    ]);
+    );
+
+    await this.prisma.$transaction(operacoesUpsert);
 
     const eventoAtualizado = await this.prisma.evento.findUnique({
       where: { id: eventoId },

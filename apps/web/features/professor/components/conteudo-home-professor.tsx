@@ -19,16 +19,27 @@ import {
   useEventosPendentes,
 } from "@/features/professor/hooks/use-professor";
 
-// Função utilitária para formatar a data como "Amanhã", "Ontem", etc.
+const getLocalDateString = (dataStr: string | Date) => {
+  if (typeof dataStr === "string") {
+    if (dataStr.includes("T")) return dataStr.split("T")[0];
+    return dataStr;
+  }
+
+  const y = dataStr.getUTCFullYear();
+  const m = String(dataStr.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(dataStr.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
 const formatarDataRelativa = (dataStr: string | Date) => {
-  const dataEvento = new Date(dataStr);
-  const hoje = new Date();
+  const dataEvento = getLocalDateString(dataStr)!;
+  const hojeLocal = getLocalDateString(new Date())!;
 
-  dataEvento.setHours(0, 0, 0, 0);
-  hoje.setHours(0, 0, 0, 0);
+  const dataObj = new Date(`${dataEvento}T00:00:00`);
+  const hojeObj = new Date(`${hojeLocal}T00:00:00`);
 
-  const diffTempo = dataEvento.getTime() - hoje.getTime();
-  const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+  const diffTempo = dataObj.getTime() - hojeObj.getTime();
+  const diffDias = Math.round(diffTempo / (1000 * 60 * 60 * 24));
 
   if (diffDias === 0) return "Hoje";
   if (diffDias === 1) return "Amanhã";
@@ -40,13 +51,11 @@ const formatarDataRelativa = (dataStr: string | Date) => {
 export function ConteudoHomeProfessor() {
   const [nomeProfessor, setNomeProfessor] = useState("Professor(a)");
 
-  // Usando os exatos hooks criados
   const { data: resTurmas, isLoading: loadTurmas } = useTurmasProfessor();
   const { data: resEventos, isLoading: loadEventos } = useProximosEventos();
   const { data: resPendentes, isLoading: loadPendentes } =
     useEventosPendentes();
 
-  // Extração segura dos dados
   const turmas = resTurmas?.dados || [];
   const proximosEventos = resEventos?.dados || [];
   const eventosPendentes = resPendentes?.dados || [];
@@ -80,16 +89,18 @@ export function ConteudoHomeProfessor() {
 
   return (
     <>
-      <h1 className="mb-8 text-2xl md:text-3xl font-medium text-zinc-900">
+      <h1 className="mb-8 text-2xl md:text-3xl font-medium">
         Olá, {nomeProfessor}!
       </h1>
 
       <main className="grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
-        {/* ESQUERDA: TURMAS */}
         <section>
-          <h2 className="mb-4 text-xl font-medium text-zinc-800">
-            Minhas Turmas:
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="mb-4 text-xl font-medium">Minhas Turmas</h2>
+            <Button variant="link" className="link">
+              <Link href="/professor/turmas">Ver todas</Link>
+            </Button>
+          </div>
 
           {turmas.length === 0 ? (
             <Card className="rounded-2xl border-dashed border-zinc-300 bg-white/50 shadow-none">
@@ -99,37 +110,39 @@ export function ConteudoHomeProfessor() {
             </Card>
           ) : (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              {turmas.map((vinculo) => (
-                <Link
-                  key={vinculo.id}
-                  href={`/professor/turmas/${vinculo.turma_id}?disciplinaId=${vinculo.disciplina_id}`}
-                  className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
-                >
-                  <Card className="flex h-full flex-col rounded-2xl border-zinc-100 shadow-sm p-0 hover:shadow-md hover:border-blue-100 transition-all cursor-pointer">
-                    <CardHeader className="p-5 pb-2">
-                      <CardTitle className="text-lg font-semibold text-blue-600 transition-colors">
-                        {vinculo.turma.serie}º Ano {vinculo.turma.identificacao}
-                      </CardTitle>
-                      <CardDescription className="line-clamp-1 text-gray-500 font-medium">
-                        {vinculo.disciplina.nome}
-                      </CardDescription>
-                    </CardHeader>
+              {turmas.map(
+                (vinculo, index) =>
+                  index < 4 && (
+                    <Link
+                      key={vinculo.id}
+                      href={`/professor/turmas/${vinculo.turma_id}?disciplina=${vinculo.disciplina_id}`}
+                      className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl"
+                    >
+                      <Card className="flex h-full flex-col rounded-2xl border-zinc-100 shadow-sm p-0 hover:shadow-md hover:border-blue-100 transition-all cursor-pointer">
+                        <CardHeader className="p-6 pb-2">
+                          <CardTitle className="text-xl font-semibold text-blue-600 transition-colors">
+                            {vinculo.turma.serie}º Ano{" "}
+                            {vinculo.turma.identificacao}
+                          </CardTitle>
+                          <CardDescription className="line-clamp-1 text-gray-500 font-medium text-base mt-1">
+                            {vinculo.disciplina.nome}
+                          </CardDescription>
+                        </CardHeader>
 
-                    <CardContent className="flex-1 p-5 pt-0 pb-5">
-                      <p className="text-sm text-gray-700">
-                        {vinculo.quantidade_matriculas} alunos matriculados
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                        <CardContent className="flex-1 p-6 pt-2 pb-6">
+                          <p className="text-sm text-gray-700 bg-zinc-50 px-3 py-1.5 rounded-lg inline-block border border-zinc-100">
+                            {vinculo.quantidade_matriculas} alunos matriculados
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  ),
+              )}
             </div>
           )}
         </section>
 
-        {/* DIREITA: AVISOS E EVENTOS */}
         <aside className="flex flex-col gap-5">
-          {/* NOTAS PENDENTES */}
           <Card className="rounded-2xl border-zinc-100 shadow-sm p-0">
             <CardHeader className="flex flex-row items-center justify-between p-5 pb-4">
               <CardTitle className="text-base font-bold text-zinc-800">
@@ -173,13 +186,9 @@ export function ConteudoHomeProfessor() {
                         </small>
                       </div>
 
-                      <Button
-                        asChild
-                        variant="link"
-                        className="flex-shrink-0 px-2 text-sm font-medium text-blue-600"
-                      >
+                      <Button asChild variant="link" className="link">
                         <Link
-                          href={`/professor/turmas/${ev.turma_id}?disciplinaId=${ev.disciplina_id}`}
+                          href={`/professor/turmas/${ev.turma_id}?disciplina=${ev.disciplina_id}`}
                         >
                           Lançar
                         </Link>
@@ -191,7 +200,6 @@ export function ConteudoHomeProfessor() {
             </CardContent>
           </Card>
 
-          {/* PRÓXIMAS ATIVIDADES */}
           <Card className="rounded-2xl border-zinc-100 shadow-sm p-0">
             <CardHeader className="p-5 pb-4">
               <CardTitle className="text-base font-bold text-zinc-800">
@@ -223,13 +231,9 @@ export function ConteudoHomeProfessor() {
                         </small>
                       </div>
 
-                      <Button
-                        asChild
-                        variant="link"
-                        className="flex-shrink-0 px-2 text-sm font-medium text-blue-600"
-                      >
+                      <Button asChild variant="link" className="link">
                         <Link
-                          href={`/professor/turmas/${ev.turma_id}?disciplinaId=${ev.disciplina_id}`}
+                          href={`/professor/turmas/${ev.turma_id}?disciplina=${ev.disciplina_id}`}
                         >
                           Ver
                         </Link>

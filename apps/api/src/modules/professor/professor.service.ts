@@ -118,7 +118,13 @@ export class ProfessorService {
 
     const data: Prisma.EventoCreateInput = {
       titulo: dados.titulo,
-      data_evento: dados.data_evento,
+      data_evento: new Date(
+        Date.UTC(
+          dados.data_evento.getUTCFullYear(),
+          dados.data_evento.getUTCMonth(),
+          dados.data_evento.getUTCDate(),
+        ),
+      ),
       descricao: dados.descricao,
       valor_nota: dados.valor_nota,
       tipo_evento: dados.tipo_evento,
@@ -180,7 +186,15 @@ export class ProfessorService {
       descricao: dados.descricao !== undefined ? dados.descricao : undefined,
       tipo_evento: dados.tipo_evento ? dados.tipo_evento : undefined,
       valor_nota: dados.valor_nota !== undefined ? dados.valor_nota : undefined,
-      data_evento: dados.data_evento ? dados.data_evento : undefined,
+      data_evento: dados.data_evento
+        ? new Date(
+            Date.UTC(
+              dados.data_evento.getUTCFullYear(),
+              dados.data_evento.getUTCMonth(),
+              dados.data_evento.getUTCDate(),
+            ),
+          )
+        : undefined,
     };
 
     const eventoAtualizado = await this.prisma.evento.update({
@@ -242,10 +256,22 @@ export class ProfessorService {
 
     const hoje = new Date();
 
+    const fimDeHoje = new Date(
+      Date.UTC(
+        hoje.getFullYear(),
+        hoje.getMonth(),
+        hoje.getDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
+
     const eventosPassados = await this.prisma.evento.findMany({
       where: {
         criador_id: professor.id,
-        data_evento: { lt: hoje },
+        data_evento: { lte: fimDeHoje },
         valor_nota: { not: null },
       },
       include: {
@@ -272,7 +298,7 @@ export class ProfessorService {
       const totalAlunos = evento.turma._count.matriculas;
       const notasLancadas = evento._count.notas_eventos;
 
-      return notasLancadas < totalAlunos;
+      return totalAlunos === 0 || notasLancadas < totalAlunos;
     });
 
     return eventosPendentes.map((evento) => {
@@ -301,11 +327,23 @@ export class ProfessorService {
 
     const hoje = new Date();
 
+    const fimDeHoje = new Date(
+      Date.UTC(
+        hoje.getFullYear(),
+        hoje.getMonth(),
+        hoje.getDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
+
     const eventos = await this.prisma.evento.findMany({
       where: {
         criador_id: professor.id,
         data_evento: {
-          gte: hoje,
+          gt: fimDeHoje,
         },
       },
       orderBy: {
@@ -390,6 +428,14 @@ export class ProfessorService {
     return {
       ...evento,
       valor_nota: evento.valor_nota ? Number(evento.valor_nota) : null,
+      notas_eventos: evento.notas_eventos.map((notaEvento) => {
+        return {
+          ...notaEvento,
+          nota_obtida: notaEvento.nota_obtida
+            ? Number(notaEvento.nota_obtida)
+            : null,
+        };
+      }),
     };
   }
 
@@ -711,178 +757,14 @@ export class ProfessorService {
       valor_nota: eventoAtualizado?.valor_nota
         ? Number(eventoAtualizado.valor_nota)
         : null,
+      notas_eventos: eventoAtualizado.notas_eventos.map((notaEvento) => {
+        return {
+          ...notaEvento,
+          nota_obtida: notaEvento.nota_obtida
+            ? Number(notaEvento.nota_obtida)
+            : null,
+        };
+      }),
     };
   }
 }
-
-// async buscarDiarioDeNotas(professorId: number, eventoId: number) {
-//   const evento = await this.prisma.evento.findUnique({
-//     where: { id: eventoId },
-//     include: {
-//       turma: {
-//         include: {
-//           matriculas: {
-//             include: {
-//               aluno: {
-//                 include: {
-//                   usuario: { select: { nome: true } },
-//                 },
-//               },
-//               notas_eventos: {
-//                 where: { evento_id: eventoId },
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-//   });
-
-//   if (!evento) {
-//     throw new Error("Evento não encontrado.");
-//   }
-
-//   const professor = await this.prisma.professor.findUnique({
-//     where: { usuario_id: professorId },
-//   });
-//   if (!professor || evento.criador_id !== professor.id) {
-//     throw new Error(
-//       "Você não tem permissão para acessar o diário deste evento.",
-//     );
-//   }
-
-//   if (evento.valor_nota === null) {
-//     throw new Error("Este evento não é avaliativo (não possui nota máxima).");
-//   }
-
-//   const alunosFormatados = evento.turma.matriculas.map((matricula) => {
-//     const registroDeNota = matricula.notas_eventos[0];
-
-//     return {
-//       matricula_id: matricula.id,
-//       nome_aluno: matricula.aluno?.usuario?.nome || "Aluno sem nome",
-//       nota_obtida: registroDeNota ? registroDeNota.nota_obtida : null,
-//     };
-//   });
-
-//   return {
-//     evento: {
-//       id: evento.id,
-//       titulo: evento.titulo,
-//       nota_maxima: evento.valor_nota,
-//     },
-//     alunos: alunosFormatados,
-//   };
-// }
-
-// async buscarAlunosParaChamada(turmaId: number, dataStr?: string) {
-//   let aulaIdInterno: number | undefined = undefined;
-
-//   if (dataStr) {
-//     const dataBusca = new Date(dataStr);
-//     const inicioDoDia = new Date(dataBusca);
-//     inicioDoDia.setUTCHours(0, 0, 0, 0);
-//     const fimDoDia = new Date(dataBusca);
-//     fimDoDia.setUTCHours(23, 59, 59, 999);
-
-//     const aulaExistente = await this.prisma.aula.findFirst({
-//       where: {
-//         turma_id: turmaId,
-//         data_aula: {
-//           gte: inicioDoDia,
-//           lte: fimDoDia,
-//         },
-//       },
-//     });
-
-//     if (aulaExistente) {
-//       aulaIdInterno = aulaExistente.id;
-//     }
-//   }
-
-//   const listaDeAlunos = await this.prisma.matricula.findMany({
-//     where: { turma_id: turmaId, status: "CURSANDO" },
-//     include: {
-//       aluno: {
-//         include: {
-//           usuario: { select: { nome: true } },
-//         },
-//       },
-//       frequencias: aulaIdInterno
-//         ? {
-//             where: { aula_id: aulaIdInterno },
-//           }
-//         : false,
-//     },
-//   });
-
-//   const listaDeAlunosFormatada = listaDeAlunos.map((matricula) => {
-//     let faltasDoAluno = matricula.frequencias?.[0]?.numero_faltas || 0;
-
-//     return {
-//       id: matricula.aluno_id,
-//       matricula_id: matricula.id,
-//       nome: matricula.aluno?.usuario?.nome,
-//       faltas: faltasDoAluno,
-//     };
-//   });
-
-//   return listaDeAlunosFormatada;
-// }
-
-// async buscarHistoricoEventos(
-//   professorId: number,
-//   pagina: number = 1,
-//   limite: number = 10,
-// ) {
-//   const professor = await this.prisma.professor.findUnique({
-//     where: { usuario_id: professorId },
-//   });
-
-//   if (!professor) {
-//     throw new Error("Professor não encontrado.");
-//   }
-
-//   const paginaAtual = Math.max(1, Number(pagina));
-//   const itensPorPagina = Math.max(1, Number(limite));
-
-//   const pularRegistos = (paginaAtual - 1) * itensPorPagina;
-
-//   const [eventos, totalEventos] = await this.prisma.$transaction([
-//     this.prisma.evento.findMany({
-//       where: { criador_id: professor.id },
-//       orderBy: { data_evento: "desc" },
-//       skip: pularRegistos,
-//       take: itensPorPagina,
-//       include: {
-//         turma: { select: { serie: true, identificacao: true } },
-//         disciplina: { select: { nome: true } },
-//       },
-//     }),
-//     this.prisma.evento.count({
-//       where: { criador_id: professor.id },
-//     }),
-//   ]);
-
-//   const totalPaginas = Math.ceil(totalEventos / itensPorPagina);
-
-//   const eventosFormatados = eventos.map((evento) => ({
-//     id: evento.id,
-//     titulo: evento.titulo,
-//     data_evento: evento.data_evento,
-//     disciplina: evento.disciplina.nome,
-//     turma: `${evento.turma.serie}º Ano ${evento.turma.identificacao}`,
-//     valor_nota: evento.valor_nota,
-//     tipo_evento: evento.tipo_evento,
-//   }));
-
-//   return {
-//     eventos: eventosFormatados,
-//     metadados: {
-//       total_registros: totalEventos,
-//       total_paginas: totalPaginas,
-//       pagina_atual: paginaAtual,
-//       itens_por_pagina: itensPorPagina,
-//     },
-//   };
-// }

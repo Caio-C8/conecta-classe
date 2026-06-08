@@ -32,16 +32,23 @@ export class EventoService {
       );
     }
 
-    return await this.eventoRepository.findByTurmaId(matricula.turma_id);
+    return await this.eventoRepository.findByTurmaId(
+      matricula.turma_id,
+      matricula.id,
+    );
   }
 
   async getNotasEventosPorMatricula(
     matriculaId: number,
     tx?: Prisma.TransactionClient,
   ): Promise<NotaEvento[]> {
-    return await this.eventoRepository.findNotasByMatriculaId(
-      matriculaId,
-      tx,
-    );
+    return await this.eventoRepository.findNotasByMatriculaId(matriculaId, tx);
+  }
+
+  async getEventosPorTurmaId(
+    turmaId: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<Evento[]> {
+    return await this.eventoRepository.findByTurmaId(turmaId, undefined, tx);
   }
 }

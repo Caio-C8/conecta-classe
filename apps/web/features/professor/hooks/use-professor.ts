@@ -20,13 +20,21 @@ export const PROFESSOR_TURMAS_QUERY_KEY = ["professor", "turmas"];
 export const PROFESSOR_AULAS_QUERY_KEY = ["professor", "aulas"];
 export const PROFESSOR_EVENTOS_QUERY_KEY = ["professor", "eventos"];
 export const PROFESSOR_MATRICULAS_QUERY_KEY = ["professor", "matriculas"];
+export const PROFESSOR_ANOS_LETIVOS_QUERY_KEY = ["professor", "anos-letivos"];
 
 // --- FETCHERS ---
-async function getTurmasProfessor(): Promise<
-  Resposta<ProfessorTurmaDetalhado[]>
-> {
-  const response =
-    await api.get<Resposta<ProfessorTurmaDetalhado[]>>("/professor/turmas");
+async function getAnosLetivosProfessor(): Promise<Resposta<number[]>> {
+  const response = await api.get<Resposta<number[]>>("/professor/anos-letivos");
+  return response.data;
+}
+
+async function getTurmasProfessor(
+  anoLetivo?: number,
+): Promise<Resposta<ProfessorTurmaDetalhado[]>> {
+  const response = await api.get<Resposta<ProfessorTurmaDetalhado[]>>(
+    "/professor/turmas",
+    { params: { anoLetivo } },
+  );
   return response.data;
 }
 
@@ -49,16 +57,22 @@ async function getMatriculasCursando(
   return response.data;
 }
 
-async function getEventosPendentes(): Promise<Resposta<Evento[]>> {
+async function getEventosPendentes(
+  anoLetivo?: number,
+): Promise<Resposta<Evento[]>> {
   const response = await api.get<Resposta<Evento[]>>(
     "/professor/eventos/pendentes",
+    { params: { anoLetivo } },
   );
   return response.data;
 }
 
-async function getProximosEventos(): Promise<Resposta<Evento[]>> {
+async function getProximosEventos(
+  anoLetivo?: number,
+): Promise<Resposta<Evento[]>> {
   const response = await api.get<Resposta<Evento[]>>(
     "/professor/eventos/proximos",
+    { params: { anoLetivo } },
   );
   return response.data;
 }
@@ -138,10 +152,17 @@ async function getEventoById(id: number): Promise<Resposta<Evento>> {
 }
 
 // --- HOOKS DE QUERIES ---
-export function useTurmasProfessor() {
+export function useAnosLetivosProfessor() {
   return useQuery({
-    queryKey: PROFESSOR_TURMAS_QUERY_KEY,
-    queryFn: getTurmasProfessor,
+    queryKey: PROFESSOR_ANOS_LETIVOS_QUERY_KEY,
+    queryFn: getAnosLetivosProfessor,
+  });
+}
+
+export function useTurmasProfessor(anoLetivo?: number) {
+  return useQuery({
+    queryKey: [...PROFESSOR_TURMAS_QUERY_KEY, anoLetivo],
+    queryFn: () => getTurmasProfessor(anoLetivo),
   });
 }
 
@@ -163,17 +184,17 @@ export function useMatriculasCursando(
   });
 }
 
-export function useEventosPendentes() {
+export function useEventosPendentes(anoLetivo?: number) {
   return useQuery({
-    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, "pendentes"],
-    queryFn: getEventosPendentes,
+    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, "pendentes", anoLetivo],
+    queryFn: () => getEventosPendentes(anoLetivo),
   });
 }
 
-export function useProximosEventos() {
+export function useProximosEventos(anoLetivo?: number) {
   return useQuery({
-    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, "proximos"],
-    queryFn: getProximosEventos,
+    queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, "proximos", anoLetivo],
+    queryFn: () => getProximosEventos(anoLetivo),
   });
 }
 

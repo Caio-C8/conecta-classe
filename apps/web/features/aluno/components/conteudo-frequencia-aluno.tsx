@@ -4,12 +4,12 @@ import { useFrequenciaAluno } from "@/features/frequencia/hooks/use-frequencia-a
 import { useAnoLetivo } from "@/features/aluno/contexts/ano-letivo-context";
 import { CabecalhoAluno } from "@/features/aluno/components/cabecalho-aluno";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LayoutDashboard, CheckCircle2, AlertCircle } from "lucide-react";
+import { LayoutDashboard, CheckCircle2, AlertCircle, Info } from "lucide-react";
 import { NivelEnsino } from "@repo/types";
 
 const getColorByPercentage = (percentage: number) => {
-  if (percentage >= 75) return "#10B981";
-  if (percentage >= 50) return "#F59E0B";
+  if (percentage >= 60) return "#10B981";
+  if (percentage >= 40) return "#F59E0B";
   return "#EF4444";
 };
 
@@ -83,72 +83,88 @@ export function ConteudoFrequenciaAluno() {
 
       <main>
         {isVisaoGeral ? (
-          <div className="bg-white rounded-[32px] p-8 md:p-12 shadow-sm border border-gray-50 flex flex-col md:flex-row items-center gap-12 md:gap-24 max-w-4xl mx-auto">
-            <div className="relative w-48 h-48 flex-shrink-0">
-              <svg
-                className="w-full h-full transform -rotate-90"
-                viewBox="0 0 140 140"
-              >
-                <circle
-                  cx="70"
-                  cy="70"
-                  r="60"
-                  stroke="#f3f4f6"
-                  strokeWidth="12"
-                  fill="transparent"
-                />
-                <circle
-                  cx="70"
-                  cy="70"
-                  r="60"
-                  stroke={circleColor}
-                  strokeWidth="12"
-                  fill="transparent"
-                  strokeDasharray={circleCircumference}
-                  strokeDashoffset={circleOffset}
-                  strokeLinecap="round"
-                  className="transition-all duration-1000 ease-out"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span
-                  className="text-4xl font-black"
-                  style={{ color: circleColor }}
+          <>
+            <div className="mb-6 flex items-start gap-3 bg-blue-50/50 text-blue-700 p-4 rounded-2xl border border-blue-100 max-w-4xl mx-auto">
+              <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <p className="text-sm font-medium">
+                Para ser aprovado, sua frequência geral deve ser igual ou
+                superior a <span className="font-bold">75%</span>.
+              </p>
+            </div>
+            <div className="bg-white rounded-[32px] p-8 md:p-12 shadow-sm border border-gray-50 flex flex-col md:flex-row items-center gap-12 md:gap-24 max-w-4xl mx-auto">
+              <div className="relative w-48 h-48 flex-shrink-0">
+                <svg
+                  className="w-full h-full transform -rotate-90"
+                  viewBox="0 0 140 140"
                 >
-                  {porcentagemGeral}%
-                </span>
-                <span className="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">
-                  de presença
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-8 w-full">
-              <div className="bg-gray-50 rounded-2xl p-6 flex justify-between items-center border border-gray-100">
-                <div>
+                  <circle
+                    cx="70"
+                    cy="70"
+                    r="60"
+                    stroke="#f3f4f6"
+                    strokeWidth="12"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="70"
+                    cy="70"
+                    r="60"
+                    stroke={circleColor}
+                    strokeWidth="12"
+                    fill="transparent"
+                    strokeDasharray={circleCircumference}
+                    strokeDashoffset={circleOffset}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span
+                    className="text-4xl font-black"
+                    style={{ color: circleColor }}
+                  >
+                    {porcentagemGeral}%
+                  </span>
                   <span className="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">
-                    Total de Aulas
-                  </span>
-                  <span className="text-3xl font-bold text-gray-800">
-                    {totalAulasGeral}
+                    de presença
                   </span>
                 </div>
               </div>
 
-              <div className="bg-red-50 rounded-2xl p-6 flex justify-between items-center border border-red-100">
-                <div>
-                  <span className="text-xs font-black text-red-400 uppercase tracking-widest block mb-1">
-                    Total de Faltas
-                  </span>
-                  <span className="text-3xl font-bold text-red-600">
-                    {totalFaltasGeral}
-                  </span>
+              <div className="flex flex-col gap-8 w-full">
+                <div className="bg-gray-50 rounded-2xl p-6 flex justify-between items-center border border-gray-100">
+                  <div>
+                    <span className="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">
+                      Total de Aulas
+                    </span>
+                    <span className="text-3xl font-bold text-gray-800">
+                      {totalAulasGeral}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-red-50 rounded-2xl p-6 flex justify-between items-center border border-red-100">
+                  <div>
+                    <span className="text-xs font-black text-red-400 uppercase tracking-widest block mb-1">
+                      Total de Faltas
+                    </span>
+                    <span className="text-3xl font-bold text-red-600">
+                      {totalFaltasGeral}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         ) : (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 gap-6 mx-auto max-w-4xl">
+            <div className="mb-2 flex items-start gap-3 bg-blue-50/50 text-blue-700 p-4 rounded-2xl border border-blue-100">
+              <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <p className="text-sm font-medium">
+                Para ser aprovado, sua frequência em cada disciplina deve ser
+                igual ou superior a <span className="font-bold">75%</span>.
+              </p>
+            </div>
             {!dados.frequencias || dados.frequencias.length === 0 ? (
               <div className="bg-white/50 border border-dashed border-gray-300 rounded-[32px] p-8 text-center text-gray-500">
                 Nenhuma frequência lançada nas disciplinas.

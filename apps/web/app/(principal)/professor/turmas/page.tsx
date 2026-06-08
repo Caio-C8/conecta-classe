@@ -4,6 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { Users } from "lucide-react";
 import { useTurmasProfessor } from "@/features/professor/hooks/use-professor";
+import { useAnoLetivo } from "@/features/professor/contexts/ano-letivo-context";
+import { CabecalhoProfessor } from "@/features/professor/components/cabecalho-professor";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -14,8 +16,12 @@ import {
 } from "@/components/ui/card";
 
 export default function TurmasProfessorPage() {
-  const { data: resTurmas, isLoading } = useTurmasProfessor();
+  const { anoLetivo, isLoadingAnos } = useAnoLetivo();
+  const { data: resTurmas, isLoading: loadTurmas } = useTurmasProfessor(
+    anoLetivo || undefined,
+  );
   const turmas = resTurmas?.dados || [];
+  const isLoading = loadTurmas || isLoadingAnos;
 
   if (isLoading) {
     return (
@@ -36,7 +42,7 @@ export default function TurmasProfessorPage() {
 
   return (
     <div className="mx-auto w-full animate-in fade-in duration-300">
-      <h1 className="mb-8 text-2xl md:text-3xl font-medium">Minhas Turmas</h1>
+      <CabecalhoProfessor titulo="Minhas Turmas" />
 
       {turmas.length === 0 ? (
         <Card className="rounded-2xl border-dashed border-zinc-300 bg-white/50 shadow-none max-w-2xl">

@@ -32,11 +32,19 @@ import { MensagemResposta } from "src/common/decorators/mensagem-resposta.decora
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
 
+  @Get("anos-letivos")
+  async getAnosLetivos(
+    @GetUsuario("id") usuarioId: number,
+  ): Promise<number[]> {
+    return this.professorService.buscarAnosLetivosDoProfessor(usuarioId);
+  }
+
   @Get("turmas")
   async getTurmas(
     @GetUsuario("id") usuarioId: number,
+    @Query("anoLetivo", new ParseIntPipe({ optional: true })) anoLetivo?: number,
   ): Promise<ProfessorTurmaDetalhado[]> {
-    return this.professorService.buscarTurmasDoProfessor(usuarioId);
+    return this.professorService.buscarTurmasDoProfessor(usuarioId, anoLetivo);
   }
 
   @Post("eventos")
@@ -74,15 +82,17 @@ export class ProfessorController {
   @Get("eventos/pendentes")
   async getEventosPendentes(
     @GetUsuario("id") usuarioId: number,
+    @Query("anoLetivo", new ParseIntPipe({ optional: true })) anoLetivo?: number,
   ): Promise<Evento[]> {
-    return this.professorService.buscarEventosPendentes(usuarioId);
+    return this.professorService.buscarEventosPendentes(usuarioId, anoLetivo);
   }
 
   @Get("eventos/proximos")
   async getProximosEventos(
     @GetUsuario("id") usuarioId: number,
+    @Query("anoLetivo", new ParseIntPipe({ optional: true })) anoLetivo?: number,
   ): Promise<Evento[]> {
-    return this.professorService.buscarProximosEventos(usuarioId);
+    return this.professorService.buscarProximosEventos(usuarioId, anoLetivo);
   }
 
   @Get("eventos/turma/:turmaId/disciplina/:disciplinaId")

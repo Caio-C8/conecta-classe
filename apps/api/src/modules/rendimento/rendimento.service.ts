@@ -49,28 +49,46 @@ export class RendimentoService {
       );
     }
 
-    const [rendimentos, notasEventos] = await Promise.all([
+    const [rendimentos, notasEventos, todosEventos] = await Promise.all([
       this.rendimentoRepository.findByMatriculaId(matricula.id, tx),
       this.eventoService.getNotasEventosPorMatricula(matricula.id, tx),
+      this.eventoService.getEventosPorTurmaId(matricula.turma_id, tx),
     ]);
 
     let totalNotas: number = 0;
 
     const rendimentosFormatados = rendimentos.map((rendimento) => {
-      const eventosDaDisciplina = notasEventos
-        .filter(
-          (nota) => nota.evento?.disciplina_id === rendimento.disciplina_id,
-        )
-        .map((nota) => ({
-          id: nota.evento_id,
-          titulo: nota.evento?.titulo || null,
-          tipo_evento: nota.evento?.tipo_evento || null,
-          data_evento: nota.evento?.data_evento || null,
-          nota_obtida: nota.nota_obtida,
-          valor_nota: nota.evento?.valor_nota || null,
-        }));
+      // Notas já lançadas para esta disciplina, indexadas por evento_id
+      const notasPorEventoId = new Map(
+        notasEventos
+          .filter(
+            (nota) => nota.evento?.disciplina_id === rendimento.disciplina_id,
+          )
+          .map((nota) => [nota.evento_id, nota]),
+      );
 
-      totalNotas += rendimento.nota_total;
+      // Todos os eventos desta disciplina (incluindo futuros sem nota)
+      const eventosDaDisciplina = todosEventos
+        .filter((ev) => ev.disciplina_id === rendimento.disciplina_id)
+        .map((ev) => {
+          const notaExistente = notasPorEventoId.get(ev.id);
+          return {
+            id: ev.id,
+            titulo: ev.titulo || null,
+            tipo_evento: ev.tipo_evento || null,
+            data_evento: ev.data_evento || null,
+            nota_obtida: notaExistente ? notaExistente.nota_obtida : null,
+            valor_nota: ev.valor_nota ?? null,
+          };
+        });
+
+      // Calcula a nota total real somando as notas obtidas nos eventos
+      const notaTotalCalculada = eventosDaDisciplina.reduce(
+        (acc, ev) => acc + (ev.nota_obtida ?? 0),
+        0,
+      );
+
+      totalNotas += notaTotalCalculada;
 
       return {
         id: rendimento.id,
@@ -78,7 +96,7 @@ export class RendimentoService {
           id: rendimento.disciplina?.id || null,
           nome: rendimento.disciplina?.nome || null,
         },
-        nota_total: rendimento.nota_total,
+        nota_total: notaTotalCalculada,
         situacao: rendimento.situacao,
         eventos: eventosDaDisciplina,
       };

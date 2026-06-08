@@ -21,7 +21,7 @@ export interface Evento {
   turma?: Turma;
   disciplina?: Disciplina;
   criador?: Professor;
-  nota_evento?: NotaEvento;
+  notas_eventos?: NotaEvento[];
 }
 
 export const CreateEventoSchema = z.object({
@@ -48,9 +48,24 @@ export const CreateEventoSchema = z.object({
     })
     .refine(
       (data) => {
+        let evtStr = "";
+
+        if (data.getUTCHours() === 0) {
+          evtStr = data.toISOString().split("T")[0]!;
+        } else {
+          const y = data.getFullYear();
+          const m = String(data.getMonth() + 1).padStart(2, "0");
+          const d = String(data.getDate()).padStart(2, "0");
+          evtStr = `${y}-${m}-${d}`;
+        }
+
         const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
-        return data >= hoje;
+        const hY = hoje.getFullYear();
+        const hM = String(hoje.getMonth() + 1).padStart(2, "0");
+        const hD = String(hoje.getDate()).padStart(2, "0");
+        const hStr = `${hY}-${hM}-${hD}`;
+
+        return evtStr >= hStr;
       },
       { message: "A data de realização do evento não pode ser no passado." },
     ),

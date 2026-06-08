@@ -27,7 +27,10 @@ const navConfig = {
     { label: "Turmas", href: "/admin/turmas" },
     { label: "Disciplinas", href: "/admin/disciplinas" },
   ],
-  professor: [{ label: "Painel Geral", href: "/professor" }],
+  professor: [
+    { label: "Painel Geral", href: "/professor" },
+    { label: "Turmas", href: "/professor/turmas" },
+  ],
   aluno: [
     { label: "Painel Geral", href: "/aluno" },
     { label: "Frequência", href: "/aluno/frequencia" },

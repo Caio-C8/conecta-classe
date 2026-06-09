@@ -43,8 +43,6 @@ Antes de executar qualquer comando ou iniciar o banco de dados de desenvolviment
 O repositório disponibiliza templates no formato `.env.example`. Siga estes passos:
 
 1. **Na pasta raiz do projeto (`/`)**: Faça uma cópia do `.env.example`, renomeie a cópia para `.env` e defina as variáveis gerais ali descritas.
-2. **Na pasta específica do banco de dados (`packages/database`)**: Faça uma cópia do `packages/database/.env.example`, renomeie-a para `packages/database/.env` e configure principalmente a variável `DATABASE_URL` (chave de conexão do Prisma).
-3. **Na pasta específica da API (`apps/api`)**: Faça uma cópia do `apps/api/.env.example`, renomeie-a para `apps/api/.env` e configure a variável `JWT_SECRETO`.
 
 ### 4. Subir e Configurar o Banco de Dados
 

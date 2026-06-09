@@ -233,7 +233,6 @@ export function SheetLancarNotas({
                   className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                   disabled={isSalvando || isResetando || isLoading}
                 >
-                  <Trash2 className="mr-2 h-4 w-4" />
                   {isResetando ? "Resetando..." : "Resetar todas as notas"}
                 </Button>
               </AlertDialogTrigger>
@@ -242,9 +241,10 @@ export function SheetLancarNotas({
                   <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
                   <AlertDialogDescription>
                     Esta ação irá excluir todas as notas lançadas para o evento{" "}
-                    <strong>&quot;{tituloEvento}&quot;</strong>. O diário voltará
-                    a ficar completamente limpo e o evento será considerado com
-                    notas pendentes. Essa ação não pode ser desfeita.
+                    <strong>&quot;{tituloEvento}&quot;</strong>. O diário
+                    voltará a ficar completamente limpo e o evento será
+                    considerado com notas pendentes. Essa ação não pode ser
+                    desfeita.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

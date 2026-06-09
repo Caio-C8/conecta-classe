@@ -12,6 +12,7 @@ import Link from "next/link";
 import { formatarData, formatarDiaMes } from "@repo/utils";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
+import { NivelEnsino, SituacaoTurma } from "@repo/types";
 
 export function ConteudoHomeAlunoPage() {
   const [nomeUsuario, setNomeUsuario] = useState<string>("Carregando...");
@@ -65,9 +66,26 @@ export function ConteudoHomeAlunoPage() {
     setNomeUsuario(nomeSalvo || "Aluno");
   }, []);
 
+  const formatarNivel = (nivel?: string | null) => {
+    if (nivel === NivelEnsino.MEDIO) return "Ensino Médio";
+    if (nivel === NivelEnsino.FUNDAMENTAL_2) return "Ensino Fundamental II";
+    if (nivel === NivelEnsino.FUNDAMENTAL_1) return "Ensino Fundamental I";
+    return nivel || "";
+  };
+
+  const formatarSituacao = (situacao?: string | null) => {
+    if (situacao === SituacaoTurma.EM_ANDAMENTO) return "Em andamento";
+    if (situacao === SituacaoTurma.ENCERRADA) return "Encerrada";
+    return situacao || "";
+  };
+
+  const stringTurma = rendimentos?.turma
+    ? `${rendimentos.turma.identificacao} - ${rendimentos.turma.serie}º ano - ${formatarNivel(rendimentos.turma.nivel_ensino)} - ${formatarSituacao(rendimentos.turma.situacao)}`
+    : "";
+
   return (
     <>
-      <CabecalhoAluno titulo={`Olá, ${nomeUsuario}!`} />
+      <CabecalhoAluno titulo={`Olá, ${nomeUsuario}!`} descricao={stringTurma} />
 
       {isLoading ? (
         <div className="space-y-8 mt-6">
@@ -95,7 +113,7 @@ export function ConteudoHomeAlunoPage() {
                 </div>
 
                 <small className="mt-1 block text-sm text-green-600 select-none">
-                  {`Um total de ${eventos.filter((e) => e.nota_evento !== null).length} avaliações.`}
+                  {`Um total de ${eventos.filter((e) => e.notas_eventos !== null).length} avaliações.`}
                 </small>
 
                 <div className="absolute top-5 right-5 text-green-600 text-lg">

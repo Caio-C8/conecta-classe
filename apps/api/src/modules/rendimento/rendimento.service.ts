@@ -58,7 +58,6 @@ export class RendimentoService {
     let totalNotas: number = 0;
 
     const rendimentosFormatados = rendimentos.map((rendimento) => {
-      // Notas já lançadas para esta disciplina, indexadas por evento_id
       const notasPorEventoId = new Map(
         notasEventos
           .filter(
@@ -67,7 +66,6 @@ export class RendimentoService {
           .map((nota) => [nota.evento_id, nota]),
       );
 
-      // Todos os eventos desta disciplina (incluindo futuros sem nota)
       const eventosDaDisciplina = todosEventos
         .filter((ev) => ev.disciplina_id === rendimento.disciplina_id)
         .map((ev) => {
@@ -114,6 +112,7 @@ export class RendimentoService {
         identificacao: matricula.turma?.identificacao || null,
         serie: matricula.turma?.serie || null,
         nivel_ensino: matricula.turma?.nivel_ensino || null,
+        situacao: matricula.turma?.situacao || null,
       },
       media_geral: mediaGeral,
       rendimentos: rendimentosFormatados,

@@ -596,6 +596,40 @@ export class ProfessorService {
     return aula;
   }
 
+  async excluirAula(usuarioId: number, aulaId: number): Promise<void> {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: usuarioId },
+    });
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const aula = await this.prisma.aula.findUnique({
+      where: { id: aulaId },
+      include: { turma: true },
+    });
+
+    if (!aula || aula.professor_id !== professor.id) {
+      throw new NotFoundException("Aula não encontrada ou sem permissão.");
+    }
+
+    if (aula.turma.situacao === SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Não é possível excluir uma aula de uma turma encerrada.",
+      );
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.frequencia.deleteMany({
+        where: { aula_id: aulaId },
+      }),
+      this.prisma.aula.delete({
+        where: { id: aulaId },
+      }),
+    ]);
+  }
+
   async realizarFrequencia(
     usuarioId: number,
     dados: RegistrarFrequenciaInput,
@@ -606,6 +640,25 @@ export class ProfessorService {
 
     if (!professor) {
       throw new NotFoundException("Professor não encontrado.");
+    }
+
+    let aulaStr = "";
+    if (dados.data_aula.getUTCHours() === 0) {
+      aulaStr = dados.data_aula.toISOString().split("T")[0]!;
+    } else {
+      const y = dados.data_aula.getFullYear();
+      const m = String(dados.data_aula.getMonth() + 1).padStart(2, "0");
+      const d = String(dados.data_aula.getDate()).padStart(2, "0");
+      aulaStr = `${y}-${m}-${d}`;
+    }
+    const hoje = new Date();
+    const hY = hoje.getFullYear();
+    const hM = String(hoje.getMonth() + 1).padStart(2, "0");
+    const hD = String(hoje.getDate()).padStart(2, "0");
+    const hStr = `${hY}-${hM}-${hD}`;
+
+    if (aulaStr > hStr) {
+      throw new BadRequestException("A data da aula não pode ser no futuro.");
     }
 
     const turma = await this.prisma.turma.findUnique({
@@ -621,12 +674,6 @@ export class ProfessorService {
     }
 
     if (turma.nivel_ensino === NivelEnsino.FUNDAMENTAL_1) {
-      // if (dados.disciplina_id !== undefined) {
-      //   throw new BadRequestException(
-      //     "Para o Fundamental I, a chamada deve ser por dia letivo global.",
-      //   );
-      // }
-
       const vinculoTurma = await this.prisma.professorTurma.findFirst({
         where: { professor_id: professor.id, turma_id: dados.turma_id },
       });

@@ -1,6 +1,11 @@
 import { Matricula } from "./matricula";
 import { Disciplina } from "./disciplina";
-import { NivelEnsino, SituacaoRendimento, TipoEvento } from "./enums";
+import {
+  NivelEnsino,
+  SituacaoRendimento,
+  SituacaoTurma,
+  TipoEvento,
+} from "./enums";
 
 export interface RendimentoDisciplina {
   id: number;
@@ -22,6 +27,7 @@ export interface RespostaGetRendimentosAluno {
     identificacao: string | null;
     serie: number | null;
     nivel_ensino: NivelEnsino | null;
+    situacao: SituacaoTurma | null;
   };
   media_geral: number;
   rendimentos: {

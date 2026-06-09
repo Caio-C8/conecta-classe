@@ -133,6 +133,66 @@ export class TurmaService {
       throw new BadRequestException("Turma já está encerrada.");
     }
 
+    const eventos = await this.prisma.evento.findMany({
+      where: { turma_id: id },
+      include: {
+        _count: {
+          select: { notas_eventos: true },
+        },
+      },
+    });
+
+    const hoje = new Date(
+      Date.UTC(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+      ),
+    );
+
+    const possuiEventosPendentesData = eventos.some(
+      (ev) => ev.data_evento.getTime() >= hoje.getTime(),
+    );
+
+    if (possuiEventosPendentesData) {
+      throw new BadRequestException(
+        "Não é possível encerrar a turma. Existem eventos agendados para hoje ou para datas futuras.",
+      );
+    }
+
+    const quantidadeMatriculas = await this.prisma.matricula.count({
+      where: {
+        turma_id: id,
+        status: "CURSANDO",
+      },
+    });
+
+    const possuiNotasPendentes = eventos.some((ev) => {
+      if (ev.valor_nota === null) return false;
+      const notasLancadas = ev._count.notas_eventos;
+      return quantidadeMatriculas > 0 && notasLancadas < quantidadeMatriculas;
+    });
+
+    if (possuiNotasPendentes) {
+      throw new BadRequestException(
+        "Não é possível encerrar a turma. Existem eventos avaliativos com notas pendentes de lançamento.",
+      );
+    }
+
+    const disciplinasIds = await this.turmaRepository.findDisciplinasByTurmaId(id);
+
+    for (const disciplinaId of disciplinasIds) {
+      const somaNotas = eventos
+        .filter((ev) => ev.disciplina_id === disciplinaId && ev.valor_nota !== null)
+        .reduce((acc, ev) => acc + ev.valor_nota!.toNumber(), 0);
+
+      if (somaNotas < 100) {
+        throw new BadRequestException(
+          "Não é possível encerrar a turma. A distribuição de notas não atingiu 100 pontos para todas as disciplinas.",
+        );
+      }
+    }
+
     return await this.prisma.$transaction(async (tx) => {
       const isFundamental1 = turma.nivel_ensino === "FUNDAMENTAL_1";
 

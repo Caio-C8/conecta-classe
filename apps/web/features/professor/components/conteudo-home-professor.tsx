@@ -18,6 +18,8 @@ import {
   useProximosEventos,
   useEventosPendentes,
 } from "@/features/professor/hooks/use-professor";
+import { useAnoLetivo } from "@/features/professor/contexts/ano-letivo-context";
+import { CabecalhoProfessor } from "@/features/professor/components/cabecalho-professor";
 
 const getLocalDateString = (dataStr: string | Date) => {
   if (typeof dataStr === "string") {
@@ -51,16 +53,23 @@ const formatarDataRelativa = (dataStr: string | Date) => {
 export function ConteudoHomeProfessor() {
   const [nomeProfessor, setNomeProfessor] = useState("Professor(a)");
 
-  const { data: resTurmas, isLoading: loadTurmas } = useTurmasProfessor();
-  const { data: resEventos, isLoading: loadEventos } = useProximosEventos();
-  const { data: resPendentes, isLoading: loadPendentes } =
-    useEventosPendentes();
+  const { anoLetivo, isLoadingAnos } = useAnoLetivo();
+
+  const { data: resTurmas, isLoading: loadTurmas } = useTurmasProfessor(
+    anoLetivo || undefined,
+  );
+  const { data: resEventos, isLoading: loadEventos } = useProximosEventos(
+    anoLetivo || undefined,
+  );
+  const { data: resPendentes, isLoading: loadPendentes } = useEventosPendentes(
+    anoLetivo || undefined,
+  );
 
   const turmas = resTurmas?.dados || [];
   const proximosEventos = resEventos?.dados || [];
   const eventosPendentes = resPendentes?.dados || [];
 
-  const isLoading = loadTurmas || loadEventos || loadPendentes;
+  const isLoading = loadTurmas || loadEventos || loadPendentes || isLoadingAnos;
 
   useEffect(() => {
     const nomeCookie = Cookies.get("nome");
@@ -89,9 +98,7 @@ export function ConteudoHomeProfessor() {
 
   return (
     <>
-      <h1 className="mb-8 text-2xl md:text-3xl font-medium">
-        Olá, {nomeProfessor}!
-      </h1>
+      <CabecalhoProfessor titulo={`Olá, ${nomeProfessor}!`} />
 
       <main className="grid grid-cols-1 gap-8 lg:grid-cols-[2fr_1fr]">
         <section>

@@ -25,6 +25,7 @@ export class ProfessorService {
 
   async buscarTurmasDoProfessor(
     usuarioId: number,
+    anoLetivo?: number,
   ): Promise<ProfessorTurmaDetalhado[]> {
     const professor = await this.prisma.professor.findUnique({
       where: { usuario_id: usuarioId },
@@ -34,10 +35,16 @@ export class ProfessorService {
       throw new NotFoundException("Professor não encontrado.");
     }
 
+    const whereClause: Prisma.ProfessorTurmaWhereInput = {
+      professor_id: professor.id,
+    };
+
+    if (anoLetivo) {
+      whereClause.turma = { ano_letivo: anoLetivo };
+    }
+
     const resultados = await this.prisma.professorTurma.findMany({
-      where: {
-        professor_id: professor.id,
-      },
+      where: whereClause,
       include: {
         turma: {
           include: {
@@ -61,6 +68,28 @@ export class ProfessorService {
         disciplina: disciplina,
       };
     });
+  }
+
+  async buscarAnosLetivosDoProfessor(usuarioId: number): Promise<number[]> {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: usuarioId },
+    });
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const turmas = await this.prisma.professorTurma.findMany({
+      where: { professor_id: professor.id },
+      select: {
+        turma: {
+          select: { ano_letivo: true },
+        },
+      },
+    });
+
+    const anos = [...new Set(turmas.map((t) => t.turma.ano_letivo))];
+    return anos.sort((a, b) => b - a); // descending
   }
 
   async criarEvento(
@@ -234,18 +263,20 @@ export class ProfessorService {
       );
     }
 
-    if (evento.notas_eventos.length > 0) {
-      throw new BadRequestException(
-        "Não é possível excluir um evento que já possui notas lançadas.",
-      );
-    }
-
-    await this.prisma.evento.delete({
-      where: { id: eventoId },
-    });
+    await this.prisma.$transaction([
+      this.prisma.notaEvento.deleteMany({
+        where: { evento_id: eventoId },
+      }),
+      this.prisma.evento.delete({
+        where: { id: eventoId },
+      }),
+    ]);
   }
 
-  async buscarEventosPendentes(usuarioId: number): Promise<Evento[]> {
+  async buscarEventosPendentes(
+    usuarioId: number,
+    anoLetivo?: number,
+  ): Promise<Evento[]> {
     const professor = await this.prisma.professor.findUnique({
       where: { usuario_id: usuarioId },
     });
@@ -268,12 +299,18 @@ export class ProfessorService {
       ),
     );
 
+    const whereClause: Prisma.EventoWhereInput = {
+      criador_id: professor.id,
+      data_evento: { lte: fimDeHoje },
+      valor_nota: { not: null },
+    };
+
+    if (anoLetivo) {
+      whereClause.turma = { ano_letivo: anoLetivo };
+    }
+
     const eventosPassados = await this.prisma.evento.findMany({
-      where: {
-        criador_id: professor.id,
-        data_evento: { lte: fimDeHoje },
-        valor_nota: { not: null },
-      },
+      where: whereClause,
       include: {
         turma: {
           include: {
@@ -316,36 +353,35 @@ export class ProfessorService {
     });
   }
 
-  async buscarProximosEventos(professorId: number): Promise<Evento[]> {
+  async buscarProximosEventos(
+    professorId: number,
+    anoLetivo?: number,
+  ): Promise<Evento[]> {
     const professor = await this.prisma.professor.findUnique({
       where: { usuario_id: professorId },
     });
 
     if (!professor) {
-      throw new Error("Professor não encontrado.");
+      throw new NotFoundException("Professor não encontrado.");
     }
 
     const hoje = new Date();
 
-    const fimDeHoje = new Date(
-      Date.UTC(
-        hoje.getFullYear(),
-        hoje.getMonth(),
-        hoje.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
+    const inicioDeHoje = new Date(
+      Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()),
     );
 
-    const eventos = await this.prisma.evento.findMany({
-      where: {
-        criador_id: professor.id,
-        data_evento: {
-          gt: fimDeHoje,
-        },
-      },
+    const whereClause: Prisma.EventoWhereInput = {
+      criador_id: professor.id,
+      data_evento: { gte: inicioDeHoje },
+    };
+
+    if (anoLetivo) {
+      whereClause.turma = { ano_letivo: anoLetivo };
+    }
+
+    const proximosEventos = await this.prisma.evento.findMany({
+      where: whereClause,
       orderBy: {
         data_evento: "asc",
       },
@@ -356,7 +392,7 @@ export class ProfessorService {
       },
     });
 
-    return eventos.map((evento) => {
+    return proximosEventos.map((evento) => {
       return {
         ...evento,
         valor_nota: evento.valor_nota ? Number(evento.valor_nota) : null,
@@ -452,18 +488,34 @@ export class ProfessorService {
       throw new NotFoundException("Professor não encontrado.");
     }
 
-    const whereClause: Prisma.AulaWhereInput = {
-      professor_id: professor.id,
-    };
+    const whereClause: Prisma.AulaWhereInput = {};
 
-    if (turmaId) whereClause.turma_id = turmaId;
-    if (disciplinaId) whereClause.disciplina_id = disciplinaId;
+    if (turmaId) {
+      whereClause.turma_id = turmaId;
+
+      // Para Fundamental 1, a frequência é global por dia letivo,
+      // então não filtramos por disciplina_id nem professor_id.
+      const turma = await this.prisma.turma.findUnique({
+        where: { id: turmaId },
+      });
+
+      if (turma && turma.nivel_ensino === NivelEnsino.FUNDAMENTAL_1) {
+        // Não filtra por professor_id nem disciplina_id
+      } else {
+        whereClause.professor_id = professor.id;
+        if (disciplinaId) whereClause.disciplina_id = disciplinaId;
+      }
+    } else {
+      whereClause.professor_id = professor.id;
+      if (disciplinaId) whereClause.disciplina_id = disciplinaId;
+    }
 
     return await this.prisma.aula.findMany({
       where: whereClause,
       include: {
         turma: true,
         disciplina: true,
+        frequencias: true,
       },
       orderBy: {
         data_aula: "desc",
@@ -523,11 +575,11 @@ export class ProfessorService {
     }
 
     if (turma.nivel_ensino === NivelEnsino.FUNDAMENTAL_1) {
-      if (dados.disciplina_id !== undefined) {
-        throw new BadRequestException(
-          "Para o Fundamental I, a chamada deve ser por dia letivo global.",
-        );
-      }
+      // if (dados.disciplina_id !== undefined) {
+      //   throw new BadRequestException(
+      //     "Para o Fundamental I, a chamada deve ser por dia letivo global.",
+      //   );
+      // }
 
       const vinculoTurma = await this.prisma.professorTurma.findFirst({
         where: { professor_id: professor.id, turma_id: dados.turma_id },
@@ -618,10 +670,16 @@ export class ProfessorService {
         },
       });
     } else {
+      // Para Fundamental 1, a aula é global (sem disciplina específica)
+      const disciplinaIdParaAula =
+        turma.nivel_ensino === NivelEnsino.FUNDAMENTAL_1
+          ? undefined
+          : dados.disciplina_id;
+
       resultado = await this.prisma.aula.create({
         data: {
           turma_id: dados.turma_id,
-          disciplina_id: dados.disciplina_id,
+          disciplina_id: disciplinaIdParaAula,
           professor_id: professor.id,
           quantidade: dados.quantidade,
           data_aula: dados.data_aula,

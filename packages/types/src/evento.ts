@@ -22,6 +22,7 @@ export interface Evento {
   disciplina?: Disciplina;
   criador?: Professor;
   notas_eventos?: NotaEvento[];
+  nota_obtida?: number | null;
 }
 
 export const CreateEventoSchema = z.object({

@@ -42,6 +42,8 @@ import { FaPlus } from "react-icons/fa";
 import { SheetLancarNotas } from "@/features/professor/components/sheet-lancar-notas";
 import { ModalEditarEvento } from "@/features/professor/components/modais/modal-editar-evento";
 import { ModalCriarEvento } from "@/features/professor/components/modais/modal-criar-evento";
+import { Badge } from "@/components/ui/badge";
+import { SituacaoTurma } from "@repo/types";
 
 const getLocalDateString = (dataStr: string | Date) => {
   if (typeof dataStr === "string") {
@@ -83,6 +85,7 @@ export default function PainelTurmaPage() {
   const [abaAtiva, setAbaAtiva] = useState<string>("frequencia");
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isEditingChamada, setIsEditingChamada] = useState(false);
   const [dataAula, setDataAula] = useState(getLocalDateString(new Date())!);
   const [quantidadeAulas, setQuantidadeAulas] = useState(1);
   const [faltas, setFaltas] = useState<Record<number, number>>({});
@@ -127,6 +130,29 @@ export default function PainelTurmaPage() {
       if (atual <= 0) return prev;
       return { ...prev, [matriculaId]: atual - 1 };
     });
+  };
+
+  const handleNovaChamada = () => {
+    setIsEditingChamada(false);
+    setDataAula(getLocalDateString(new Date())!);
+    setQuantidadeAulas(1);
+    setFaltas({});
+    setIsSheetOpen(true);
+  };
+
+  const handleEditarChamada = (aula: any) => {
+    setIsEditingChamada(true);
+    setDataAula(getLocalDateString(aula.data_aula)!);
+    setQuantidadeAulas(aula.quantidade);
+    
+    const initialFaltas: Record<number, number> = {};
+    if (aula.frequencias) {
+      aula.frequencias.forEach((freq: any) => {
+        initialFaltas[freq.matricula_id] = freq.numero_faltas;
+      });
+    }
+    setFaltas(initialFaltas);
+    setIsSheetOpen(true);
   };
 
   const handleSalvarChamada = () => {
@@ -178,19 +204,38 @@ export default function PainelTurmaPage() {
   return (
     <div className="mx-auto w-full">
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 rounded-3xl shadow-sm border border-zinc-100">
-        <div className="flex items-center gap-5">
-          <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
-            <LayoutDashboard size={28} />
+        <div className="flex items-center justify-between gap-5 w-full">
+          <div className="flex gap-5">
+            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+              <LayoutDashboard size={28} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-zinc-900">
+                {vinculoAtual.turma.serie}º Ano{" "}
+                {vinculoAtual.turma.identificacao}
+              </h1>
+              <p className="text-sm font-medium text-zinc-500 mt-1">
+                {vinculoAtual.disciplina.nome} •{" "}
+                {vinculoAtual.quantidade_matriculas} alunos
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-900">
-              {vinculoAtual.turma.serie}º Ano {vinculoAtual.turma.identificacao}
-            </h1>
-            <p className="text-sm font-medium text-zinc-500 mt-1">
-              {vinculoAtual.disciplina.nome} •{" "}
-              {vinculoAtual.quantidade_matriculas} alunos
-            </p>
-          </div>
+
+          <Badge
+            variant={
+              vinculoAtual.turma.situacao === SituacaoTurma.EM_ANDAMENTO
+                ? "secondary"
+                : vinculoAtual.turma.situacao === SituacaoTurma.ENCERRADA
+                  ? "destructive"
+                  : "default"
+            }
+          >
+            {vinculoAtual.turma.situacao === SituacaoTurma.EM_ANDAMENTO
+              ? "Em Andamento"
+              : vinculoAtual.turma.situacao === SituacaoTurma.ENCERRADA
+                ? "Encerrada"
+                : "Não Iniciada"}
+          </Badge>
         </div>
       </div>
 
@@ -230,15 +275,14 @@ export default function PainelTurmaPage() {
               </h2>
 
               <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetTrigger asChild>
                   <Button
                     size="lg"
                     className="flex items-center justify-center gap-2 rounded-xl bg-[#3580E9] hover:bg-[#3580E9]/90 text-white px-6 py-6 text-base cursor-pointer"
+                    onClick={handleNovaChamada}
                   >
                     <FaPlus />
                     Registrar nova frequência
                   </Button>
-                </SheetTrigger>
                 <SheetContent className="w-full sm:max-w-md overflow-y-auto border-none p-5">
                   <SheetHeader className="mb-6">
                     <SheetTitle>Realizar Chamada</SheetTitle>
@@ -255,6 +299,7 @@ export default function PainelTurmaPage() {
                           type="date"
                           value={dataAula}
                           onChange={(e) => setDataAula(e.target.value)}
+                          disabled={isEditingChamada}
                         />
                       </div>
                       <div className="space-y-2">
@@ -357,7 +402,9 @@ export default function PainelTurmaPage() {
                           <div>
                             <p className="font-bold text-zinc-900">
                               {format(
-                                new Date(aula.data_aula),
+                                new Date(
+                                  `${getLocalDateString(aula.data_aula)}T00:00:00`,
+                                ),
                                 "dd 'de' MMMM, yyyy",
                                 { locale: ptBR },
                               )}
@@ -367,6 +414,13 @@ export default function PainelTurmaPage() {
                             </p>
                           </div>
                         </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditarChamada(aula)}
+                        >
+                          Editar
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -396,7 +450,7 @@ export default function PainelTurmaPage() {
             </div>
 
             <section className="flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <h3 className="text-base font-bold text-zinc-500 uppercase tracking-widest">
                   Eventos Concluídos
                 </h3>
@@ -461,7 +515,7 @@ export default function PainelTurmaPage() {
             </section>
 
             <section className="flex flex-col gap-4 mt-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <h3 className="text-base font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
                   Próximos Eventos
                 </h3>

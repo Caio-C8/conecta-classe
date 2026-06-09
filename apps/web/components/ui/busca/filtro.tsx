@@ -108,7 +108,8 @@ export function Filtro<T extends Record<string, any>>({
 
               {campo.tipo === "select" ? (
                 <Select
-                  value={valorAtual}
+                  key={valorAtual ? "has-value" : "empty"}
+                  value={valorAtual || undefined}
                   onValueChange={(valor) => handleChange(nomeCampo, valor)}
                 >
                   <SelectTrigger id={nomeCampo} className="w-full">

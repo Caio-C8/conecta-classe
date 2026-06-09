@@ -179,7 +179,24 @@ export function AbaAvaliacoes({
                     )}
                   </p>
                 </CardHeader>
-                <CardContent className="p-5 pt-0 flex justify-end">
+                <CardContent
+                  className={`p-5 pt-0 flex gap-2 ${ev.valor_nota !== null ? "justify-between" : "justify-end"}`}
+                >
+                  {ev.valor_nota !== null && (
+                    <SheetLancarNotas
+                      eventoId={ev.id}
+                      turmaId={turmaId}
+                      tituloEvento={ev.titulo}
+                      valorNota={Number(ev.valor_nota)}
+                    >
+                      <Button
+                        variant="default"
+                        className="bg-zinc-900 hover:bg-zinc-800"
+                      >
+                        Lançar / Editar Notas
+                      </Button>
+                    </SheetLancarNotas>
+                  )}
                   <ModalEditarEvento evento={ev} estiloTrigger="button" />
                 </CardContent>
               </Card>

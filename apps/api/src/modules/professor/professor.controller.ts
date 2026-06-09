@@ -33,16 +33,15 @@ export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
 
   @Get("anos-letivos")
-  async getAnosLetivos(
-    @GetUsuario("id") usuarioId: number,
-  ): Promise<number[]> {
+  async getAnosLetivos(@GetUsuario("id") usuarioId: number): Promise<number[]> {
     return this.professorService.buscarAnosLetivosDoProfessor(usuarioId);
   }
 
   @Get("turmas")
   async getTurmas(
     @GetUsuario("id") usuarioId: number,
-    @Query("anoLetivo", new ParseIntPipe({ optional: true })) anoLetivo?: number,
+    @Query("anoLetivo", new ParseIntPipe({ optional: true }))
+    anoLetivo?: number,
   ): Promise<ProfessorTurmaDetalhado[]> {
     return this.professorService.buscarTurmasDoProfessor(usuarioId, anoLetivo);
   }
@@ -82,7 +81,8 @@ export class ProfessorController {
   @Get("eventos/pendentes")
   async getEventosPendentes(
     @GetUsuario("id") usuarioId: number,
-    @Query("anoLetivo", new ParseIntPipe({ optional: true })) anoLetivo?: number,
+    @Query("anoLetivo", new ParseIntPipe({ optional: true }))
+    anoLetivo?: number,
   ): Promise<Evento[]> {
     return this.professorService.buscarEventosPendentes(usuarioId, anoLetivo);
   }
@@ -90,7 +90,8 @@ export class ProfessorController {
   @Get("eventos/proximos")
   async getProximosEventos(
     @GetUsuario("id") usuarioId: number,
-    @Query("anoLetivo", new ParseIntPipe({ optional: true })) anoLetivo?: number,
+    @Query("anoLetivo", new ParseIntPipe({ optional: true }))
+    anoLetivo?: number,
   ): Promise<Evento[]> {
     return this.professorService.buscarProximosEventos(usuarioId, anoLetivo);
   }
@@ -138,6 +139,16 @@ export class ProfessorController {
     return await this.professorService.buscarAulaPorId(usuarioId, aulaId);
   }
 
+  @Delete("aulas/:id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @MensagemResposta("Aula excluída com sucesso.")
+  async excluirAula(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id", ParseIntPipe) aulaId: number,
+  ): Promise<void> {
+    await this.professorService.excluirAula(usuarioId, aulaId);
+  }
+
   @Post("frequencia")
   @MensagemResposta("Frequência registrada com sucesso.")
   async registrarFrequencia(
@@ -150,9 +161,13 @@ export class ProfessorController {
   @Get("turmas/:id/matriculas")
   async buscarMatriculasCursando(
     @Param("id", ParseIntPipe) turmaId: number,
-    @Query("disciplinaId", new ParseIntPipe({ optional: true })) disciplinaId?: number,
+    @Query("disciplinaId", new ParseIntPipe({ optional: true }))
+    disciplinaId?: number,
   ): Promise<Matricula[]> {
-    return await this.professorService.buscarMatriculasCursando(turmaId, disciplinaId);
+    return await this.professorService.buscarMatriculasCursando(
+      turmaId,
+      disciplinaId,
+    );
   }
 
   @Post("eventos/:id/notas")
@@ -178,38 +193,3 @@ export class ProfessorController {
     await this.professorService.resetarNotas(usuarioId, eventoId);
   }
 }
-
-// @Get("eventos/historico")
-// async getHistoricoEventos(
-//   @GetUsuario("id") usuarioId: number,
-//   @Query("pagina") pagina?: string,
-//   @Query("limite") limite?: string,
-// ) {
-//   const numPagina = pagina ? Number(pagina) : 1;
-//   const numLimite = limite ? Number(limite) : 10;
-
-//   return this.professorService.buscarHistoricoEventos(
-//     usuarioId,
-//     numPagina,
-//     numLimite,
-//   );
-// }
-
-// @Get("eventos/:id/notas")
-// async getDiarioDeNotas(
-//   @GetUsuario("id") usuarioId: number,
-//   @Param("id") eventoId: string,
-// ) {
-//   return this.professorService.buscarDiarioDeNotas(usuarioId, +eventoId);
-// }
-
-// @Get("turmas/:id/alunos")
-// async buscarAlunosParaChamada(
-//   @Param("id") turmaId: string,
-//   @Query("data") dataStr?: string,
-// ) {
-//   return this.professorService.buscarAlunosParaChamada(
-//     Number(turmaId),
-//     dataStr,
-//   );
-// }

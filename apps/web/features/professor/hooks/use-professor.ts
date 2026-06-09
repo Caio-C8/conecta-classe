@@ -154,6 +154,11 @@ async function getAulaById(id: number): Promise<Resposta<Aula>> {
   return response.data;
 }
 
+async function excluirAula(id: number): Promise<Resposta<null>> {
+  const response = await api.delete<Resposta<null>>(`/professor/aulas/${id}`);
+  return response.data;
+}
+
 // NOVO: Busca evento específico com as notas
 async function getEventoById(id: number): Promise<Resposta<Evento>> {
   const response = await api.get<Resposta<Evento>>(`/professor/eventos/${id}`);
@@ -298,6 +303,23 @@ export function useRegistrarFrequencia() {
     onError: (error: any) => {
       const mensagem =
         error.response?.data?.mensagem || "Ocorreu um erro inesperado.";
+      toast.error(mensagem);
+    },
+  });
+}
+
+export function useExcluirAula() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: excluirAula,
+    onSuccess: (resposta) => {
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_AULAS_QUERY_KEY });
+      toast.success(resposta?.mensagem || "Aula excluída com sucesso.");
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro ao excluir a aula.";
       toast.error(mensagem);
     },
   });

@@ -195,7 +195,7 @@ export function ModalEditarEvento({
                 name="tipo_evento"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} key={isOpen ? "open" : "closed"}>
                     <SelectTrigger
                       id="tipo_evento"
                       className={`bg-card text-[16px] sm:text-sm ${
@@ -237,7 +237,7 @@ export function ModalEditarEvento({
                     decimalScale={2}
                     value={field.value ?? ""}
                     onValueChange={(values) => {
-                      field.onChange(values.floatValue);
+                      field.onChange(values.value === "" ? null : values.floatValue);
                     }}
                     className={`bg-card text-[16px] sm:text-sm ${
                       errors.valor_nota

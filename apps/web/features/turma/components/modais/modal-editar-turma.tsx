@@ -175,13 +175,22 @@ export function ModalEditarTurma({
 
             <Field>
               <FieldLabel htmlFor="serie">Série/Ano:</FieldLabel>
-              <NumberInput
-                id="serie"
-                placeholder="Ex: 1, 9"
-                allowNegative={false}
-                decimalScale={0}
-                className={`bg-card text-[16px] sm:text-sm ${errors.serie ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
-                {...register("serie")}
+              <Controller
+                name="serie"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput
+                    id="serie"
+                    placeholder="Ex: 1, 9"
+                    allowNegative={false}
+                    decimalScale={0}
+                    value={field.value ?? ""}
+                    onValueChange={(values) => {
+                      field.onChange(values.value === "" ? null : values.floatValue);
+                    }}
+                    className={`bg-card text-[16px] sm:text-sm ${errors.serie ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
+                  />
+                )}
               />
               {errors.serie && <FieldError message={errors.serie.message} />}
             </Field>
@@ -194,7 +203,7 @@ export function ModalEditarTurma({
                 name="nivel_ensino"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} key={isOpen ? "open" : "closed"}>
                     <SelectTrigger
                       id="nivel_ensino"
                       className={`bg-card text-[16px] sm:text-sm ${errors.nivel_ensino ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
@@ -222,13 +231,22 @@ export function ModalEditarTurma({
 
             <Field>
               <FieldLabel htmlFor="ano_letivo">Ano Letivo:</FieldLabel>
-              <NumberInput
-                id="ano_letivo"
-                placeholder="Ex: 2026"
-                allowNegative={false}
-                decimalScale={0}
-                className={`bg-card text-[16px] sm:text-sm ${errors.ano_letivo ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
-                {...register("ano_letivo")}
+              <Controller
+                name="ano_letivo"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput
+                    id="ano_letivo"
+                    placeholder="Ex: 2026"
+                    allowNegative={false}
+                    decimalScale={0}
+                    value={field.value ?? ""}
+                    onValueChange={(values) => {
+                      field.onChange(values.value === "" ? null : values.floatValue);
+                    }}
+                    className={`bg-card text-[16px] sm:text-sm ${errors.ano_letivo ? "border-destructive focus-visible:ring-destructive" : "border-border"}`}
+                  />
+                )}
               />
               {errors.ano_letivo && (
                 <FieldError message={errors.ano_letivo.message} />

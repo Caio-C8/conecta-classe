@@ -23,7 +23,7 @@ export function TabelaTurmas({ turmas = [], isLoading }: TabelaTurmasProps) {
   if (!mostrarTabela) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-muted/30 border border-dashed rounded-lg text-muted-foreground w-full max-w-7xl mt-6">
-        Nenhuma matrícula encontrada.
+        Nenhuma turma encontrada.
       </div>
     );
   }

@@ -4,16 +4,16 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push",
-    "db:studio": "prisma studio",
-    "db:seed": "prisma db seed",
-    "db:seed:frequencia": "tsx prisma/seedFrequencia.ts",
-    "db:seed:evento": "tsx prisma/seedEvento.ts",
-    "db:seed:rendimento": "tsx prisma/seedRendimento.ts",
-    "db:seed:professor": "tsx prisma/seedProfessor.ts",
-    "db:seed:usuarios": "tsx prisma/seedUsuarios.ts",
-    "db:seed:encerrar-turma": "tsx prisma/seedEncerrarTurma.ts"
+    "db:generate": "dotenv -e ../../.env -- prisma generate",
+    "db:push": "dotenv -e ../../.env -- prisma db push",
+    "db:studio": "dotenv -e ../../.env -- prisma studio",
+    "db:seed": "dotenv -e ../../.env -- prisma db seed",
+    "db:seed:frequencia": "dotenv -e ../../.env -- tsx prisma/seedFrequencia.ts",
+    "db:seed:evento": "dotenv -e ../../.env -- tsx prisma/seedEvento.ts",
+    "db:seed:rendimento": "dotenv -e ../../.env -- tsx prisma/seedRendimento.ts",
+    "db:seed:professor": "dotenv -e ../../.env -- tsx prisma/seedProfessor.ts",
+    "db:seed:usuarios": "dotenv -e ../../.env -- tsx prisma/seedUsuarios.ts",
+    "db:seed:encerrar-turma": "dotenv -e ../../.env -- tsx prisma/seedEncerrarTurma.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

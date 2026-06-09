@@ -21,6 +21,7 @@ export default function LoginPage() {
             width={128}
             height={128}
             className="mb-4"
+            priority
           />
           <span className="text-2xl font-bold">
             Conecta<span className="font-medium">Classe</span>

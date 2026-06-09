@@ -50,9 +50,11 @@ async function getAulasProfessor(
 
 async function getMatriculasCursando(
   turmaId: number,
+  disciplinaId?: number,
 ): Promise<Resposta<Matricula[]>> {
   const response = await api.get<Resposta<Matricula[]>>(
     `/professor/turmas/${turmaId}/matriculas`,
+    { params: { disciplinaId } },
   );
   return response.data;
 }
@@ -140,6 +142,13 @@ async function registrarNotas({
   return response.data;
 }
 
+async function resetarNotas(eventoId: number): Promise<Resposta<null>> {
+  const response = await api.delete<Resposta<null>>(
+    `/professor/eventos/${eventoId}/notas`,
+  );
+  return response.data;
+}
+
 async function getAulaById(id: number): Promise<Resposta<Aula>> {
   const response = await api.get<Resposta<Aula>>(`/professor/aulas/${id}`);
   return response.data;
@@ -175,11 +184,19 @@ export function useAulasProfessor(turmaId?: number, disciplinaId?: number) {
 
 export function useMatriculasCursando(
   turmaId: number,
-  enabled: boolean = true,
+  options?: {
+    disciplinaId?: number;
+    enabled?: boolean;
+  },
 ) {
+  const enabled = options?.enabled ?? true;
   return useQuery({
-    queryKey: [...PROFESSOR_MATRICULAS_QUERY_KEY, turmaId],
-    queryFn: () => getMatriculasCursando(turmaId),
+    queryKey: [
+      ...PROFESSOR_MATRICULAS_QUERY_KEY,
+      turmaId,
+      options?.disciplinaId,
+    ],
+    queryFn: () => getMatriculasCursando(turmaId, options?.disciplinaId),
     enabled: !!turmaId && enabled,
   });
 }
@@ -303,6 +320,23 @@ export function useRegistrarNotas() {
   });
 }
 
+export function useResetarNotas() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: resetarNotas,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PROFESSOR_EVENTOS_QUERY_KEY });
+      toast.success("Notas resetadas com sucesso.");
+    },
+    onError: (error: any) => {
+      const mensagem =
+        error.response?.data?.mensagem || "Ocorreu um erro ao resetar as notas.";
+      toast.error(mensagem);
+    },
+  });
+}
+
 export function useAula(id: number, enabled: boolean = true) {
   return useQuery({
     queryKey: [...PROFESSOR_AULAS_QUERY_KEY, id],
@@ -311,10 +345,10 @@ export function useAula(id: number, enabled: boolean = true) {
   });
 }
 
-export function useEvento(id: number, enabled: boolean = true) {
+export function useEvento(id: number) {
   return useQuery({
     queryKey: [...PROFESSOR_EVENTOS_QUERY_KEY, id],
     queryFn: () => getEventoById(id),
-    enabled: !!id && enabled,
+    enabled: !!id,
   });
 }

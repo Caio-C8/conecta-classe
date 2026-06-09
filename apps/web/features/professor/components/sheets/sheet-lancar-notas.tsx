@@ -16,10 +16,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   useMatriculasCursando,
   useEvento,
   useRegistrarNotas,
+  useResetarNotas,
 } from "@/features/professor/hooks/use-professor";
+import { Trash2 } from "lucide-react";
 
 interface SheetLancarNotasProps {
   eventoId: number;
@@ -40,17 +53,16 @@ export function SheetLancarNotas({
   const [notas, setNotas] = useState<Record<number, string>>({});
 
   const { data: resMatriculas, isLoading: loadMatriculas } =
-    useMatriculasCursando(turmaId, isOpen);
-  const { data: resEvento, isLoading: loadEvento } = useEvento(
-    eventoId,
-    isOpen,
-  );
+    useMatriculasCursando(turmaId, { enabled: isOpen });
+  const { data: resEvento, isLoading: loadEvento } = useEvento(eventoId);
 
   const { mutate: registrarNotas, isPending: isSalvando } = useRegistrarNotas();
+  const { mutate: resetarNotas, isPending: isResetando } = useResetarNotas();
 
   const alunos = resMatriculas?.dados || [];
   const notasSalvas = resEvento?.dados?.notas_eventos ?? [];
   const isLoading = loadMatriculas || loadEvento;
+  const possuiNotasLancadas = notasSalvas.length > 0;
 
   const notasSalvasKey = JSON.stringify(notasSalvas);
 
@@ -125,6 +137,14 @@ export function SheetLancarNotas({
     );
   };
 
+  const handleResetarNotas = () => {
+    resetarNotas(eventoId, {
+      onSuccess: () => {
+        setNotas({});
+      },
+    });
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
@@ -196,14 +216,49 @@ export function SheetLancarNotas({
           </div>
         )}
 
-        <SheetFooter className="mt-8">
+        <SheetFooter className="mt-8 flex flex-col gap-3">
           <Button
             className="w-full bg-zinc-900 hover:bg-zinc-800"
             onClick={handleSalvar}
-            disabled={isSalvando || isLoading}
+            disabled={isSalvando || isResetando || isLoading}
           >
             {isSalvando ? "Salvando..." : "Salvar Diário de Notas"}
           </Button>
+
+          {possuiNotasLancadas && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                  disabled={isSalvando || isResetando || isLoading}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {isResetando ? "Resetando..." : "Resetar todas as notas"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação irá excluir todas as notas lançadas para o evento{" "}
+                    <strong>&quot;{tituloEvento}&quot;</strong>. O diário voltará
+                    a ficar completamente limpo e o evento será considerado com
+                    notas pendentes. Essa ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleResetarNotas}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    Sim, resetar notas
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>

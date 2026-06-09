@@ -12,6 +12,7 @@ import {
 import {
   useUpdateEvento,
   useExcluirEvento,
+  useEvento,
 } from "@/features/professor/hooks/use-professor";
 import { setApiFormErrors } from "@/lib/utils-form";
 import {
@@ -50,8 +51,12 @@ export function ModalEditarEvento({
 
   const { mutate: updateEvento, isPending: isUpdating } = useUpdateEvento();
   const { mutate: excluirEvento, isPending: isExcluindo } = useExcluirEvento();
+  const { data: resEvento } = useEvento(evento.id);
 
   const isPending = isUpdating || isExcluindo;
+
+  const notasLancadas = resEvento?.dados?.notas_eventos ?? [];
+  const possuiNotasLancadas = notasLancadas.length > 0;
 
   const formatDateForInput = (date: Date | string) => {
     if (typeof date === "string") {
@@ -244,6 +249,12 @@ export function ModalEditarEvento({
               />
               {errors.valor_nota && (
                 <FieldError message={errors.valor_nota.message} />
+              )}
+              {possuiNotasLancadas && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Notas já foram lançadas para este evento. O novo valor não pode
+                  ser menor que a maior nota atribuída.
+                </p>
               )}
             </Field>
           </div>

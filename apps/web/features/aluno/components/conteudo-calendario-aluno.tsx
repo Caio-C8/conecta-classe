@@ -35,13 +35,13 @@ const getColorByTipoEvento = (tipo: string) => {
     case TipoEvento.ATIVIDADE:
       return "#3B82F6"; // Azul
     case TipoEvento.GERAL:
-      return "#F59E0B"; // Amarelo
+      return "#6B7280"; // Amarelo
     case TipoEvento.PROVA:
       return "#8B5CF6"; // Roxo
     case TipoEvento.AVISO:
       return "#EC4899"; // Rosa
     default:
-      return "#6B7280"; // Cinza
+      return "";
   }
 };
 

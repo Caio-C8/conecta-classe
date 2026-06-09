@@ -226,6 +226,23 @@ export class ProfessorService {
         : undefined,
     };
 
+    if (dados.valor_nota !== undefined && dados.valor_nota !== null) {
+      const maiorNota = await this.prisma.notaEvento.aggregate({
+        where: { evento_id: eventoId },
+        _max: { nota_obtida: true },
+      });
+
+      const maiorNotaLancada = maiorNota._max.nota_obtida
+        ? Number(maiorNota._max.nota_obtida)
+        : 0;
+
+      if (maiorNotaLancada > 0 && dados.valor_nota < maiorNotaLancada) {
+        throw new BadRequestException(
+          `Não é possível alterar o valor máximo do evento para ${dados.valor_nota}, pois existem alunos com notas maiores já lançadas (Máximo atual lançado: ${maiorNotaLancada}).`,
+        );
+      }
+    }
+
     const eventoAtualizado = await this.prisma.evento.update({
       where: { id: eventoId },
       data,
@@ -271,6 +288,35 @@ export class ProfessorService {
         where: { id: eventoId },
       }),
     ]);
+  }
+
+  async resetarNotas(usuarioId: number, eventoId: number): Promise<void> {
+    const professor = await this.prisma.professor.findUnique({
+      where: { usuario_id: usuarioId },
+    });
+
+    if (!professor) {
+      throw new NotFoundException("Professor não encontrado.");
+    }
+
+    const evento = await this.prisma.evento.findUnique({
+      where: { id: eventoId },
+      include: { turma: true },
+    });
+
+    if (!evento || evento.criador_id !== professor.id) {
+      throw new NotFoundException("Evento não encontrado ou sem permissão.");
+    }
+
+    if (evento.turma.situacao === SituacaoTurma.ENCERRADA) {
+      throw new BadRequestException(
+        "Não é possível resetar notas de uma turma encerrada.",
+      );
+    }
+
+    await this.prisma.notaEvento.deleteMany({
+      where: { evento_id: eventoId },
+    });
   }
 
   async buscarEventosPendentes(
@@ -703,7 +749,10 @@ export class ProfessorService {
     return resultado as Aula;
   }
 
-  async buscarMatriculasCursando(turmaId: number): Promise<Matricula[]> {
+  async buscarMatriculasCursando(
+    turmaId: number,
+    disciplinaId?: number,
+  ): Promise<Matricula[]> {
     const turma = await this.prisma.turma.findUnique({
       where: { id: turmaId },
     });
@@ -712,10 +761,9 @@ export class ProfessorService {
       throw new NotFoundException("Turma não encontrada.");
     }
 
-    return await this.prisma.matricula.findMany({
+    const matriculas = await this.prisma.matricula.findMany({
       where: {
         turma_id: turmaId,
-        status: StatusMatricula.CURSANDO,
       },
       include: {
         aluno: {
@@ -723,6 +771,11 @@ export class ProfessorService {
             usuario: true,
           },
         },
+        rendimentos_disciplinas: disciplinaId
+          ? {
+              where: { disciplina_id: disciplinaId },
+            }
+          : true,
       },
       orderBy: {
         aluno: {
@@ -731,6 +784,20 @@ export class ProfessorService {
           },
         },
       },
+    });
+
+    return matriculas.map((matricula) => {
+      return {
+        ...matricula,
+        rendimentos_disciplinas: matricula.rendimentos_disciplinas.map(
+          (rendimento) => {
+            return {
+              ...rendimento,
+              nota_total: rendimento.nota_total?.toNumber(),
+            };
+          },
+        ),
+      };
     });
   }
 

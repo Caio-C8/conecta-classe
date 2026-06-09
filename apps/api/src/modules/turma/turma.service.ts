@@ -133,6 +133,40 @@ export class TurmaService {
       throw new BadRequestException("Turma já está encerrada.");
     }
 
+    if (!turma.professores || turma.professores.length === 0) {
+      throw new BadRequestException(
+        "Não é possível encerrar a turma. Não há professores vinculados a ela.",
+      );
+    }
+
+    const aulas = await this.prisma.aula.findMany({
+      where: { turma_id: id },
+      select: { professor_id: true, disciplina_id: true },
+    });
+
+    if (aulas.length === 0) {
+      throw new BadRequestException(
+        "Não é possível encerrar a turma. Nenhuma aula foi registrada.",
+      );
+    }
+
+    for (const vinculo of turma.professores) {
+      const possuiAula = aulas.some(
+        (aula) =>
+          aula.professor_id === vinculo.professor_id &&
+          (turma.nivel_ensino === "FUNDAMENTAL_1" ||
+            aula.disciplina_id === vinculo.disciplina_id),
+      );
+
+      if (!possuiAula) {
+        throw new BadRequestException(
+          turma.nivel_ensino === "FUNDAMENTAL_1"
+            ? "Não é possível encerrar a turma. Existem professores sem nenhuma aula registrada."
+            : "Não é possível encerrar a turma. Existem disciplinas sem nenhuma aula registrada.",
+        );
+      }
+    }
+
     const eventos = await this.prisma.evento.findMany({
       where: { turma_id: id },
       include: {
@@ -179,11 +213,14 @@ export class TurmaService {
       );
     }
 
-    const disciplinasIds = await this.turmaRepository.findDisciplinasByTurmaId(id);
+    const disciplinasIds =
+      await this.turmaRepository.findDisciplinasByTurmaId(id);
 
     for (const disciplinaId of disciplinasIds) {
       const somaNotas = eventos
-        .filter((ev) => ev.disciplina_id === disciplinaId && ev.valor_nota !== null)
+        .filter(
+          (ev) => ev.disciplina_id === disciplinaId && ev.valor_nota !== null,
+        )
         .reduce((acc, ev) => acc + ev.valor_nota!.toNumber(), 0);
 
       if (somaNotas < 100) {

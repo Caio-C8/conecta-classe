@@ -150,8 +150,9 @@ export class ProfessorController {
   @Get("turmas/:id/matriculas")
   async buscarMatriculasCursando(
     @Param("id", ParseIntPipe) turmaId: number,
+    @Query("disciplinaId", new ParseIntPipe({ optional: true })) disciplinaId?: number,
   ): Promise<Matricula[]> {
-    return await this.professorService.buscarMatriculasCursando(turmaId);
+    return await this.professorService.buscarMatriculasCursando(turmaId, disciplinaId);
   }
 
   @Post("eventos/:id/notas")
@@ -166,6 +167,15 @@ export class ProfessorController {
       eventoId,
       dados,
     );
+  }
+
+  @Delete("eventos/:id/notas")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async resetarNotas(
+    @GetUsuario("id") usuarioId: number,
+    @Param("id", ParseIntPipe) eventoId: number,
+  ): Promise<void> {
+    await this.professorService.resetarNotas(usuarioId, eventoId);
   }
 }
 

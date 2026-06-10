@@ -35,6 +35,18 @@ interface ModalCriarEventoProps {
   estiloTrigger?: "link" | "button";
 }
 
+const getLocalDateString = (dataStr: string | Date) => {
+  if (typeof dataStr === "string") {
+    if (dataStr.includes("T")) return dataStr.split("T")[0];
+    return dataStr;
+  }
+
+  const y = dataStr.getUTCFullYear();
+  const m = String(dataStr.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(dataStr.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
 export function ModalCriarEvento({
   turmaId,
   disciplinaId,
@@ -169,7 +181,11 @@ export function ModalCriarEvento({
                 name="tipo_evento"
                 control={control}
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value} key={isOpen ? "open" : "closed"}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    key={isOpen ? "open" : "closed"}
+                  >
                     <SelectTrigger
                       id="tipo_evento"
                       className={`bg-card text-[16px] sm:text-sm ${
@@ -211,7 +227,9 @@ export function ModalCriarEvento({
                     decimalScale={2}
                     value={field.value ?? ""}
                     onValueChange={(values) => {
-                      field.onChange(values.value === "" ? null : values.floatValue);
+                      field.onChange(
+                        values.value === "" ? null : values.floatValue,
+                      );
                     }}
                     className={`bg-card text-[16px] sm:text-sm ${
                       errors.valor_nota
@@ -237,6 +255,7 @@ export function ModalCriarEvento({
                   ? "border-destructive focus-visible:ring-destructive"
                   : "border-border"
               }`}
+              min={getLocalDateString(new Date())!}
               {...register("data_evento")}
             />
             {errors.data_evento && (

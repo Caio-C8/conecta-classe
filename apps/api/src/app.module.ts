@@ -20,11 +20,13 @@ import { RendimentoModule } from "./modules/rendimento/rendimento.module";
 import { ProfessorModule } from "./modules/professor/professor.module";
 import { TurmaModule } from "./modules/turma/turma.module";
 import { SeedModule } from "./modules/seed/seed.module";
+import * as path from "path";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: path.resolve(process.cwd(), "../../.env"),
     }),
     PersistenceModule,
     AutenticacaoModule,

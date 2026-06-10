@@ -153,32 +153,37 @@ export function ConteudoNotasAluno() {
                             Nenhuma avaliação foi lançada nesta disciplina.
                           </div>
                         ) : (
-                          rend.eventos.map((ev) => (
-                            <div
-                              key={ev.id}
-                              className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/70 border border-gray-100/50"
-                            >
-                              <div>
-                                <p className="font-bold text-gray-900 text-sm line-clamp-1">
-                                  {ev.titulo}
-                                </p>
-                                <p className="text-[11px] font-medium text-gray-500 mt-1 uppercase tracking-wider">
-                                  Data: {formatarData(ev.data_evento ?? "")}
-                                </p>
-                              </div>
-                              <div className="text-right flex-shrink-0 ml-4">
-                                <span className="text-lg font-black text-gray-800">
-                                  {ev.nota_obtida !== null
-                                    ? ev.nota_obtida
-                                    : "-"}
-                                </span>
-                                <span className="text-sm font-bold text-gray-400 ml-1">
-                                  /{" "}
-                                  {ev.valor_nota !== null ? ev.valor_nota : "-"}
-                                </span>
-                              </div>
-                            </div>
-                          ))
+                          rend.eventos.map(
+                            (ev) =>
+                              ev.valor_nota !== null && (
+                                <div
+                                  key={ev.id}
+                                  className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/70 border border-gray-100/50"
+                                >
+                                  <div>
+                                    <p className="font-bold text-gray-900 text-sm line-clamp-1">
+                                      {ev.titulo}
+                                    </p>
+                                    <p className="text-[11px] font-medium text-gray-500 mt-1 uppercase tracking-wider">
+                                      Data: {formatarData(ev.data_evento ?? "")}
+                                    </p>
+                                  </div>
+                                  <div className="text-right flex-shrink-0 ml-4">
+                                    <span className="text-lg font-black text-gray-800">
+                                      {ev.nota_obtida !== null
+                                        ? ev.nota_obtida
+                                        : "-"}
+                                    </span>
+                                    <span className="text-sm font-bold text-gray-400 ml-1">
+                                      /{" "}
+                                      {ev.valor_nota !== null
+                                        ? ev.valor_nota
+                                        : "-"}
+                                    </span>
+                                  </div>
+                                </div>
+                              ),
+                          )
                         )}
                       </div>
                     </div>

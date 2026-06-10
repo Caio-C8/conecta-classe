@@ -3,7 +3,7 @@ import { PrismaService } from "../../common/prisma/prisma.service";
 import { UsuarioService } from "../usuario/usuario.service";
 import { TurmaService } from "../turma/turma.service";
 import { DisciplinaService } from "../disciplina/disciplina.service";
-import { NivelEnsino, Papel, Cargo } from "@repo/types";
+import { NivelEnsino, Papel, Cargo, TipoEvento } from "@repo/types";
 
 @Injectable()
 export class SeedService {
@@ -139,6 +139,140 @@ export class SeedService {
     }
     for (let i = 14; i < 20; i++) {
       await this.turmaService.vincularAluno(turmaMedio.id, { alunoId: alunos[i].id });
+    }
+
+    // 7. Simular Resultados (Eventos, Notas, Aulas e Frequências)
+    const matriculasF1 = await this.prisma.matricula.findMany({ where: { turma_id: turmaF1.id } });
+    const matriculasF2 = await this.prisma.matricula.findMany({ where: { turma_id: turmaF2.id } });
+    const matriculasMedio = await this.prisma.matricula.findMany({ where: { turma_id: turmaMedio.id } });
+
+    const pastDate1 = new Date('2026-02-15T10:00:00Z');
+    const pastDate2 = new Date('2026-04-10T10:00:00Z');
+
+    // Turma F1 (Prof. Carlos, Matemática)
+    const eventoAvaliativoF1 = await this.prisma.evento.create({
+      data: {
+        turma_id: turmaF1.id,
+        disciplina_id: disciplinas[0].id,
+        criador_id: professores[0].id,
+        titulo: "Prova do 1º Bimestre",
+        descricao: "Prova de Matemática Básica",
+        tipo_evento: TipoEvento.PROVA,
+        valor_nota: 10.0,
+        data_evento: pastDate1,
+      }
+    });
+    for (const m of matriculasF1) {
+      await this.prisma.notaEvento.create({
+        data: { evento_id: eventoAvaliativoF1.id, matricula_id: m.id, nota_obtida: 8.5 }
+      });
+      await this.prisma.rendimentoDisciplina.updateMany({
+        where: { matricula_id: m.id, disciplina_id: disciplinas[0].id },
+        data: { nota_total: 8.5 }
+      });
+    }
+
+    await this.prisma.evento.create({
+      data: {
+        turma_id: turmaF1.id,
+        disciplina_id: disciplinas[0].id,
+        criador_id: professores[0].id,
+        titulo: "Aviso de Reunião",
+        descricao: "Reunião de Pais e Mestres",
+        tipo_evento: TipoEvento.AVISO,
+        data_evento: pastDate2,
+      }
+    });
+
+    const aulaF1 = await this.prisma.aula.create({
+      data: {
+        turma_id: turmaF1.id,
+        disciplina_id: disciplinas[0].id,
+        professor_id: professores[0].id,
+        data_aula: pastDate1,
+        quantidade: 2,
+      }
+    });
+    for (const m of matriculasF1) {
+      await this.prisma.frequencia.create({
+        data: { aula_id: aulaF1.id, matricula_id: m.id, numero_faltas: 0 }
+      });
+    }
+
+    // Turma F2 (Prof. Ana, Português)
+    const eventoAvaliativoF2 = await this.prisma.evento.create({
+      data: {
+        turma_id: turmaF2.id,
+        disciplina_id: disciplinas[1].id,
+        criador_id: professores[1].id,
+        titulo: "Prova de Redação",
+        descricao: "Avaliação do 1º Bimestre",
+        tipo_evento: TipoEvento.PROVA,
+        valor_nota: 10.0,
+        data_evento: pastDate1,
+      }
+    });
+    for (const m of matriculasF2) {
+      await this.prisma.notaEvento.create({
+        data: { evento_id: eventoAvaliativoF2.id, matricula_id: m.id, nota_obtida: 7.0 }
+      });
+      await this.prisma.rendimentoDisciplina.updateMany({
+        where: { matricula_id: m.id, disciplina_id: disciplinas[1].id },
+        data: { nota_total: 7.0 }
+      });
+    }
+
+    const aulaF2 = await this.prisma.aula.create({
+      data: {
+        turma_id: turmaF2.id,
+        disciplina_id: disciplinas[1].id,
+        professor_id: professores[1].id,
+        data_aula: pastDate1,
+        quantidade: 2,
+      }
+    });
+    for (const m of matriculasF2) {
+      await this.prisma.frequencia.create({
+        data: { aula_id: aulaF2.id, matricula_id: m.id, numero_faltas: 1 }
+      });
+    }
+
+    // Turma Médio (Prof. Carlos, Matemática)
+    const eventoAvaliativoMedio = await this.prisma.evento.create({
+      data: {
+        turma_id: turmaMedio.id,
+        disciplina_id: disciplinas[0].id,
+        criador_id: professores[0].id,
+        titulo: "Prova de Álgebra",
+        descricao: "Funções e Equações",
+        tipo_evento: TipoEvento.PROVA,
+        valor_nota: 10.0,
+        data_evento: pastDate2,
+      }
+    });
+    for (const m of matriculasMedio) {
+      await this.prisma.notaEvento.create({
+        data: { evento_id: eventoAvaliativoMedio.id, matricula_id: m.id, nota_obtida: 9.0 }
+      });
+      await this.prisma.rendimentoDisciplina.updateMany({
+        where: { matricula_id: m.id, disciplina_id: disciplinas[0].id },
+        data: { nota_total: 9.0 }
+      });
+    }
+
+    const aulaMedio = await this.prisma.aula.create({
+      data: {
+        turma_id: turmaMedio.id,
+        disciplina_id: disciplinas[0].id,
+        professor_id: professores[0].id,
+        data_aula: pastDate2,
+        quantidade: 2,
+      }
+    });
+    for (const m of matriculasMedio) {
+      await this.prisma.frequencia.create({
+        data: { aula_id: aulaMedio.id, matricula_id: m.id, numero_faltas: 0 }
+      });
     }
   }
 }

@@ -19,6 +19,7 @@ import { EventoModule } from "./modules/evento/evento.module";
 import { RendimentoModule } from "./modules/rendimento/rendimento.module";
 import { ProfessorModule } from "./modules/professor/professor.module";
 import { TurmaModule } from "./modules/turma/turma.module";
+import { SeedModule } from "./modules/seed/seed.module";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TurmaModule } from "./modules/turma/turma.module";
     RendimentoModule,
     ProfessorModule,
     TurmaModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [

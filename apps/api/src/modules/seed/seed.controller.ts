@@ -17,6 +17,8 @@ export class SeedController {
   @Post("limpar")
   async limparBanco() {
     await this.seedService.limparBanco();
-    return { mensagem: "Banco limpo com sucesso e usuário admin padrão recriado." };
+    return {
+      mensagem: "Banco limpo com sucesso e usuário admin padrão recriado.",
+    };
   }
 }

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Aula, Matricula } from "@repo/types";
 import { SheetRegistrarFrequencia } from "@/features/professor/components/sheets/sheet-registrar-frequencia";
-import { useMounted } from "@/hooks/use-mounted";
 
 interface AbaFrequenciaProps {
   turmaId: number;
@@ -34,17 +33,11 @@ export function AbaFrequencia({
   aulas,
   alunos,
 }: AbaFrequenciaProps) {
-  const isMounted = useMounted();
-
   const { handleEditarChamada, SheetFrequencia } = SheetRegistrarFrequencia({
     turmaId,
     disciplinaId,
     alunos,
   });
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">

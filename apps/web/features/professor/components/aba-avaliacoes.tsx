@@ -8,7 +8,6 @@ import { Evento } from "@repo/types";
 import { SheetLancarNotas } from "@/features/professor/components/sheets/sheet-lancar-notas";
 import { ModalEditarEvento } from "@/features/professor/components/modais/modal-editar-evento";
 import { ModalCriarEvento } from "@/features/professor/components/modais/modal-criar-evento";
-import { useMounted } from "@/hooks/use-mounted";
 
 interface AbaAvaliacoesProps {
   turmaId: number;
@@ -39,8 +38,6 @@ export function AbaAvaliacoes({
   disciplinaId,
   eventos,
 }: AbaAvaliacoesProps) {
-  const isMounted = useMounted();
-
   const eventosProximos = eventos.filter((e) => !isPassado(e.data_evento));
   const eventosConcluidos = eventos.filter((e) => isPassado(e.data_evento));
 
@@ -56,10 +53,6 @@ export function AbaAvaliacoes({
     (acc, ev) => acc + (Number(ev.valor_nota) || 0),
     0,
   );
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">

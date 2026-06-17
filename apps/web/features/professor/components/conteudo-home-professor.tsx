@@ -20,7 +20,6 @@ import {
 } from "@/features/professor/hooks/use-professor";
 import { useAnoLetivo } from "@/features/professor/contexts/ano-letivo-context";
 import { CabecalhoProfessor } from "@/features/professor/components/cabecalho-professor";
-import { useMounted } from "@/hooks/use-mounted";
 
 const getLocalDateString = (dataStr: string | Date) => {
   if (typeof dataStr === "string") {
@@ -52,8 +51,6 @@ const formatarDataRelativa = (dataStr: string | Date) => {
 };
 
 export function ConteudoHomeProfessor() {
-  const isMounted = useMounted();
-
   const [nomeProfessor, setNomeProfessor] = useState("Professor(a)");
 
   const { anoLetivo, isLoadingAnos } = useAnoLetivo();
@@ -80,10 +77,6 @@ export function ConteudoHomeProfessor() {
       setNomeProfessor(nomeCookie.split(" ")[0]);
     }
   }, []);
-
-  if (!isMounted) {
-    return null;
-  }
 
   if (isLoading) {
     return (

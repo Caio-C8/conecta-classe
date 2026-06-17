@@ -37,7 +37,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { SquarePen } from "lucide-react";
-import { useMounted } from "@/hooks/use-mounted";
 
 interface ModalEditarEventoProps {
   evento: Evento;
@@ -60,7 +59,6 @@ export function ModalEditarEvento({
   evento,
   estiloTrigger = "link",
 }: ModalEditarEventoProps) {
-  const isMounted = useMounted();
   const [isOpen, setIsOpen] = useState(false);
 
   const { mutate: updateEvento, isPending: isUpdating } = useUpdateEvento();
@@ -140,10 +138,6 @@ export function ModalEditarEvento({
       },
     });
   };
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

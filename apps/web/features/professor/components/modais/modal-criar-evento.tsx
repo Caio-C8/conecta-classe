@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FaPlus } from "react-icons/fa";
-import { useMounted } from "@/hooks/use-mounted";
 
 interface ModalCriarEventoProps {
   turmaId: number;
@@ -53,7 +52,6 @@ export function ModalCriarEvento({
   disciplinaId,
   estiloTrigger = "button",
 }: ModalCriarEventoProps) {
-  const isMounted = useMounted();
   const [isOpen, setIsOpen] = useState(false);
 
   const { mutate: createEvento, isPending: isCriando } = useCreateEvento();
@@ -111,10 +109,6 @@ export function ModalCriarEvento({
       },
     );
   };
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>

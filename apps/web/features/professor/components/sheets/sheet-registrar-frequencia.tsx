@@ -40,6 +40,7 @@ import {
   RegistrarFrequenciaInput,
   RegistrarFrequenciaSchema,
 } from "@repo/types";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface SheetRegistrarFrequenciaProps {
   turmaId: number;
@@ -64,6 +65,7 @@ export function SheetRegistrarFrequencia({
   disciplinaId,
   alunos,
 }: SheetRegistrarFrequenciaProps) {
+  const isMounted = useMounted();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isEditingChamada, setIsEditingChamada] = useState(false);
   const [aulaIdEditando, setAulaIdEditando] = useState<number | null>(null);
@@ -185,6 +187,10 @@ export function SheetRegistrarFrequencia({
       },
     });
   };
+
+  if (!isMounted) {
+    return null;
+  }
 
   return {
     isSheetOpen,
